@@ -1,0 +1,24 @@
+@HD	VN:1.5	SO:coordinate
+@SQ	SN:scaffold1	LN:1050000	M5:132d6a865577c9f94c302555801ce407	UR:file:/home/peru/dev/pytest-ngsfixtures/pytest_ngsfixtures/data/ref/scaffolds.fa
+@SQ	SN:scaffold2	LN:340000	M5:a64ae48833f2a81042f7c4058114a4b1	UR:file:/home/peru/dev/pytest-ngsfixtures/pytest_ngsfixtures/data/ref/scaffolds.fa
+@SQ	SN:scaffold3	LN:230000	M5:031ab5dce1d8858bce5527a4fbd96337	UR:file:/home/peru/dev/pytest-ngsfixtures/pytest_ngsfixtures/data/ref/scaffolds.fa
+@SQ	SN:scaffold4	LN:130000	M5:52222806aa9a9e84580991b4a80623bb	UR:file:/home/peru/dev/pytest-ngsfixtures/pytest_ngsfixtures/data/ref/scaffolds.fa
+@SQ	SN:scaffold5	LN:20000	M5:ba48762c1d5df77dabbbca6f493e8208	UR:file:/home/peru/dev/pytest-ngsfixtures/pytest_ngsfixtures/data/ref/scaffolds.fa
+@SQ	SN:scaffold6	LN:100000	M5:b873f5332104a4106983a6d4921be4bb	UR:file:/home/peru/dev/pytest-ngsfixtures/pytest_ngsfixtures/data/ref/scaffolds.fa
+@SQ	SN:scaffold7	LN:40000	M5:6aa89a381dce8f63cffa78259e6783d4	UR:file:/home/peru/dev/pytest-ngsfixtures/pytest_ngsfixtures/data/ref/scaffolds.fa
+@SQ	SN:scaffold8	LN:30000	M5:de0edf488b8e3661e67a393f9e25319e	UR:file:/home/peru/dev/pytest-ngsfixtures/pytest_ngsfixtures/data/ref/scaffolds.fa
+@SQ	SN:scaffold9	LN:20000	M5:e99355c706d7598e384e3cf8c49a0064	UR:file:/home/peru/dev/pytest-ngsfixtures/pytest_ngsfixtures/data/ref/scaffolds.fa
+@SQ	SN:scaffold10	LN:10000	M5:dd3b0c3779a452c19ecade3f05158638	UR:file:/home/peru/dev/pytest-ngsfixtures/pytest_ngsfixtures/data/ref/scaffolds.fa
+@SQ	SN:scaffold11	LN:10000	M5:3a0d947b073b2a52cfec5e350ffe5959	UR:file:/home/peru/dev/pytest-ngsfixtures/pytest_ngsfixtures/data/ref/scaffolds.fa
+@SQ	SN:scaffold12	LN:10000	M5:668c4a8d1fa0617ea1ece3f117a64041	UR:file:/home/peru/dev/pytest-ngsfixtures/pytest_ngsfixtures/data/ref/scaffolds.fa
+@SQ	SN:scaffold13	LN:10000	M5:7d410e8cd21f3617787fab1e96f042a4	UR:file:/home/peru/dev/pytest-ngsfixtures/pytest_ngsfixtures/data/ref/scaffolds.fa
+scaffold1	7660	12906	-	.
+scaffold1	13194	29046	-	.
+scaffold1	29760	47688	-	.
+scaffold1	33762	34054	+	.
+scaffold1	47786	95672	+	.
+scaffold1	49608	51992	-	.
+scaffold1	77698	102048	+	.
+scaffold1	95650	102084	+	.
+scaffold1	102088	109110	-	.
+scaffold1	106840	106940	-	.

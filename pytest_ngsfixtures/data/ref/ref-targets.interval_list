@@ -1,0 +1,12 @@
+@HD	VN:1.5	SO:coordinate
+@SQ	SN:chr6	LN:2000000	M5:466f9f73538be8b1efb0d3957c20b57d	UR:file:/home/peru/dev/pytest-ngsfixtures/pytest_ngsfixtures/data/ref/ref.fa
+chr6	7660	12906	-	.
+chr6	13194	29046	-	.
+chr6	29760	47688	-	.
+chr6	33762	34054	+	.
+chr6	47786	95672	+	.
+chr6	49608	51992	-	.
+chr6	77698	102048	+	.
+chr6	95650	102084	+	.
+chr6	102088	109110	-	.
+chr6	106840	106940	-	.

@@ -1,0 +1,339 @@
+# -*- snakemake -*-
+from Bio import SeqIO
+
+class SequenceException(Exception):
+    pass
+
+config = {
+    'seed' : 100,
+    'sampling' : [0.8, 0.1, 0.1],
+    'tiny': {
+        'size' : 100,
+        'regions' : [('chr6', 890000, 915000)],
+    },
+    'small': {
+        'size' : 1000,
+        'regions' : [('chr6', 850000, 920000)],
+    },
+    'medium': {
+        'size' : 10000,
+        'regions' : [('chr6', 750000, 1300000)],
+    },
+    'yuge': {
+        'size' : 100000,
+        'regions' : [('chr6', 1, 2000000)],
+    },
+    'regions' : [('chr6', 31850001, 33850000)],
+}
+
+SAMPLES = ["CHS.HG00512", "CHS.HG00513", "PUR.HG00731", "PUR.HG00733",
+           "YRI.NA19238", "YRI.NA19239"]
+BAMFILES = expand("{sample}.1000g.bam", sample=SAMPLES)
+SEQUENCES = expand("{sample}.1000g_1.fastq.gz", sample=SAMPLES) + expand("{sample}.1000g_2.fastq.gz", sample=SAMPLES)
+URL = "http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/data_collections/1000_genomes_project/data/{population}/{individual}/alignment/{individual}.alt_bwamem_GRCh38DH.20150718.{population}.low_coverage.cram"
+ENSEMBL_REST = "rest.ensembl.org/sequence/region/human/{chromosome}:{start}..{end}:1"
+GTFGZ = 'ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_21/gencode.v21.annotation.gtf.gz'
+REF = "ref.fasta"
+REGIONS = ",".join(["{chr}:{start}-{end}".format(chr=x[0], start=x[1], end=x[2]) for x in config['regions']])
+
+rule thoug_bam:
+    params: regions = REGIONS
+    output: "{population}.{individual}.1000g.bam"
+    shell: "samtools view -h -b http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/data_collections/1000_genomes_project/data/{wildcards.population}/{wildcards.individual}/alignment/{wildcards.individual}.alt_bwamem_GRCh38DH.20150718.{wildcards.population}.low_coverage.cram {params.regions} -o {output}"
+
+rule thousand_genome_bams:
+    input: BAMFILES
+
+rule regions_bed:
+    params: regions = REGIONS
+    output: "regions.bed"
+    shell: 'echo {params.regions} | tr " " "\n" | sed -e "s/[:-]/\t/g" > {output}'
+
+           
+rule ref_fasta:
+    """Sneaky: just use first region"""
+    params: chromosome = config['regions'][0][0],
+            start=config['regions'][0][1],
+            end=config['regions'][0][2],
+    output: "ref.fasta"
+    shell:
+        "curl rest.ensembl.org/sequence/region/human/{params.chromosome}:{params.start}..{params.end}:1 -H 'Content-type:text/x-fasta' > {output}; "
+        'sed -i -e "s/>\([^ ][^ ]*\)/>chr6 \\1/g" {output}'
+    
+
+rule ref_genome:
+    params: length=config['regions'][0][2] - config['regions'][0][1] + 1
+    output: "ref.genome"
+    shell: "echo \"chrom\tsize\nchr6\t{params.length}\" > {output}"
+
+rule gencode:
+    output: "gencode.v21.annotation.gtf.gz"
+    shell: "curl ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_21/gencode.v21.annotation.gtf.gz > {output}"
+
+rule ref_raw_gtf:
+    input: gtf = "gencode.v21.annotation.gtf.gz", regions = "regions.bed"
+    output: "ref.raw.gtf"
+    shell: "bedtools intersect -a {input.gtf} -b {input.regions} > {output}"
+
+           
+rule ref_gtf:
+    params: shift = config['regions'][0][1]
+    input: raw = "ref.raw.gtf", genome = "ref.genome"
+    output: "ref.gtf"
+    shell: "bedtools shift -i {input.raw} -g {input.genome} -s -{params.shift} > {output}"
+
+
+           
+rule samtools_sort:
+    input: "{prefix}.bam"
+    output: "{prefix}.sort.bam"
+    shell: "samtools sort {input} -o {output}"
+           
+rule samtools_sortn:
+    input: "{prefix}.bam"
+    output: "{prefix}.sortn.bam"
+    shell: "samtools sort -n {input} -o {output}"
+
+rule thoug_fastq:
+    input: "{prefix}.1000g.sortn.bam"
+    output: fq1="{prefix}.1000g_1.fastq.gz",
+            fq2="{prefix}.1000g_2.fastq.gz",
+    shell: "bedtools bamtofastq -i {input} -fq {output.fq1} -fq2 {output.fq2} 2>/dev/null"
+
+rule gzip:
+    input: "{prefix}"
+    output: "{prefix}.gz"
+    shell: "gzip -vf {input}"
+
+rule unzip_fasta:
+    input: "{prefix}.fasta.gz"
+    output: "{prefix}.fasta"
+    shell: "gzip -vf -d {input}"
+
+
+rule sequences:
+    input: SEQUENCES + ["ref.gtf",  "ref.fasta"]
+    
+           
+
+rule bwa_index:
+    input: "{prefix}.fasta"
+    output: "{prefix}.fasta.sa"
+    shell: "bwa index {input}"
+
+rule bwa_mem:
+    input: read1 = "{prefix}.1000g_1.fastq.gz",
+           read2 = "{prefix}.1000g_2.fastq.gz",
+           ref = "ref.fasta",
+           index = "ref.fasta.sa"
+    output: "{prefix}.mem.bam"
+    shell: "bwa mem -L '@RG\tID:{wildcards.prefix}\tSM:{wildcards.prefix}' {input.ref} {input.read1} {input.read2} 2> {wildcards.prefix}.mem.log | samtools view -Sb - > {output}"
+
+rule allbam:
+    input:  expand("{sample}.mem.sort.bam", sample=SAMPLES)
+    output: "all.bam"
+    shell: "samtools merge -f {output} {input}"
+            
+rule samtools_index:
+    input: "{prefix}.bam"
+    output: "{prefix}.bam.bai"
+    shell: "samtools index {input}"
+
+rule vcf_call:
+    input: bam="{prefix}.bam", bai="{prefix}.bam.bai", ref="ref.fasta"
+    output: "{prefix}.vcf"
+    shell: "samtools mpileup -ug -f {input.ref} {input.bam} | bcftools call -vmO v -o {output}"
+
+WINDOWSIZE=100
+rule make_windows:
+    input: ref = "ref.gtf", bam = "{prefix}.bam"
+    output: "{prefix}_{windowsize}.bed"
+    shell: "bedtools makewindows -b {input.ref} -w {wildcards.windowsize} | bedtools sort | uniq | bedtools coverage -mean -a stdin -b {input.bam}  > {output}"
+
+
+rule mappings:
+    input: expand("{sample}.mem.sort.bam", sample=SAMPLES) + expand("{sample}.mem.sort.bam.bai", sample=SAMPLES) + ["all.bam", "all.bam.bai"]
+
+
+rule region_definitions:
+    wildcard_constraints: prefix="(tiny|small|medium|yuge)"
+    output: bed = "{prefix}.bed"
+    run:
+        regions = "\n".join(["\t".join([str(x) for x in p]) for p in config[wildcards.prefix]['regions']])
+        with open(output.bed, "w") as fh:
+            fh.write(regions)
+
+# See ref/Makefile for definition of scaffolds; this region actually consists of 6 scaffolds
+LASTSCAFFOLD="chr6:1900000:2000000"
+
+rule scaffold_bed:
+    params: scaffold=LASTSCAFFOLD
+    output: "scaffold.bed"
+    shell: 'echo {params.scaffold} | tr " " "\n" | sed -e "s/[:-]/\t/g" > {output}'
+
+rule scaffold_regions_bed:
+    params: scaffold=LASTSCAFFOLD
+    input: scaffold = "scaffold.bed", bed = "{prefix}.bed", genome="ref.genome"
+    output: "{prefix}_scaffold.bed"
+    shell: 'cat {input.scaffold} {input.bed} | bedtools slop -i - -g {input.genome} -l 1000 -r 1000 > {output}'
+
+
+##############################
+# Rules for generating sample sequence files
+##############################
+def sampleseq_command(**kwargs):
+    """Generate command for sampling sequences with bedtools and seqtk"""
+    check_error=True
+    if kwargs['regionlabel'] == "yuge":
+        fraction = 1
+        check_error = False
+    elif kwargs['regionlabel'] == kwargs['outdir']:
+        fraction = 0.8
+    else:
+        fraction = 0.1
+    size=int(fraction * config[kwargs['outdir']]['size'])
+    intersectopts = " -a "
+    if "_scaffold" in kwargs['regionlabel']:
+        intersectopts = " -v " + intersectopts
+    fun = "head"
+    if kwargs['ab'] == ".B":
+        fun = "tail"
+    fastqopt = "-fq /dev/stdout -fq2 /dev/null"
+    if int(kwargs['read']) == 2:
+        fastqopt = "-fq2 /dev/stdout -fq /dev/null"
+    cmdfmt = "bedtools intersect {intersectopts} {sortn} -b {regions} | bedtools bamtofastq -i - {fastqopt} 2>{log} | paste - - - - | LC_ALL=C sort -t$'\\t' -k1,1 -u | tr \"\\t\" \"\\n\" | seqtk sample -s {seed} - {doublesize} | {fun} -{size} > {out} 2>>{log}  || test $? -eq 141"
+    cmd = cmdfmt.format(sortn=kwargs['sortn'], regions=kwargs['regions'],
+                        fastqopt=fastqopt, seed=kwargs['seed'],
+                        doublesize=2*size, out=kwargs['fastq'],
+                        fun=fun, size=4*size, log=kwargs['log'],
+                        intersectopts=intersectopts)
+    print("Generated command: '{}'".format(cmd))
+    shell(cmd)
+    checkids(kwargs['fastq'], size, check_error)
+    
+
+
+def checkids(fastq, size, check_error=True):
+    ids = set()
+    for index, record in enumerate(SeqIO.parse(fastq, "fastq")):
+        ids.add(record.id)
+    n = len(set(ids))
+    print("Ids and sampling size: {}\t{}\t{}\n".format(fastq, size, n))
+    if check_error:
+        if n != size:
+            raise SequenceException("Unique ids not equal to sampling size: {}\t{}\t{}\n".format(fastq, size, n))
+    else:
+        print("Ids and sampling size: {}\t{}\t{}\n".format(fastq, size, n))
+    
+
+wildcard_constraints:
+    samplepfx = "(CHS|PUR|YRI)\.[0-9A-Z]+",
+    ab = "(\.A|\.B|)"
+
+rule sample_from_bam_regions:
+    """Use bedtools and seqtk to sample from bam file"""
+    params:
+        seed = config['seed']
+    input:
+        sortn = "{samplepfx}.mem.sortn.bam",
+        regions = "{regionlabel}.bed"
+    output:
+        fastq = temporary("{outdir}/{regionlabel}_{samplepfx}{ab}_{read}.fastq")
+    log: "{outdir}/{regionlabel}_{samplepfx}{ab}_{read}.log"
+    run:
+        kwargs = {**params, **input, **output, **wildcards, 'log':log[0]}
+        sampleseq_command(**kwargs)
+
+        
+rule concatenate_bam_samples:
+    """Concatenate bam samples"""
+    wildcard_constraints: prefix="(CHS|PUR|YRI)\.[0-9A-Z]+",
+                          outdir="(tiny|small|medium)"
+    input: regions = "{outdir}/{outdir}_{samplepfx}{ab}_{read}.fastq",
+           scaffold = "{outdir}/scaffold_{samplepfx}{ab}_{read}.fastq",
+           all = "{outdir}/{outdir}_scaffold_{samplepfx}{ab}_{read}.fastq"
+    output:
+        fastq = "{outdir}/{samplepfx}{ab}_{read}.fastq"
+    run:
+        cmdfmt = "cat {regions} {scaffold} {all} > {fastq}"
+        cmd = cmdfmt.format(regions=input.regions,
+                            scaffold=input.scaffold, all = input.all,
+                            fastq=output.fastq)
+        print("Command: ", cmd)
+        shell(cmd)
+        checkids(output.fastq, config[wildcards.outdir]['size'])
+
+
+rule sample_from_bam_yuge:
+    """Specialized rule for yuge files; sample entire region"""
+    wildcard_constraints: samplepfx="(CHS|PUR|YRI)\.[0-9A-Z]+",
+                          outdir="yuge"
+    params:
+        seed = 1234
+    input:
+        sortn = "{samplepfx}.mem.sortn.bam",
+        regions = "yuge.bed"
+    output:
+        fastq = "{outdir}/{samplepfx}{ab}_{read}.fastq"
+    log:
+        log = "{outdir}/{samplepfx}{ab}_{read}.log"
+    run:
+        kwargs = {**params, **input, **output, **wildcards, 'log':log[0], 'regionlabel':"yuge"}
+        sampleseq_command(**kwargs)
+
+rule link_A_sequence:
+    """Create symbolic link from A file to regular sequence"""
+    wildcard_constraints: Apfx = "PUR.+"
+    input: A = "{outdir}/{Apfx}.A_{read}.fastq.gz"
+    output: fastq = "{outdir}/{Apfx}_{read}.fastq.gz"
+    shell: "cd {wildcards.outdir} && ln -sf $(basename {input.A}) $(basename {output.fastq})"
+
+ruleorder: link_A_sequence > gzip
+           
+rule ab_sequences:
+    input: expand("{outdir}/{sample}{ab}_{read}.fastq.gz", outdir=["tiny", "small", "medium", "yuge"], sample=SAMPLES[2:4], read=[1,2], ab=[".A", ".B"])
+
+rule noab_sequences:
+    input: expand("{outdir}/{sample}_{read}.fastq.gz", outdir=["tiny", "small", "medium", "yuge"], sample=SAMPLES, read=[1,2])
+
+rule link_sequences:
+    input: expand("{outdir}/{sample}_{read}.fastq.gz", outdir=["tiny", "small", "medium", "yuge"], sample=SAMPLES[2:4], read=[1,2])
+           
+
+rule tiny_sequences:
+    input: expand("{outdir}/{sample}_{read}.fastq.gz", outdir=["tiny"], sample=SAMPLES, read=[1,2]) +
+           expand("{outdir}/{sample}{ab}_{read}.fastq.gz", outdir=["tiny"], sample=SAMPLES[2:4], read=[1,2], ab=[".A", ".B"])
+
+rule small_sequences:
+    input: expand("{outdir}/{sample}_{read}.fastq.gz", outdir=["small"], sample=SAMPLES, read=[1,2]) +
+           expand("{outdir}/{sample}{ab}_{read}.fastq.gz", outdir=["small"], sample=SAMPLES[2:4], read=[1,2], ab=[".A", ".B"])
+
+rule medium_sequences:
+    input: expand("{outdir}/{sample}_{read}.fastq.gz", outdir=["medium"], sample=SAMPLES, read=[1,2]) +
+           expand("{outdir}/{sample}{ab}_{read}.fastq.gz", outdir=["medium"], sample=SAMPLES[2:4], read=[1,2], ab=[".A", ".B"])
+
+rule yuge_sequences:
+    input: expand("{outdir}/{sample}_{read}.fastq.gz", outdir=["yuge"], sample=SAMPLES, read=[1,2]) +
+           expand("{outdir}/{sample}{ab}_{read}.fastq.gz", outdir=["yuge"], sample=SAMPLES[2:4], read=[1,2], ab=[".A", ".B"])
+
+rule all_sequences:
+    input: expand("{outdir}/{sample}_{read}.fastq.gz", outdir=["tiny", "small", "medium", "yuge"], sample=SAMPLES, read=[1,2]) + 
+           expand("{outdir}/{sample}{ab}_{read}.fastq.gz", outdir=["tiny", "small", "medium", "yuge"], sample=SAMPLES[2:4], read=[1,2], ab=[".A", ".B"])
+
+rule clean:
+    shell:
+        "rm -f *.log;"
+        "rm -f */*.log;"
+        "rm -f */*.fastq;"
+        "rm -f */regions_*;"
+        "rm -f */last_*;"
+        "rm -f */all_*;"
+        "rm -f ref.*;"
+        "rm -f *.bed;"
+        "rm -f *.cram;"
+        "rm -f *.crai;"
+        "rm -f *.bam;"
+        "rm -f *.bai;"
+        "rm -f *.gz;"
+        "rm -f *.fastq;"
+        

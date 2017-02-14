@@ -1,0 +1,132 @@
+LOCUS       ERCC-00016               844 bp    DNA     linear   SYN 14-MAR-2013
+DEFINITION  Synthetic construct external RNA control ERCC-00016 sequence.
+ACCESSION   ERCC-00016
+VERSION     ERCC-00016
+KEYWORDS    .
+SOURCE      synthetic construct
+  ORGANISM  synthetic construct
+            other sequences; artificial sequences.
+REFERENCE   1  (bases 1 to 844)
+  AUTHORS   McDaniel,J.H., Roesslein,M., Zook,J., Munro,S., Vang,L., Scott
+            Pine,P. and Salit,M.L.
+  CONSRTM   External RNA Control Consortium
+  TITLE     Antigenomic External RNA Controls
+  JOURNAL   Unpublished
+REFERENCE   2  (bases 1 to 844)
+  AUTHORS   McDaniel,J.H., Roesslein,M., Zook,J., Munro,S., Vang,L., Scott
+            Pine,P. and Salit,M.L.
+  CONSRTM   External RNA Control Consortium
+  TITLE     Direct Submission
+  JOURNAL   Submitted (02-AUG-2006) Material Measurement Laboratory, Biosystems
+            and Biomaterials Division, National Institute of Standards and
+            Technology, 100 Bureau Drive, Gaithersburg, MD 20899, USA
+REFERENCE   3  (bases 1 to 844)
+  AUTHORS   McDaniel,J.H., Roesslein,M., Zook,J., Munro,S., Vang,L., Scott
+            Pine,P. and Salit,M.L.
+  CONSRTM   External RNA Control Consortium
+  TITLE     Direct Submission
+  JOURNAL   Submitted (20-SEP-2006) Material Measurement Laboratory, Biosystems
+            and Biomaterials Division, National Institute of Standards and
+            Technology, 100 Bureau Drive, Gaithersburg, MD 20899, USA
+  REMARK    Sequence update by submitter
+REFERENCE   4  (bases 1 to 844)
+  AUTHORS   McDaniel,J.H., Roesslein,M., Zook,J., Munro,S., Vang,L., Scott
+            Pine,P. and Salit,M.L.
+  CONSRTM   External RNA Control Consortium
+  TITLE     Direct Submission
+  JOURNAL   Submitted (28-FEB-2013) Material Measurement Laboratory, Biosystems
+            and Biomaterials Division, National Institute of Standards and
+            Technology, 100 Bureau Drive, Gaithersburg, MD 20899, USA
+  REMARK    Sequence update by submitter
+COMMENT     On Feb 28, 2013 this sequence version replaced gi:114976930.
+FEATURES             Location/Qualifiers
+     source          1..844
+                     /clone="NISTag23"
+                     /clone_lib="NIST SRM 2374, DNA Sequence Library for
+                     External RNA Controls"
+                     /db_xref="taxon:32630"
+                     /mol_type="other DNA"
+                     /note="antigenomic construct"
+                     /organism="synthetic construct"
+     misc_feature    1..844
+                     /note="external RNA control ERCC-00016"
+ORIGIN
+        1 gttgtaacga atgttaattt aggaggcaag agtttgtggg cgcggacttg cagctcgtaa
+       61 cgctctaaaa gggttatgcc gctgaggcgg gaccatagtc aggaagtttg tccgatccgc
+      121 tccagttgtc aagagtagag gatttcgtgt tcgccgatac tgccgaaaac gtcataccga
+      181 agcaattctg tcgtcactct gtatgtccgt gccccacctt cgagtatgag ttttaaagtt
+      241 cgtgcagaga catagctcgc gcactccctg tgtgatgccg gtcggccgac acatgcttca
+      301 atgtgccttg aacttgcatt cgaaagaatg tccttatctt gatcggccat tgtaatgcaa
+      361 cgctctcctt tcattgacac gaggttcgta gatggctgtt actcgcggac gttaaataaa
+      421 actatcagcg tcagcggatt aggaggctta cgggggaacc tacaattgtt cgccgcatgg
+      481 tccgaaggcg ccatgtccct cagcggagcg acaacaatta ctactggagc tattgtaaat
+      541 acgcagcaac aagcgtccag acatttgccg ctgacctcca gtcgcatgga cgggggagaa
+      601 cagctggagc aatgcatcat tcgctgaggg acatccaatc acggaatcaa ggaagaatta
+      661 ccaattttac ctgtaacgaa accaatttat tactgacgca gagtgaatca catctatagc
+      721 ggttacgacc ctccagagtg atccgacggc gatgtgtctt tgacccccgt gtgactggtg
+      781 ttcctgtcgt atccgcaaca tgtttactca tcactacgtt aaaaaaaaaa aaaaaaaaaa
+      841 aaaa
+//
+LOCUS       ERCC-00156               494 bp    DNA     linear   SYN 14-MAR-2013
+DEFINITION  Synthetic construct external RNA control ERCC-00156 sequence.
+ACCESSION   ERCC-00156
+VERSION     ERCC-00156
+KEYWORDS    .
+SOURCE      synthetic construct
+  ORGANISM  synthetic construct
+            other sequences; artificial sequences.
+REFERENCE   1  (bases 1 to 494)
+  AUTHORS   McDaniel,J.H., Roesslein,M., Zook,J., Munro,S., Vang,L., Scott
+            Pine,P. and Salit,M.L.
+  CONSRTM   External RNA Control Consortium
+  TITLE     Antigenomic External RNA Controls
+  JOURNAL   Unpublished
+REFERENCE   2  (bases 1 to 494)
+  AUTHORS   McDaniel,J.H., Roesslein,M., Zook,J., Munro,S., Vang,L., Scott
+            Pine,P. and Salit,M.L.
+  CONSRTM   External RNA Control Consortium
+  TITLE     Direct Submission
+  JOURNAL   Submitted (02-AUG-2006) Material Measurement Laboratory, Biosystems
+            and Biomaterials Division, National Institute of Standards and
+            Technology, 100 Bureau Drive, Gaithersburg, MD 20899, USA
+REFERENCE   3  (bases 1 to 494)
+  AUTHORS   McDaniel,J.H., Roesslein,M., Zook,J., Munro,S., Vang,L., Scott
+            Pine,P. and Salit,M.L.
+  CONSRTM   External RNA Control Consortium
+  TITLE     Direct Submission
+  JOURNAL   Submitted (20-SEP-2006) Material Measurement Laboratory, Biosystems
+            and Biomaterials Division, National Institute of Standards and
+            Technology, 100 Bureau Drive, Gaithersburg, MD 20899, USA
+  REMARK    Sequence update by submitter
+REFERENCE   4  (bases 1 to 494)
+  AUTHORS   McDaniel,J.H., Roesslein,M., Zook,J., Munro,S., Vang,L., Scott
+            Pine,P. and Salit,M.L.
+  CONSRTM   External RNA Control Consortium
+  TITLE     Direct Submission
+  JOURNAL   Submitted (28-FEB-2013) Material Measurement Laboratory, Biosystems
+            and Biomaterials Division, National Institute of Standards and
+            Technology, 100 Bureau Drive, Gaithersburg, MD 20899, USA
+  REMARK    Sequence update by submitter
+COMMENT     On Feb 28, 2013 this sequence version replaced gi:114975588.
+FEATURES             Location/Qualifiers
+     source          1..494
+                     /clone="NISTag2"
+                     /clone_lib="NIST SRM 2374, DNA Sequence Library for
+                     External RNA Controls"
+                     /db_xref="taxon:32630"
+                     /mol_type="other DNA"
+                     /note="antigenomic construct"
+                     /organism="synthetic construct"
+     misc_feature    1..494
+                     /note="external RNA control ERCC-00156"
+ORIGIN
+        1 cacaagaatc cctgctagct gaaggagggt caaactataa cacctttagc attcgtacag
+       61 gcaggctaag tgaatactaa cccaccggca gcccgttgta gtaacgttga cccctggctc
+      121 ggagacattt ggtgttgcct agtactaggt gactggtacc gattcatagg ttcgccattc
+      181 tcttatcgag agcccgaggt agactatctt ccagatgatg ccatacgttc actcaatcgc
+      241 gcggcatgca cggtggggct acgaacttgc tatccatagg ctctagatgt ggtagaaata
+      301 tgctgcaggg gttctgtcga atttgctcgg caaccgtggc cgtgtatgct ttcatatccc
+      361 ggcggtgtga tctagccttc tcgccatatg agggcgctga gcatagaccc aaacccgact
+      421 agtcgaatct tagggttgta tgctagaacg gcatggtata agccgtgctc aaaaaaaaaa
+      481 aaaaaaaaaa aaaa
+//
