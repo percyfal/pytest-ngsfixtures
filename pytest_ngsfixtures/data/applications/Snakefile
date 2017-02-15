@@ -1,0 +1,60 @@
+# -*- snakemake -*-
+SAMPLES = ["CHS.HG00512", "CHS.HG00513", "PUR.HG00731", "PUR.HG00733",
+           "YRI.NA19238", "YRI.NA19239"]
+YUGEBAMFILES = expand("{sample}.yuge.bam", sample=SAMPLES)
+
+##############################
+# Prerequisite temporary files
+#
+# - large bams for generating result files for parsing
+##############################
+rule link_ref:
+    input: "../ref/ref.fa"
+    output: "ref.fa"
+    shell: "ln -s {input}"
+
+rule bwa_index:
+    input: "{prefix}.fa"
+    output: "{prefix}.fa.sa"
+    shell: "bwa index {input}"
+
+rule bwa_yuge:
+    input: ref = "ref.fa",
+           read1="../yuge/{prefix}_1.fastq.gz",
+           read2="../yuge/{prefix}_2.fastq.gz",
+           index = "ref.fa.sa"
+    output: "{prefix}.yuge.bam"
+    log: "{prefix}.yuge.bam.log"
+    shell: "bwa mem -L '@RG\tID:{prefix}\tSM:{prefix}' {input.ref} {input.read1} {input.read2} 2>{log} | samtools view -Sb - > {output}"
+
+rule samtools_index:
+    input: "{prefix}.bam"
+    output: "{prefix}.bam.bai"
+    shell: "samtools index {input}"
+
+rule samtools_sort:
+    input: "{prefix}.bam"
+    output: "{prefix}.sort.bam"
+    shell: "samtools sort {input} -o {output}"
+           
+rule samtools_sortn:
+    input: "{prefix}.bam"
+    output: "{prefix}.sortn.bam"
+    shell: "samtools sort -n {input} -o {output}"
+
+rule yuge_test_bam:
+    input: YUGEBAMFILES
+    output: "yuge.test.bam"
+    shell: "samtools merge -f {output} {input}"
+
+# Small bam file output
+
+
+
+
+rule clean:
+    shell:
+        "rm -f *.yuge.bam"
+        "rm -f *.yuge.bai"
+        "rm -f  *yuge.bam.log"
+        "rm -f ref*"
