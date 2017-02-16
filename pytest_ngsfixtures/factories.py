@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import re
+import py
 import logging
 import itertools
 import pytest
@@ -9,8 +10,9 @@ from pytest_ngsfixtures import plugin
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Make py.path objects?
 ROOTDIR = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
-DATADIR = os.path.join(ROOTDIR, "pytest_ngsfixtures", "data")
+DATADIR = os.path.realpath(os.path.join(ROOTDIR, "pytest_ngsfixtures", "data"))
 
 class ParameterException(Exception):
     pass
@@ -37,12 +39,49 @@ def get_config(request):
     return config
 
 
-def safe_symlink(p, src, dest):
-    p.join(os.path.dirname(dest)).ensure(dir=True)
-    if not p.join(dest).check(link=1):
-        p.join(dest).mksymlinkto(src)
+def safe_symlink(p, src, dst):
+    """Safely make symlink.
+    
+    Make symlink from src to dst in LocalPath p. If src, dst are
+    strings, they will be joined to p, assuming they are relative to
+    p. If src, dst are LocalPath instances, they are left alone since
+    LocalPath objects are always absolute paths.
+
+    Params:
+      p (LocalPath): path in which link is setup
+      src (str, LocalPath): source file that link points to. If string, assume relative to pytest_ngsfixtures data directory
+      dst (str, LocalPath): link destination name. If string, assume relative to path and concatenate; else leave alone
+
+    Returns:
+      dst (LocalPath): link name
+    """
+    if isinstance(src, str):
+        if not os.path.isabs(src):
+            src = os.path.join(DATADIR, src)
+        src = py.path.local(src)
+    if isinstance(dst, str):
+        dst = p.join(dst)
+    if not dst.check(link=1):
+        dst.dirpath().ensure(dir=True)
+        dst.mksymlinkto(src)
     else:
-        logger.warn("link {dest} -> {src} already exists! skipping...".format(src=src, dest=dest))
+        logger.warn("link {dst} -> {src} already exists! skipping...".format(src=src, dst=dst))
+    return dst
+
+
+def safe_mktemp(tmpdir_factory, dirname=None, **kwargs):
+    """Safely make directory"""
+    if dirname is None:
+        return tmpdir_factory.getbasetemp()
+    else:
+        p = tmpdir_factory.getbasetemp().join(dirname)
+        if kwargs.get("numbered", False):
+            p = tmpdir_factory.mktemp(dirname)
+        else:
+            if not p.check(dir=1):
+                p = tmpdir_factory.mktemp(dirname, numbered=False)
+        return p
+
 
 
 def sample_layout(
@@ -205,11 +244,71 @@ def reference_layout(label="ref", dirname="ref", **kwargs):
 
     """
     @pytest.fixture(scope=kwargs.get("scope", "session"), autouse=kwargs.get("autouse", False))
-    def reference_layout_factory(request, tmpdir_factory):
-        """Reference layout factory
+    def reference_layout_fixture(request, tmpdir_factory):
+        """Reference layout fixture. Setup the one-chromosome reference files
+        or scaffold reference files in a separate directory"""
+        p = safe_mktemp(tmpdir_factory, dirname, **kwargs)
+        for dst, src in ref_dict.items():
+            if dst in ref_always:
+                safe_symlink(p, src, dst)
+            if not label in dst:
+                continue
+            if dst.endswith("chrom.sizes"):
+                dst = "chrom.sizes"
+            safe_symlink(p, src, dst)
+        if request.config.option.ngs_show_fixture:
+            logger.info("'{}' reference layout".format(label))
+            logger.info("------------------------------------")
+            for x in sorted(p.visit()):
+                logger.info(str(x))
+        return p
+    return reference_layout_fixture
 
-        Setup the one-chromosome reference files or scaffold reference
-        files in a separate directory
+
+def filetype(src, fdir=None, rename=False, outprefix="test", inprefix=['PUR.HG00731', 'PUR.HG00733'], **kwargs):
+    """Fixture factory for file types. This factory is atomic in that it
+    generates one fixture for one file.
+
+    Params:
+      src (str): fixture file name source
+      fdir (str): fixture output directory
+      rename (bool): rename fixture links
+      outprefix (str): output prefix
+      inprefix (list): list of input prefixes to substitute
+      kwargs (dict): keyword arguments
+
+    """
+    @pytest.fixture(scope=kwargs.get("scope", "function"), autouse=kwargs.get("autouse", False))
+    def filetype_fixture(request, tmpdir_factory):
+        """Filetype fixture"""
+        p = safe_mktemp(tmpdir_factory, fdir, **kwargs)
+        dst = os.path.basename(src)
+        if rename:
+            pat = "(" + "|".join(inprefix) + ")"
+            dst = re.sub(pat, outprefix, dst)
+        p = safe_symlink(p, src, dst)
+        return p
+    return filetype_fixture
+
+
+
+def application(fdir, files, use_short_names=False, outprefix="test", inprefix=['PUR.HG00731', 'PUR.HG00733'], **kwargs):
+
+    """
+    Fixture factory for applications.
+
+    Params:
+      fdir (str): fixture output directory
+      files (list): list of fixture files to include
+      use_short_names (bool): use short names
+      outprefix (str): prefix for short names
+      inprefix (list): list of inprefixes to substitute for outprefix
+    """
+    @pytest.fixture(scope=kwargs.get("scope", "function"), autouse=kwargs.get("autouse", False))
+    def application_fixture(request, tmpdir_factory):
+        """Application layout factory
+
+        Setup the output files for an application.
 
         Params:
           request (FixtureRequest): fixture request object
