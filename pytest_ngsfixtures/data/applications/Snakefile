@@ -1,7 +1,9 @@
 # -*- snakemake -*-
 SAMPLES = ["CHS.HG00512", "CHS.HG00513", "PUR.HG00731", "PUR.HG00733",
            "YRI.NA19238", "YRI.NA19239"]
+
 YUGEBAMFILES = expand("{sample}.yuge.bam", sample=SAMPLES)
+TINYBAMFILES = expand("{sample}.bam", sample=SAMPLES[2:4])
 
 ##############################
 # Prerequisite temporary files
@@ -25,7 +27,7 @@ rule bwa_yuge:
            index = "ref.fa.sa"
     output: "{prefix}.yuge.bam"
     log: "{prefix}.yuge.bam.log"
-    shell: "bwa mem -L '@RG\tID:{prefix}\tSM:{prefix}' {input.ref} {input.read1} {input.read2} 2>{log} | samtools view -Sb - > {output}"
+    shell: "bwa mem -H '@HD\tyuge test data' -R '@RG\tID:{wildcards.prefix}\tSM:{wildcards.prefix}' {input.ref} {input.read1} {input.read2} 2>{log} | samtools view -Sb - > {output}"
 
 rule samtools_index:
     input: "{prefix}.bam"
@@ -48,13 +50,26 @@ rule yuge_test_bam:
     shell: "samtools merge -f {output} {input}"
 
 # Small bam file output
+rule bwa_mem:
+    input: ref = "ref.fa",
+           read1="../tiny/{prefix}_1.fastq.gz",
+           read2="../tiny/{prefix}_2.fastq.gz",
+           index = "ref.fa.sa"
+    output: "{prefix}.bam"
+    log: "{prefix}.bam.log"
+    shell: "bwa mem -H '@HD\ttiny test data' -R '@RG\tID:{wildcards.prefix}\tSM:{wildcards.prefix}' {input.ref} {input.read1} {input.read2} 2>{log} | samtools view -Sb - > {output}"
 
+rule tiny_bamfiles:
+    input: TINYBAMFILES
 
+##############################
+# File types
+##############################
 
 
 rule clean:
     shell:
-        "rm -f *.yuge.bam"
-        "rm -f *.yuge.bai"
-        "rm -f  *yuge.bam.log"
-        "rm -f ref*"
+        "rm -f *.yuge.bam; "
+        "rm -f *.yuge.bai; "
+        "rm -f  *.bam.log; "
+        "rm -f ref*; "
