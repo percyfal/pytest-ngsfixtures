@@ -149,12 +149,18 @@ chr6scaffolds.bed:
 chr6scaffoldends.bed: chr6scaffolds.bed
 	cat $< | awk '{print $$1, $$2, $$2 + 1};' > $@
 
-scaffolds.bed: chr6scaffolds.bed
-	cat $<  | sed -e "s/\([^ ][^ ]*\)\t\([0-9]*\)\t\([0-9]*\)/scaffold1\t\2\t\3/g" | awk '/scaffold/{sub("[0-9]+",++i)}1' > $@
 
 # Rule to generate reference with scaffolds
 scaffolds.fa: ref.fa chr6scaffolds.bed
 	$(BEDTOOLS) getfasta -fi $< -bed $(word 2,$^) | sed -e "s/>[^ ][^ ]*/>scaffold1/g" | awk '/scaffold/{sub("[0-9]+",++i)}1' > $@
+
+# Rule to generate reference with scaffolds and random N's
+scaffoldsN.fa: scaffolds.fa scaffolds.chrom.sizes scaffolds-transcripts.gtf scaffolds.bed
+	$(BEDTOOLS) random -g $(word 2,$^) -l 50 -n 100 > tmp.bed
+	$(BEDTOOLS) random -g $(word 2,$^) -l 100 -n 50 >> tmp.bed
+	$(BEDTOOLS) random -g $(word 2,$^) -l 200 -n 20 >> tmp.bed
+	$(BEDTOOLS) random -g $(word 2,$^) -l 500 -n 10 >> tmp.bed
+	$(BEDTOOLS) slop -b 100 -i $(word 3,$^) -g $(word 2,$^) | $(BEDTOOLS) subtract -a $(word 4,$^) -b - | $(BEDTOOLS) intersect -a - -b tmp.bed | $(BEDTOOLS) maskfasta -fi $< -fo $@ -bed -
 
 # Rule to generate gtf
 # Scaffold breaks have been chosen so that removing entries that span
@@ -194,3 +200,4 @@ clean:
 	$(RM) PUR*
 	$(RM) all*
 	$(RM) tiny-*
+	$(RM) nregions*
