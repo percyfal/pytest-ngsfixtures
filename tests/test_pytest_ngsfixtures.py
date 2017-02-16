@@ -9,49 +9,6 @@ Tests for `pytest_ngsfixtures` module.
 """
 import os
 import pytest
-from pytest_ngsfixtures import factories
-
-custom_samples = factories.sample_layout(
-    dirname="foo",
-    samples=["CHS.HG00512", "YRI.NA19238"],
-    platform_units=['bar', 'foobar'],
-    paired_end=[True, False],
-    use_short_sample_names=False,
-    runfmt="{SM}/{SM}_{PU}",
-    numbered=False,
-)
-
-sample_aliases = factories.sample_layout(
-    samples = ['CHS.HG00512', 'CHS.HG00513', 'CHS.HG00512'],
-    sample_aliases = ['s1', 's1', 's2'],
-    platform_units =['010101_AAABBB11XX', '020202_AAABBB22XX', '010101_AAABBB11XX'],
-    paired_end = [True] * 3,
-    dirname="samplealiases",
-    runfmt="{SM}/{SM}_{PU}",
- )
-
-
-def test_sample_aliases(sample_aliases):
-    d = {str(x.basename):str(x.realpath().basename) for x in sample_aliases.visit() if str(x).endswith("fastq.gz")}
-    assert d["s1_010101_AAABBB11XX_1.fastq.gz"] == "CHS.HG00512_1.fastq.gz"
-    assert d["s1_020202_AAABBB22XX_1.fastq.gz"] == "CHS.HG00513_1.fastq.gz"
-    assert d["s2_010101_AAABBB11XX_1.fastq.gz"] == "CHS.HG00512_1.fastq.gz"
-
-
-def test_custom(custom_samples, ref):
-    assert custom_samples.basename == "foo"
-    flist = [str(x.basename) for x in custom_samples.visit()]
-    assert "CHS.HG00512_bar_1.fastq.gz" in flist
-    assert "CHS.HG00512_bar_2.fastq.gz" in flist
-    assert "YRI.NA19238_foobar_1.fastq.gz" in flist
-    assert "YRI.NA19238_foobar_2.fastq.gz" not in flist
-
-
-
-def test_wrong_sample():
-    with pytest.raises(factories.SampleException):
-        factories.sample_layout(samples=["foo", "bar"])(None, None)
-
 
 def test_flat(flat):
     l = [x for x in sorted(flat.listdir()) if str(x).endswith(".gz")]

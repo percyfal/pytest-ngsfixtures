@@ -20,10 +20,21 @@ class ParameterException(Exception):
 class SampleException(Exception):
     pass
 
+ref_dict = {}
+
+for f in os.listdir(os.path.join(DATADIR, "ref")):
+    if f == "Makefile":
+        continue
+    ref_dict[f] = os.path.join(DATADIR, "ref", f)
+
+ref_always=['ERCC_spikes.gb', 'pAcGFP1-N1.fasta']
+
+
 def check_samples(samples):
     """Check the sample names are ok"""
     if not all(x in plugin.conf.SAMPLES for x in samples):
         raise SampleException("invalid sample name: choose from {}".format(plugin.conf.SAMPLES))
+
 
 def get_config(request):
     """Return a dictionary with config options."""
@@ -154,17 +165,10 @@ def sample_layout(
 
     """
     @pytest.fixture(autouse=False)
-    def sample_layout_factory(request, tmpdir_factory):
-        """
-        Fixture for pytest-ngsfixtures
+    def sample_layout_fixture(request, tmpdir_factory):
+        """Sample layout fixture. Setup sequence input files according to a
+        specified sample organization"""
 
-        Params:
-          request (FixtureRequest): fixture request object
-          tmpdir_factory (py.path.local): fixture request object
-
-        Returns:
-          p (py.path.local): tmpdir layout
-        """
         check_samples(samples)
         config = get_config(request)
         _samples = samples
@@ -181,10 +185,7 @@ def sample_layout(
         _sample_counter = 1
         _sample_map = {}
         _sampleinfo = []
-        if not dirname is None:
-            p = tmpdir_factory.mktemp(dirname, numbered=kwargs.get("numbered", True))
-        else:
-            p = tmpdir_factory.getbasetemp()
+        p = safe_mktemp(tmpdir_factory, dirname, **kwargs)
         for l in _layout:
             srckeys = l.copy()
             if not l["SM"] in _sample_map.keys():
@@ -221,17 +222,8 @@ def sample_layout(
             for x in sorted(p.visit()):
                 logger.info(str(x))
         return p
-    return sample_layout_factory
+    return sample_layout_fixture
 
-
-d = {}
-
-for f in os.listdir(os.path.join(DATADIR, "ref")):
-    if f == "Makefile":
-        continue
-    d[f] = os.path.join(DATADIR, "ref", f)
-
-always=['ERCC_spikes.gb', 'pAcGFP1-N1.fasta']
 
 def reference_layout(label="ref", dirname="ref", **kwargs):
     """
@@ -317,24 +309,23 @@ def application(fdir, files, use_short_names=False, outprefix="test", inprefix=[
         Returns:
           p (py.path.local): tmpdir layout
         """
-        p = tmpdir_factory.getbasetemp().join(dirname)
-        if not p.check(dir=1):
-            p = tmpdir_factory.mktemp(dirname, numbered=kwargs.get("numbered", False))
-        for dest, src in d.items():
-            if dest in always:
-                safe_symlink(p, src, dest)
-            if not label in dest:
+        p = safe_mktemp(tmpdir_factory, fdir, **kwargs)
+        for dst, src in d.items():
+            if dst in always:
+                safe_symlink(p, src, dst)
+            if not label in dst:
                 continue
-            if dest.endswith("chrom.sizes"):
-                dest = "chrom.sizes"
-            safe_symlink(p, src, dest)
+            if dst.endswith("chrom.sizes"):
+                dst = "chrom.sizes"
+            safe_symlink(p, src, dst)
         if request.config.option.ngs_show_fixture:
             logger.info("'{}' reference layout".format(label))
             logger.info("------------------------------------")
             for x in sorted(p.visit()):
                 logger.info(str(x))
         return p
-    return reference_layout_factory
+    return application_fixture
+
 
 
 __all__ = ('sample_layout', 'reference_layout')
