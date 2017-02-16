@@ -48,6 +48,7 @@ setup(
     url='https://github.com/percyfal/pytest-ngsfixtures',
     packages=[
         'pytest_ngsfixtures',
+        'pytest_ngsfixtures.applications',
     ],
     # package_dir={'pytest_ngsfixtures':
     #              'pytest_ngsfixtures'},
