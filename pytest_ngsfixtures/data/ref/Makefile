@@ -154,13 +154,17 @@ chr6scaffoldends.bed: chr6scaffolds.bed
 scaffolds.fa: ref.fa chr6scaffolds.bed
 	$(BEDTOOLS) getfasta -fi $< -bed $(word 2,$^) | sed -e "s/>[^ ][^ ]*/>scaffold1/g" | awk '/scaffold/{sub("[0-9]+",++i)}1' > $@
 
+# Rule to generate bed file that defines regions with N's
+scaffoldsN.bed: scaffolds.chrom.sizes scaffolds-transcripts.gtf scaffolds.bed
+	$(BEDTOOLS) random -seed 42 -g $(word 1,$^) -l 50 -n 100 > tmp.bed
+	$(BEDTOOLS) random -seed 242 -g $(word 1,$^) -l 100 -n 50 >> tmp.bed
+	$(BEDTOOLS) random -seed 24242 -g $(word 1,$^) -l 200 -n 20 >> tmp.bed
+	$(BEDTOOLS) random -seed 4242 -g $(word 1,$^) -l 500 -n 10 >> tmp.bed
+	$(BEDTOOLS) slop -b 100 -i $(word 2,$^) -g $(word 1,$^) | $(BEDTOOLS) subtract -a $(word 3,$^) -b - | $(BEDTOOLS) intersect -a - -b tmp.bed | $(BEDTOOLS) sort -i - | $(BEDTOOLS) merge -i - > $@
+
 # Rule to generate reference with scaffolds and random N's
-scaffoldsN.fa: scaffolds.fa scaffolds.chrom.sizes scaffolds-transcripts.gtf scaffolds.bed
-	$(BEDTOOLS) random -g $(word 2,$^) -l 50 -n 100 > tmp.bed
-	$(BEDTOOLS) random -g $(word 2,$^) -l 100 -n 50 >> tmp.bed
-	$(BEDTOOLS) random -g $(word 2,$^) -l 200 -n 20 >> tmp.bed
-	$(BEDTOOLS) random -g $(word 2,$^) -l 500 -n 10 >> tmp.bed
-	$(BEDTOOLS) slop -b 100 -i $(word 3,$^) -g $(word 2,$^) | $(BEDTOOLS) subtract -a $(word 4,$^) -b - | $(BEDTOOLS) intersect -a - -b tmp.bed | $(BEDTOOLS) maskfasta -fi $< -fo $@ -bed -
+scaffoldsN.fa: scaffolds.fa scaffoldsN.bed
+	$(BEDTOOLS) maskfasta -fi $< -fo $@ -bed $(word 2,$^)
 
 # Rule to generate gtf
 # Scaffold breaks have been chosen so that removing entries that span
