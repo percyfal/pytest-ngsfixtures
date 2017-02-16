@@ -20,6 +20,7 @@ conf = Config(SIZES = ["tiny", "small", "medium", "yuge"],
 _help_ngs_size = "select sample size (choices: {})".format(", ".join("'{}'".format(x) for x in conf.SIZES))
 _help_ngs_layout="select predefined sample layout(s) (allowed choices: {})".format(", ".join("'{}'".format(x) for x in conf.SAMPLE_LAYOUTS))
 _help_ngs_show_fixture="show fixture layout"
+_help_ngs_threads="set the number of threads to use in test"
 
 def pytest_addoption(parser):
     group = parser.getgroup("ngsfixtures", "next-generation sequencing fixture options")
@@ -52,13 +53,21 @@ def pytest_addoption(parser):
         default=False,
         help=_help_ngs_show_fixture,
     )
+    group.addoption(
+        '-T',
+        '--ngs-threads',
+        action="store",
+        dest="ngs_threads",
+        default=1,
+        help=_help_ngs_threads,
+    )
 
 
 flat = factories.sample_layout(samples=['CHS.HG00512'])
 
 kwargs =  {'samples' : ['PUR.HG00731.A', 'PUR.HG00731.B', 'PUR.HG00733.A'],
            'platform_units' : ['010101_AAABBB11XX', '020202_AAABBB22XX', '010101_AAABBB11XX'],
-           'paired_end' : [True] * 3,
+           'paired_end' : [True] * 3, 'numbered': True,
 }
 
 
@@ -87,6 +96,7 @@ kwargs =  {'samples' :  ['PUR.HG00731.A', 'PUR.HG00731.B', 'PUR.HG00733.A'] + ['
            'populations' : ['PUR'] * 3 + ['CHS'] * 2 + ['YRI'] * 2,
            'paired_end' : [True] * 7,
            'use_short_sample_names' : False,
+           'numbered': True,
 }
 
 pop_sample = factories.sample_layout(
