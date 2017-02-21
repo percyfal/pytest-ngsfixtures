@@ -54,7 +54,7 @@ def pytest_addoption(parser):
         help=_help_ngs_show_fixture,
     )
     group.addoption(
-        '-T',
+        '--nt',
         '--ngs-threads',
         action="store",
         dest="ngs_threads",
