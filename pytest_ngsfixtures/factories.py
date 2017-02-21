@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 # Make py.path objects?
 ROOTDIR = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 DATADIR = os.path.realpath(os.path.join(ROOTDIR, "pytest_ngsfixtures", "data"))
+REPO = "https://raw.githubusercontent.com/percyfal/pytest-ngsfixtures/master"
 
 class ParameterException(Exception):
     pass
@@ -48,6 +49,22 @@ def get_config(request):
             request.config.getini(option_name)
         config[option] = conf
     return config
+
+
+def _download_sample_file(fn):
+    """Download sample file if it doesn't yet exist
+
+    Setup urllib connection and download data file.
+    """
+    if not os.path.exists(fn):
+        pass
+    else:
+        from urllib.request import urlretrieve
+        src = os.path.join(REPO, os.path.relpath(fn, ROOTDIR))
+        try:
+            test = urlretrieve(src)
+        except:
+            raise
 
 
 def safe_symlink(p, src, dst):
@@ -197,6 +214,8 @@ def sample_layout(
                 l['SM'] = _sample_map[l['SM']]
             if len(sample_aliases) > 0:
                 l['SM'] = sample_aliases.pop()
+            src = os.path.join(DATADIR, config['size'], srckeys['SM'] + "_1.fastq.gz")
+            _download_sample_file(src)
             safe_symlink(p, os.path.join(DATADIR, config['size'], srckeys['SM'] + "_1.fastq.gz"),
                     runfmt.format(**l) + read1_suffix)
             if l['PE']:
