@@ -15,10 +15,13 @@ from pytest_ngsfixtures.factories import safe_mktemp, safe_symlink
 from pytest_ngsfixtures.filetypes import *
 
 # Filetypes
-bamfile = os.path.realpath(os.path.join(os.path.dirname(__file__), os.pardir, "pytest_ngsfixtures", "data", "applications", "PUR.HG00731.bam"))
-bam = factories.filetype(bamfile, fdir="bamfoo")
-renamebam = factories.filetype(bamfile, fdir="renamebamfoo", rename=True, outprefix="s")
-
+bamfile_realpath = os.path.realpath(os.path.join(os.path.dirname(__file__), os.pardir, "pytest_ngsfixtures", "data", "applications", "PUR.HG00731.bam"))
+PURHG00731 = os.path.join("applications", "PUR.HG00731.bam")
+PURHG00733 = os.path.join("applications", "PUR.HG00733.bam")
+PURFILES = [PURHG00731, PURHG00733]
+bamfile = PURHG00731
+bam = factories.filetype(bamfile, fdir="bamfoo", scope="function")
+renamebam = factories.filetype(bamfile, fdir="renamebamfoo", rename=True, outprefix="s", scope="function")
 
 def test_wrong_sample():
     with pytest.raises(factories.SampleException):
@@ -43,23 +46,23 @@ def test_safe_symlink(tmpdir_factory, bam):
     # Test using string as input
     l = safe_symlink(p, bamfile, "foo/foo.bar")
     assert str(l).endswith("foo/foo.bar")
-    assert l.realpath() == bamfile
+    assert l.realpath() == bamfile_realpath
     # Test using localpath as input
     l = safe_symlink(p, bam, "foo.bar")
     assert l.realpath() == bam.realpath()
     assert str(l).endswith("foo.bar")
-    
+
 
 def test_bam(bam):
     assert str(bam).endswith("bamfoo/PUR.HG00731.bam")
-    assert bam.realpath() == bamfile
+    assert bam.realpath() == bamfile_realpath
 
 def test_bam_rename(renamebam):
     assert str(renamebam).endswith("renamebamfoo/s.bam")
-    assert renamebam.realpath() == bamfile
+    assert renamebam.realpath() == bamfile_realpath
 
-    
-@pytest.fixture
+
+@pytest.fixture(scope="function")
 def combinedbam(tmpdir_factory, bam, renamebam):
     p = tmpdir_factory.mktemp("combined")
     p.join(bam.basename).mksymlinkto(bam.realpath())
@@ -70,7 +73,7 @@ def test_combine_fixtures(combinedbam):
     flist = sorted([x.basename for x in combinedbam.visit()])
     assert flist == ['PUR.HG00731.bam', 's.bam']
     fset = set([str(x.realpath()) for x in combinedbam.visit()])
-    assert fset == set([bamfile])
+    assert fset == set([bamfile_realpath])
 
 
 @pytest.mark.parametrize("data", filetypes[0:2])
@@ -86,6 +89,7 @@ custom_samples = factories.sample_layout(
     use_short_sample_names=False,
     runfmt="{SM}/{SM}_{PU}",
     numbered=False,
+    scope="function",
 )
 
 def test_custom(custom_samples, ref):
@@ -106,6 +110,7 @@ sample_aliases = factories.sample_layout(
     dirname="samplealiases",
     runfmt="{SM}/{SM}_{PU}",
     numbered=True,
+    scope="function",
  )
 
 
@@ -115,3 +120,24 @@ def test_sample_aliases(sample_aliases):
     assert d["s1_010101_AAABBB11XX_1.fastq.gz"] == "CHS.HG00512_1.fastq.gz"
     assert d["s1_020202_AAABBB22XX_1.fastq.gz"] == "CHS.HG00513_1.fastq.gz"
     assert d["s2_010101_AAABBB11XX_1.fastq.gz"] == "CHS.HG00512_1.fastq.gz"
+
+
+def test_fileset_fixture_raises():
+    with pytest.raises(AssertionError):
+        p = factories.fileset(src="foo")
+    with pytest.raises(AssertionError):
+        p = factories.fileset(src=["foo"], dst="bar")
+
+
+bamset = factories.fileset(src=PURFILES, fdir="bamset", scope="function")
+def test_fileset_fixture(bamset):
+    flist = sorted([x.basename for x in bamset.visit() if x.basename != ".lock"])
+    assert flist == sorted([os.path.basename(x) for x in PURFILES])
+
+dstfiles = ["foo.fastq.gz", "bar.fastq.gz"]
+bamset2 = factories.fileset(src=PURFILES, dst=dstfiles, fdir="bamset2", scope="function")
+def test_fileset_fixture_dst(bamset2):
+    flist = sorted([x.basename for x in bamset2.visit() if x.basename != ".lock"])
+    assert flist == sorted(dstfiles)
+    flist = sorted([x.realpath() for x in bamset2.visit() if x.basename != ".lock"])
+    assert flist[0] == bamfile_realpath
