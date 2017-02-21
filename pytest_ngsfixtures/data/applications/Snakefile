@@ -2,7 +2,7 @@
 SAMPLES = ["CHS.HG00512", "CHS.HG00513", "PUR.HG00731", "PUR.HG00733",
            "YRI.NA19238", "YRI.NA19239"]
 
-YUGEBAMFILES = expand("{sample}.yuge.bam", sample=SAMPLES)
+YUGEBAMFILES = expand("{sample}.yuge.sort.bam", sample=SAMPLES)
 TINYBAMFILES = expand("{sample}.bam", sample=SAMPLES[2:4])
 
 ##############################
@@ -11,9 +11,9 @@ TINYBAMFILES = expand("{sample}.bam", sample=SAMPLES[2:4])
 # - large bams for generating result files for parsing
 ##############################
 rule link_ref:
-    input: "../ref/ref.fa"
+    input: "../ref/scaffoldsN.fa"
     output: "ref.fa"
-    shell: "ln -s {input}"
+    shell: "ln -s {input} {output}"
 
 rule bwa_index:
     input: "{prefix}.fa"
@@ -38,16 +38,21 @@ rule samtools_sort:
     input: "{prefix}.bam"
     output: "{prefix}.sort.bam"
     shell: "samtools sort {input} -o {output}"
-           
+
 rule samtools_sortn:
     input: "{prefix}.bam"
     output: "{prefix}.sortn.bam"
     shell: "samtools sort -n {input} -o {output}"
 
 rule yuge_test_bam:
-    input: YUGEBAMFILES
+    input: "yuge.bam.fofn"
     output: "yuge.test.bam"
-    shell: "samtools merge -f {output} {input}"
+    shell: "samtools merge -f {output} -b {input}"
+
+rule yuge_bam_fofn:
+    input: YUGEBAMFILES
+    output: "yuge.bam.fofn"
+    shell: "ls -1 {input} > {output}"
 
 # Small bam file output
 rule bwa_mem:
