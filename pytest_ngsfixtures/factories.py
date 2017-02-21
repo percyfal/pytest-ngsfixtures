@@ -52,7 +52,7 @@ def get_config(request):
 
 def safe_symlink(p, src, dst):
     """Safely make symlink.
-    
+
     Make symlink from src to dst in LocalPath p. If src, dst are
     strings, they will be joined to p, assuming they are relative to
     p. If src, dst are LocalPath instances, they are left alone since
@@ -70,6 +70,8 @@ def safe_symlink(p, src, dst):
         if not os.path.isabs(src):
             src = os.path.join(DATADIR, src)
         src = py.path.local(src)
+    if dst is None:
+        dst = src.basename
     if isinstance(dst, str):
         dst = p.join(dst)
     if not dst.check(link=1):
@@ -257,12 +259,13 @@ def reference_layout(label="ref", dirname="ref", **kwargs):
     return reference_layout_fixture
 
 
-def filetype(src, fdir=None, rename=False, outprefix="test", inprefix=['PUR.HG00731', 'PUR.HG00733'], **kwargs):
+def filetype(src, dst=None, fdir=None, rename=False, outprefix="test", inprefix=['PUR.HG00731', 'PUR.HG00733'], **kwargs):
     """Fixture factory for file types. This factory is atomic in that it
     generates one fixture for one file.
 
     Params:
       src (str): fixture file name source
+      dst (str): fixture file name destination; link name
       fdir (str): fixture output directory
       rename (bool): rename fixture links
       outprefix (str): output prefix
@@ -270,61 +273,63 @@ def filetype(src, fdir=None, rename=False, outprefix="test", inprefix=['PUR.HG00
       kwargs (dict): keyword arguments
 
     """
+    dst = os.path.basename(src) if dst is None else dst
+    if rename:
+        pat = "(" + "|".join(inprefix) + ")"
+        dst = re.sub(pat, outprefix, dst)
     @pytest.fixture(scope=kwargs.get("scope", "function"), autouse=kwargs.get("autouse", False))
     def filetype_fixture(request, tmpdir_factory):
         """Filetype fixture"""
         p = safe_mktemp(tmpdir_factory, fdir, **kwargs)
-        dst = os.path.basename(src)
-        if rename:
-            pat = "(" + "|".join(inprefix) + ")"
-            dst = re.sub(pat, outprefix, dst)
         p = safe_symlink(p, src, dst)
+        if request.config.option.ngs_show_fixture:
+            logger.info("filetype fixture content")
+            logger.info("------------------------")
+            for x in sorted(p.visit()):
+                logger.info(str(x))
         return p
     return filetype_fixture
 
 
-
-def application(fdir, files, use_short_names=False, outprefix="test", inprefix=['PUR.HG00731', 'PUR.HG00733'], **kwargs):
-
+def fileset(src, dst=None, fdir=None, **kwargs):
     """
-    Fixture factory for applications.
+    Fixture factory to generate filesets.
 
     Params:
-      fdir (str): fixture output directory
-      files (list): list of fixture files to include
-      use_short_names (bool): use short names
-      outprefix (str): prefix for short names
-      inprefix (list): list of inprefixes to substitute for outprefix
-    """
-    @pytest.fixture(scope=kwargs.get("scope", "function"), autouse=kwargs.get("autouse", False))
-    def application_fixture(request, tmpdir_factory):
-        """Application layout factory
+      src (list): list of sources
+      dst (list): list of destination; if None, use src basename
+      fdir (:obj:`str` or :obj:`py._path.local.LocalPath`): output directory
 
-        Setup the output files for an application.
+    Returns:
+      func: a fixture function
+    """
+    assert isinstance(src, list), "not a list"
+    assert dst is None or isinstance(dst, list), "not a list"
+    if dst is None:
+        dst = [None]
+    @pytest.fixture(scope=kwargs.get("scope", "function"), autouse=kwargs.get("autouse", False))
+    def fileset_fixture(request, tmpdir_factory):
+        """Fileset factory
+
+        Setup a set of files
 
         Params:
           request (FixtureRequest): fixture request object
           tmpdir_factory (py.path.local): fixture request object
 
         Returns:
-          p (py.path.local): tmpdir layout
+          :obj:`py._path.local.LocalPath`: output directory in which the files reside
         """
         p = safe_mktemp(tmpdir_factory, fdir, **kwargs)
-        for dst, src in d.items():
-            if dst in always:
-                safe_symlink(p, src, dst)
-            if not label in dst:
-                continue
-            if dst.endswith("chrom.sizes"):
-                dst = "chrom.sizes"
-            safe_symlink(p, src, dst)
+        for s, d in itertools.zip_longest(src, dst):
+            safe_symlink(p, s, d)
         if request.config.option.ngs_show_fixture:
-            logger.info("'{}' reference layout".format(label))
-            logger.info("------------------------------------")
+            logger.info("fileset fixture content")
+            logger.info("-----------------------")
             for x in sorted(p.visit()):
                 logger.info(str(x))
         return p
-    return application_fixture
+    return fileset_fixture
 
 
 
