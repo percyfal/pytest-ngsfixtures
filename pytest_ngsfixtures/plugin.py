@@ -39,7 +39,7 @@ def pytest_addoption(parser):
         '--ngs-layout',
         action='store',
         dest='ngs_layout',
-        default=['sample'],
+        default=[],
         help=_help_ngs_layout,
         nargs="+",
         metavar="layout",
