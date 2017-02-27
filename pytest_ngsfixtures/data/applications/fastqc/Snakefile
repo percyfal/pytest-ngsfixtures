@@ -1,0 +1,23 @@
+# -*- snakemake -*-
+import os
+
+configfile: "../config.yaml"
+include: "../fileutils.sm"
+
+VERSIONS = config['fastqc']['_conda_versions']
+BAM = os.path.join("../{end}", config['input']['bam'])
+END = config['end']
+
+rule fastqc:
+    input: bam=BAM, conda="fastqc-{version}.yaml"
+    output: **config['fastqc']['fastqc']
+    conda: "fastqc-{version}.yaml"
+    shell:
+        "mkdir -p {wildcards.version} && " + \
+            "fastqc --noextract {input.bam} -o {wildcards.version}/{wildcards.end}"
+
+
+TARGETS = expand([str(r.output.zipfile) for r in workflow.rules if r.name.startswith("fastqc")], version=VERSIONS, end=END)
+
+rule all:
+    input: TARGETS

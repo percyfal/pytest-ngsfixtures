@@ -1,0 +1,49 @@
+basedir: "data"
+end: ["se", "pe"]
+
+# Application to output
+# Map application to output file name
+# Format
+# application:
+#   _default: default version
+#   _versions: list of versions
+#   subtool: output(s)
+#     _exlude: versions
+
+# General data input
+input:
+  bam: medium.bam
+  ref: scaffoldsN.fa
+    
+# Parameters
+params:
+  regions: "scaffold1:10000-11000"
+
+samtools:
+  _default: 1.3.1
+  _versions: [1.2, 1.3.1]
+  _conda_versions: [1.2, 1.3.1]
+  flagstat: "{version}/{end}/medium.flagstat"
+  depth: "{version}/{end}/medium.coverage.txt"
+  faidx: "{version}/scaffoldsN.fa.fai"
+  stats: "{version}/{end}/medium.stats"
+fastqc:
+  _default: 0.11.5
+  _versions: [0.7.2, 0.10.1, 0.11.2, 0.11.5]
+  _conda_versions: [0.10.1, 0.11.2, 0.11.5]
+  fastqc:
+    zipfile: "{version}/{end}/medium_fastqc.zip"
+    #txt: "{version}/medium_fastqc/fastqc_data.txt"
+    #html: "{version}/medium_fastqc/fastqc_report.html"
+qualimap:
+  _default: 2.2.2a
+  _versions: [2.1.3, 2.2.2, 2.2.2a]
+  _conda_versions: [2.1.3, 2.2.2a]
+  bamqc: "{version}/{end}/genome_results.txt"
+cutadapt:
+  _default: 1.12
+  _versions:  [1.8.1, 1.8.3, 1.9.1, "1.10", 1.11, 1.12]
+  _conda_versions: [1.8.1, 1.8.3, 1.9.1, "1.10", 1.11, 1.12]
+  pe: "{version}/pe/cutadapt_metrics.txt"
+  se: "{version}/se/cutadapt_metrics.txt"
+  

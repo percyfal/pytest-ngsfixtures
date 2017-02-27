@@ -1,0 +1,21 @@
+# -*- snakemake -*-
+import os
+
+configfile: "../config.yaml"
+include: "../fileutils.sm"
+
+APPLICATION = "qualimap"
+VERSIONS = config[APPLICATION]['_conda_versions']
+BAM = os.path.join("../{end}", config['input']['bam'])
+END = config['end']
+
+rule qualimap_bamqc:
+    input: bam=BAM, conda="qualimap-{version}.yaml"
+    output: config["qualimap"]["bamqc"]
+    conda: "qualimap-{version}.yaml"
+    shell: "qualimap bamqc -bam {input.bam} -outdir {version} > {output}"
+           
+TARGETS = expand([str(r.output) for r in workflow.rules if r.name.startswith(APPLICATION)], version=VERSIONS, end=END)
+
+rule all:
+    input: TARGETS

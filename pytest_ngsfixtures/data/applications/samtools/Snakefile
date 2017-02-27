@@ -1,0 +1,44 @@
+# -*- snakemake -*-
+import os
+
+configfile: "../config.yaml"
+include: "../fileutils.sm"
+
+VERSIONS = config['samtools']['_conda_versions']
+REGIONS = config['params']['regions']
+END = config['end']
+BAM = os.path.join("../{end}", config['input']['bam'])
+
+rule samtools_flagstat:
+    input: bam=BAM, conda="samtools-{version}.yaml"
+    output: config['samtools']['flagstat']
+    conda: "samtools-{version}.yaml"
+    shell: "samtools flagstat {input.bam} > {output}"
+
+rule samtools_depth:
+    params: regions = REGIONS
+    input: bam=BAM, conda="samtools-{version}.yaml"
+    output: config['samtools']['depth']
+    conda: "samtools-{version}.yaml"
+    shell: "samtools depth -r {params.regions} {input.bam} > {output}"
+
+rule samtools_faidx:
+    input: ref=os.path.join("{version}", config['input']['ref']),  conda="samtools-{version}.yaml"
+    output: config['samtools']['faidx']
+    conda: "samtools-{version}.yaml"
+    shell: "samtools faidx {input.ref}"
+           
+rule samtools_stats:
+    input: bam=BAM, conda="samtools-{version}.yaml"
+    output: config['samtools']['stats']
+    conda: "samtools-{version}.yaml"
+    shell: "samtools stats {input.bam} > {output}"
+
+TARGETS = expand([str(r.output) for r in workflow.rules if r.name.startswith("samtools") and not "{end}" in str(r.output)], version=VERSIONS)
+ENDTARGETS = expand([str(r.output) for r in workflow.rules if r.name.startswith("samtools") and "{end}" in str(r.output)], version=VERSIONS, end=END)
+
+#print(TARGETS)
+#print(ENDTARGETS)
+
+rule all:
+    input: TARGETS + ENDTARGETS

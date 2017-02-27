@@ -1,0 +1,36 @@
+# -*- snakemake -*-
+import os
+
+configfile: "../config.yaml"
+include: "../fileutils.sm"
+
+APPLICATION = "cutadapt"
+VERSIONS = config[APPLICATION]['_conda_versions']
+READ1 = os.path.join("../../yuge/CHS.HG00512_1.fastq.gz")
+READ2 = os.path.join("../../yuge/CHS.HG00512_2.fastq.gz")
+
+threeprime = "AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC"
+fiveprime = "AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT"
+
+rule cutadapt_pe:
+    params: threeprime = threeprime,
+            fiveprime = fiveprime,
+            cmd = APPLICATION
+    input: read1=READ1, read2=READ2, conda= APPLICATION + "-{version}.yaml"
+    output: config['cutadapt']['pe']
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "{params.cmd} {input.read1} {input.read2} -a {params.threeprime} -A {params.fiveprime} -o /dev/null -p /dev/null > {output}"
+
+rule cutadapt_se:
+    params: threeprime = threeprime,
+            cmd = APPLICATION
+    input: read1=READ1, conda= APPLICATION + "-{version}.yaml"
+    output: config['cutadapt']['se']
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "{params.cmd} {input.read1} -a {params.threeprime} -o /dev/null > {output}"
+
+
+TARGETS = expand([str(r.output) for r in workflow.rules if r.name.startswith(APPLICATION)], version=VERSIONS)
+
+rule all:
+    input: TARGETS
