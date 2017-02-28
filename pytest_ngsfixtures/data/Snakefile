@@ -28,6 +28,7 @@ config = {
 
 SAMPLES = ["CHS.HG00512", "CHS.HG00513", "PUR.HG00731", "PUR.HG00733",
            "YRI.NA19238", "YRI.NA19239"]
+POPULATIONS = list(set([x.split(".")[0] for x in SAMPLES]))
 BAMFILES = expand("{sample}.1000g.bam", sample=SAMPLES)
 SEQUENCES = expand("{sample}.1000g_1.fastq.gz", sample=SAMPLES) + expand("{sample}.1000g_2.fastq.gz", sample=SAMPLES)
 URL = "http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/data_collections/1000_genomes_project/data/{population}/{individual}/alignment/{individual}.alt_bwamem_GRCh38DH.20150718.{population}.low_coverage.cram"
@@ -316,9 +317,24 @@ rule yuge_sequences:
     input: expand("{outdir}/{sample}_{read}.fastq.gz", outdir=["yuge"], sample=SAMPLES, read=[1,2]) +
            expand("{outdir}/{sample}{ab}_{read}.fastq.gz", outdir=["yuge"], sample=SAMPLES[2:4], read=[1,2], ab=[".A", ".B"])
 
+
+def _find_individuals(wildcards):
+    return [os.path.join(wildcards.outdir, "{ind}_{read}.fastq.gz".format(ind=x, read=wildcards.read)) for x in SAMPLES if x.startswith(wildcards.pop)]
+
+rule make_pooled_samples:
+    wildcard_constraints:
+        pop = "(" + "|".join(POPULATIONS) + ")"
+    input: _find_individuals
+    output: "{outdir}/{pop}_{read}.fastq.gz"
+    shell: "zcat {input} | gzip - > {output}"
+
+rule pool_sequences:
+    input:  expand("{outdir}/{pop}_{read}.fastq.gz", outdir=["tiny", "small", "medium", "yuge"], pop=POPULATIONS, read=[1,2])
+           
 rule all_sequences:
     input: expand("{outdir}/{sample}_{read}.fastq.gz", outdir=["tiny", "small", "medium", "yuge"], sample=SAMPLES, read=[1,2]) + 
            expand("{outdir}/{sample}{ab}_{read}.fastq.gz", outdir=["tiny", "small", "medium", "yuge"], sample=SAMPLES[2:4], read=[1,2], ab=[".A", ".B"])
+          
 
 rule clean:
     shell:
