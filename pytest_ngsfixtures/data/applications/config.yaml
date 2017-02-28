@@ -1,15 +1,6 @@
 basedir: "data"
 end: ["se", "pe"]
 
-# Application to output
-# Map application to output file name
-# Format
-# application:
-#   _default: default version
-#   _versions: list of versions
-#   subtool: output(s)
-#     _exlude: versions
-
 # General data input
 input:
   bam: medium.bam
@@ -19,31 +10,62 @@ input:
 params:
   regions: "scaffold1:10000-11000"
 
-samtools:
-  _default: 1.3.1
-  _versions: [1.2, 1.3.1]
-  _conda_versions: [1.2, 1.3.1]
-  flagstat: "{version}/{end}/medium.flagstat"
-  depth: "{version}/{end}/medium.coverage.txt"
-  faidx: "{version}/scaffoldsN.fa.fai"
-  stats: "{version}/{end}/medium.stats"
+# Application to output
+# Map application to output file name
+# Format
+# application:
+#   _default: default version
+#   _versions: list of versions
+#   subtool: output(s)
+#     _exlude: versions
+
+bwa:
+  _default: 0.7.15
+  _versions: [0.5.9, 0.6.2, 0.7.8, 0.7.12, 0.7.13, 0.7.15]
+  _conda_versions: [0.5.9, 0.6.2, 0.7.8, 0.7.12, 0.7.13, 0.7.15]
+  bwa_mem:
+    output: "{version}/{end}/bwa_mem.log"
+    _versions: [0.7.8, 0.7.12, 0.7.13, 0.7.15]
+
+cutadapt:
+  _default: 1.12
+  _versions:  [1.8.1, 1.8.3, 1.9.1, "1.10", 1.11, 1.12]
+  _conda_versions: [1.8.1, 1.8.3, 1.9.1, "1.10", 1.11, 1.12]
+  cutadapt:
+    output: "{version}/{end}/cutadapt_metrics.txt"
+    
 fastqc:
   _default: 0.11.5
   _versions: [0.7.2, 0.10.1, 0.11.2, 0.11.5]
   _conda_versions: [0.10.1, 0.11.2, 0.11.5]
   fastqc:
-    zipfile: "{version}/{end}/medium_fastqc.zip"
-    #txt: "{version}/medium_fastqc/fastqc_data.txt"
-    #html: "{version}/medium_fastqc/fastqc_report.html"
+    output:
+      zipfile: "{version}/{end}/medium_fastqc.zip"
+
 qualimap:
   _default: 2.2.2a
   _versions: [2.1.3, 2.2.2, 2.2.2a]
   _conda_versions: [2.1.3, 2.2.2a]
-  bamqc: "{version}/{end}/genome_results.txt"
-cutadapt:
-  _default: 1.12
-  _versions:  [1.8.1, 1.8.3, 1.9.1, "1.10", 1.11, 1.12]
-  _conda_versions: [1.8.1, 1.8.3, 1.9.1, "1.10", 1.11, 1.12]
-  pe: "{version}/pe/cutadapt_metrics.txt"
-  se: "{version}/se/cutadapt_metrics.txt"
+  qualimap_bamqc:
+    output: "{version}/{end}/genome_results.txt"
   
+samtools:
+  _default: 1.3.1
+  _conda_versions: [1.2, 1.3.1]
+  _versions: [1.2, 1.3.1]
+  samtools_flagstat:
+    output: "{version}/{end}/medium.flagstat.txt"
+  samtools_depth:
+    output:
+      "{version}/{end}/medium.depth.txt"
+  samtools_faidx:
+    output:
+      "{version}/scaffoldsN.fa.fai"
+  samtools_idxstats:
+    output:
+      "{version}/{end}/medium.idxstats.txt"
+  samtools_rmdup:
+    output: "{version}/{end}/medium.rmdup.txt"
+    _versions: [1.3.1]
+  samtools_stats:
+    output: "{version}/{end}/medium.stats.txt"

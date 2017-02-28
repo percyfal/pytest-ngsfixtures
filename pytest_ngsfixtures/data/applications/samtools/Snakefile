@@ -1,44 +1,56 @@
 # -*- snakemake -*-
 import os
+from pytest_ngsfixtures.helpers import make_targets
 
 configfile: "../config.yaml"
 include: "../fileutils.sm"
 
-VERSIONS = config['samtools']['_conda_versions']
-REGIONS = config['params']['regions']
-END = config['end']
+APPLICATION = "samtools"
+param = {
+    'ref' : os.path.join("{version}", config['input']['ref']),
+    'end': config['end'],
+    'version': config[APPLICATION]['_conda_versions'],
+    'regions': config['params']['regions'],
+}
+
 BAM = os.path.join("../{end}", config['input']['bam'])
 
-rule samtools_flagstat:
-    input: bam=BAM, conda="samtools-{version}.yaml"
-    output: config['samtools']['flagstat']
-    conda: "samtools-{version}.yaml"
-    shell: "samtools flagstat {input.bam} > {output}"
-
 rule samtools_depth:
-    params: regions = REGIONS
+    params: regions = param['regions']
     input: bam=BAM, conda="samtools-{version}.yaml"
-    output: config['samtools']['depth']
+    output: config['samtools']['samtools_depth']['output']
     conda: "samtools-{version}.yaml"
     shell: "samtools depth -r {params.regions} {input.bam} > {output}"
 
 rule samtools_faidx:
-    input: ref=os.path.join("{version}", config['input']['ref']),  conda="samtools-{version}.yaml"
-    output: config['samtools']['faidx']
+    input: ref=param['ref'],  conda="samtools-{version}.yaml"
+    output: config['samtools']['samtools_faidx']['output']
     conda: "samtools-{version}.yaml"
     shell: "samtools faidx {input.ref}"
+
+rule samtools_flagstat:
+    input: bam=BAM, conda="samtools-{version}.yaml"
+    output: config['samtools']['samtools_flagstat']['output']
+    conda: "samtools-{version}.yaml"
+    shell: "samtools flagstat {input.bam} > {output}"
+
+rule samtools_idxstats:
+    input: bam=BAM, conda="samtools-{version}.yaml"
+    output: config['samtools']['samtools_idxstats']['output']
+    conda: "samtools-{version}.yaml"
+    shell: "samtools idxstats {input.bam} > {output}"
+
+rule samtools_rmdup:
+    input: bam=BAM, conda="samtools-{version}.yaml"
+    output: config['samtools']['samtools_rmdup']['output']
+    conda: "samtools-{version}.yaml"
+    shell: "options=''; if [[ '{wildcards.end}' == 'se' ]]; then options='-s'; fi; samtools rmdup $options {input.bam} {wildcards.version}/{wildcards.end}/tmp.bam 2> {output}; rm -f {wildcards.version}/{wildcards.end}/tmp.bam"
            
 rule samtools_stats:
     input: bam=BAM, conda="samtools-{version}.yaml"
-    output: config['samtools']['stats']
+    output: config['samtools']['samtools_stats']['output']
     conda: "samtools-{version}.yaml"
     shell: "samtools stats {input.bam} > {output}"
-
-TARGETS = expand([str(r.output) for r in workflow.rules if r.name.startswith("samtools") and not "{end}" in str(r.output)], version=VERSIONS)
-ENDTARGETS = expand([str(r.output) for r in workflow.rules if r.name.startswith("samtools") and "{end}" in str(r.output)], version=VERSIONS, end=END)
-
-#print(TARGETS)
-#print(ENDTARGETS)
-
+           
 rule all:
-    input: TARGETS + ENDTARGETS
+    input: make_targets(workflow.rules, config, APPLICATION, end=param['end'], version=param['version'])

@@ -1,21 +1,15 @@
 # -*- snakemake -*-
 import os
 import yaml
-from pytest_ngsfixtures import ROOT_DIR
-
-conda="""channels:
-  - bioconda
-dependencies:
-  - {application}=={version}
-"""
+from pytest_ngsfixtures.helpers import ROOT_DIR, make_conda_env_file
 
 rule make_conda_env_file:
     output: yaml = temporary("{application}-{version}.yaml")
     run:
-        with open(output.yaml, "w") as fh:
-            fh.write(conda.format(application=wildcards.application, version=wildcards.version))
+        make_conda_env_file(output.yaml, **wildcards)
 
+        
 rule link_version_ref:
     input: os.path.join(ROOT_DIR, config["basedir"], "ref", config["input"]["ref"])
     output: temporary(os.path.join("{version}", config["input"]["ref"]))
-    shell: "ln -sf {input} {output}"
+    shell: "mkdir -p $(dirname {output}); ln -sf {input} {output}"
