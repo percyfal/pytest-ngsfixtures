@@ -285,8 +285,7 @@ def filetype(src, dst=None, fdir=None, rename=False, outprefix="test", inprefix=
         if request.config.option.ngs_show_fixture:
             logger.info("filetype fixture content")
             logger.info("------------------------")
-            for x in sorted(p.visit()):
-                logger.info(str(x))
+            logger.info(str(p))
         return p
     return filetype_fixture
 
