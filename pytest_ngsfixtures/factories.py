@@ -23,7 +23,7 @@ class SampleException(Exception):
 ref_dict = {}
 
 for f in os.listdir(os.path.join(DATADIR, "ref")):
-    if f == "Makefile":
+    if f in ("Makefile", "Snakefile.test"):
         continue
     ref_dict[f] = os.path.join(DATADIR, "ref", f)
 
@@ -332,4 +332,4 @@ def fileset(src, dst=None, fdir=None, **kwargs):
 
 
 
-__all__ = ('sample_layout', 'reference_layout')
+__all__ = ('sample_layout', 'reference_layout', 'filetype', 'fileset')
