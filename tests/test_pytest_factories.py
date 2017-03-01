@@ -95,19 +95,19 @@ def test_custom(custom_samples, ref):
 
 def test_download_url_fail(tmpdir_factory):
     import urllib.request
-    bn = tmpdir_factory.getbasetemp().join("foo.bar")
+    bn = tmpdir_factory.mktemp("foo").join("foo.bar")
     with pytest.raises(urllib.error.HTTPError):
         factories._download_sample_file(str(bn), "yuge")
 
 def test_download_url_wrong_size(tmpdir_factory):
     import urllib.request
-    bn = tmpdir_factory.getbasetemp().join("foo.bar")
+    bn = tmpdir_factory.mktemp("foo").join("foo.bar")
     factories._download_sample_file(str(bn), "tiny")
     assert not bn.exists()
 
 def test_download_url(tmpdir_factory, monkeypatch):
     import urllib.request
-    bn = tmpdir_factory.getbasetemp().join("foo.bar.gz")
+    bn = tmpdir_factory.mktemp("foo").join("foo.bar.gz")
     def mockreturn(*args):
         return "https://raw.githubusercontent.com/percyfal/pytest-ngsfixtures/master/pytest_ngsfixtures/data/tiny/CHS.HG00512_1.fastq.gz"
     monkeypatch.setattr(os.path, 'join', mockreturn)
@@ -116,12 +116,14 @@ def test_download_url(tmpdir_factory, monkeypatch):
     with gzip.open(str(bn), 'rb') as fh:
         assert fh.readlines()[0].strip() == b'@ERR016116.1225854/1'
 
+
 def test_download_url_exists(tmpdir_factory):
     import urllib.request
-    bn = tmpdir_factory.getbasetemp().join("foo.bar.gz")
+    bn = tmpdir_factory.mktemp("foo").join("foo.bar.gz")
     bn.write("foo.bar")
     factories._download_sample_file(str(bn), "yuge")
     assert "foo.bar" == "".join(bn.readlines())
+
 
 
 sample_aliases = factories.sample_layout(
