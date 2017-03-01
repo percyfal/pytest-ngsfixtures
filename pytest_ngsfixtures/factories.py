@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 ROOTDIR = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 DATADIR = os.path.realpath(os.path.join(ROOTDIR, "pytest_ngsfixtures", "data"))
 REPO = "https://raw.githubusercontent.com/percyfal/pytest-ngsfixtures/master"
+DOWNLOAD_SIZES = ["yuge"]
 
 class ParameterException(Exception):
     pass
@@ -51,19 +52,25 @@ def get_config(request):
     return config
 
 
-def _download_sample_file(fn):
+def _download_sample_file(fn, size):
     """Download sample file if it doesn't yet exist
 
     Setup urllib connection and download data file.
     """
-    if not os.path.exists(fn):
-        pass
+    if not size in DOWNLOAD_SIZES:
+        return
+    if os.path.exists(fn):
+        return
     else:
-        from urllib.request import urlretrieve
-        src = os.path.join(REPO, os.path.relpath(fn, ROOTDIR))
+        import urllib.request
+        import shutil
+        logger.info("File '{}' doesn't exist; downloading it from git repo to local pytest_ngsfixtures installation location".format(fn))
+        url = os.path.join(REPO, os.path.relpath(fn, ROOTDIR))
         try:
-            test = urlretrieve(src)
-        except:
+            with urllib.request.urlopen(url) as response, open(fn, 'wb') as fh:
+                shutil.copyfileobj(response, fh)
+        except Exception as e:
+            logger.error("Downloading '{}' failed: {}".format(url, e))
             raise
 
 
@@ -215,7 +222,7 @@ def sample_layout(
             if len(sample_aliases) > 0:
                 l['SM'] = sample_aliases.pop()
             src = os.path.join(DATADIR, config['size'], srckeys['SM'] + "_1.fastq.gz")
-            _download_sample_file(src)
+            _download_sample_file(src, config['size'])
             safe_symlink(p, os.path.join(DATADIR, config['size'], srckeys['SM'] + "_1.fastq.gz"),
                     runfmt.format(**l) + read1_suffix)
             if l['PE']:
