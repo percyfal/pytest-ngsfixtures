@@ -1,21 +1,8 @@
 # -*- coding: utf-8 -*-
 """Plugin configuration module for pytest-ngsfixtures"""
 import itertools
-from collections import namedtuple
 from pytest_ngsfixtures import factories
-
-Config = namedtuple('Config', 'SIZES SAMPLES POPULATIONS SAMPLE_LAYOUTS')
-
-conf = Config(SIZES = ["tiny", "small", "medium", "yuge"],
-              SAMPLES = ['CHS.HG00512', 'CHS.HG00513',
-                         'PUR.HG00731', 'PUR.HG00733',
-                         'PUR.HG00731.A', 'PUR.HG00731.B',
-                         'PUR.HG00733.A', 'PUR.HG00733.B',
-                         'YRI.NA19238', 'YRI.NA19239'],
-              POPULATIONS = ["CHS", "PUR", "YRI"],
-              SAMPLE_LAYOUTS= ["sample", "sample_run", "project_sample_run",
-                               "pop_sample", "pop_sample_run", "pop_project_sample_run"]
-)
+from pytest_ngsfixtures.config import conf
 
 _help_ngs_size = "select sample size (choices: {})".format(", ".join("'{}'".format(x) for x in conf.SIZES))
 _help_ngs_layout="select predefined sample layout(s) (allowed choices: {})".format(", ".join("'{}'".format(x) for x in conf.SAMPLE_LAYOUTS))

@@ -5,7 +5,7 @@ import py
 import logging
 import itertools
 import pytest
-from pytest_ngsfixtures import plugin
+from pytest_ngsfixtures.config import conf
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -34,8 +34,8 @@ ref_always=['ERCC_spikes.gb', 'pAcGFP1-N1.fasta']
 
 def check_samples(samples):
     """Check the sample names are ok"""
-    if not all(x in plugin.conf.SAMPLES for x in samples):
-        raise SampleException("invalid sample name: choose from {}".format(plugin.conf.SAMPLES))
+    if not all(x in conf.SAMPLES for x in samples):
+        raise SampleException("invalid sample name: choose from {}".format(conf.SAMPLES))
 
 
 def get_config(request):
