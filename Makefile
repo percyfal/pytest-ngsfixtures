@@ -26,7 +26,7 @@ BROWSER := python -c "$$BROWSER_PYSCRIPT"
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
-clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
+clean: clean-build clean-pyc clean-test clean-snakemake ## remove all build, test, coverage and Python artifacts
 
 
 clean-build: ## remove build artifacts
@@ -46,6 +46,10 @@ clean-test: ## remove test and coverage artifacts
 	rm -fr .tox/
 	rm -f .coverage
 	rm -fr htmlcov/
+
+clean-snakemake: ## remove snakemake directories
+	find . -name '.snakemake' -exec rm -fr {} +
+
 
 lint: ## check style with flake8
 	flake8 pytest_ngsfixtures tests
