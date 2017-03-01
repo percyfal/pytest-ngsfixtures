@@ -101,6 +101,16 @@ def test_custom(custom_samples, ref):
     assert "YRI.NA19238_foobar_2.fastq.gz" not in flist
 
 
+def test_download_url():
+    import urllib.request
+    import shutil
+    url = "https://raw.githubusercontent.com/percyfal/pytest-ngsfixtures/master/pytest_ngsfixtures/data/tiny/CHS.HG00512_1.fastq.gz"
+    file_name = "/home/peru/tabort.fastq.gz"
+    print(help(urllib.request.urlopen))
+    # Download the file from `url` and save it locally under `file_name`:
+    with urllib.request.urlopen(url) as response, open(file_name, 'wb') as out_file:
+        shutil.copyfileobj(response, out_file)
+
 
 sample_aliases = factories.sample_layout(
     samples = ['CHS.HG00512', 'CHS.HG00513', 'CHS.HG00512'],
