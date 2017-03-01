@@ -12,7 +12,6 @@ import py
 import pytest
 from pytest_ngsfixtures import factories
 from pytest_ngsfixtures.factories import safe_mktemp, safe_symlink
-from pytest_ngsfixtures.filetypes import *
 
 # Filetypes
 bamfile_realpath = os.path.realpath(os.path.join(os.path.dirname(__file__), os.pardir, "pytest_ngsfixtures", "data", "applications", "PUR.HG00731.bam"))
@@ -75,12 +74,6 @@ def test_combine_fixtures(combinedbam):
     fset = set([str(x.realpath()) for x in combinedbam.visit()])
     assert fset == set([bamfile_realpath])
 
-
-@pytest.mark.parametrize("data", filetypes[0:2])
-def test_filetypes(data):
-    assert data in filetypes[0:2]
-
-
 custom_samples = factories.sample_layout(
     dirname="foo",
     samples=["CHS.HG00512", "YRI.NA19238"],
@@ -100,16 +93,35 @@ def test_custom(custom_samples, ref):
     assert "YRI.NA19238_foobar_1.fastq.gz" in flist
     assert "YRI.NA19238_foobar_2.fastq.gz" not in flist
 
-
-def test_download_url():
+def test_download_url_fail(tmpdir_factory):
     import urllib.request
-    import shutil
-    url = "https://raw.githubusercontent.com/percyfal/pytest-ngsfixtures/master/pytest_ngsfixtures/data/tiny/CHS.HG00512_1.fastq.gz"
-    file_name = "/home/peru/tabort.fastq.gz"
-    print(help(urllib.request.urlopen))
-    # Download the file from `url` and save it locally under `file_name`:
-    with urllib.request.urlopen(url) as response, open(file_name, 'wb') as out_file:
-        shutil.copyfileobj(response, out_file)
+    bn = tmpdir_factory.getbasetemp().join("foo.bar")
+    with pytest.raises(urllib.error.HTTPError):
+        factories._download_sample_file(str(bn), "yuge")
+
+def test_download_url_wrong_size(tmpdir_factory):
+    import urllib.request
+    bn = tmpdir_factory.getbasetemp().join("foo.bar")
+    factories._download_sample_file(str(bn), "tiny")
+    assert not bn.exists()
+
+def test_download_url(tmpdir_factory, monkeypatch):
+    import urllib.request
+    bn = tmpdir_factory.getbasetemp().join("foo.bar.gz")
+    def mockreturn(*args):
+        return "https://raw.githubusercontent.com/percyfal/pytest-ngsfixtures/master/pytest_ngsfixtures/data/tiny/CHS.HG00512_1.fastq.gz"
+    monkeypatch.setattr(os.path, 'join', mockreturn)
+    factories._download_sample_file(str(bn), "yuge")
+    import gzip
+    with gzip.open(str(bn), 'rb') as fh:
+        assert fh.readlines()[0].strip() == b'@ERR016116.1225854/1'
+
+def test_download_url_exists(tmpdir_factory):
+    import urllib.request
+    bn = tmpdir_factory.getbasetemp().join("foo.bar.gz")
+    bn.write("foo.bar")
+    factories._download_sample_file(str(bn), "yuge")
+    assert "foo.bar" == "".join(bn.readlines())
 
 
 sample_aliases = factories.sample_layout(
