@@ -5,16 +5,16 @@ import py
 import logging
 import itertools
 import pytest
-from pytest_ngsfixtures import plugin
+from pytest_ngsfixtures.config import sample_conf
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Make py.path objects?
 ROOTDIR = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 DATADIR = os.path.realpath(os.path.join(ROOTDIR, "pytest_ngsfixtures", "data"))
 REPO = "https://raw.githubusercontent.com/percyfal/pytest-ngsfixtures/master"
 DOWNLOAD_SIZES = ["yuge"]
+
 
 class ParameterException(Exception):
     pass
@@ -25,7 +25,7 @@ class SampleException(Exception):
 ref_dict = {}
 
 for f in os.listdir(os.path.join(DATADIR, "ref")):
-    if f == "Makefile":
+    if f in ("Makefile", "Snakefile.test"):
         continue
     ref_dict[f] = os.path.join(DATADIR, "ref", f)
 
@@ -34,8 +34,8 @@ ref_always=['ERCC_spikes.gb', 'pAcGFP1-N1.fasta']
 
 def check_samples(samples):
     """Check the sample names are ok"""
-    if not all(x in plugin.conf.SAMPLES for x in samples):
-        raise SampleException("invalid sample name: choose from {}".format(plugin.conf.SAMPLES))
+    if not all(x in sample_conf.SAMPLES for x in samples):
+        raise SampleException("invalid sample name: choose from {}".format(sample_conf.SAMPLES))
 
 
 def get_config(request):
@@ -111,14 +111,14 @@ def safe_mktemp(tmpdir_factory, dirname=None, **kwargs):
     if dirname is None:
         return tmpdir_factory.getbasetemp()
     else:
-        p = tmpdir_factory.getbasetemp().join(dirname)
+        p = tmpdir_factory.getbasetemp().join(os.path.dirname(dirname)).ensure(dir=True)
         if kwargs.get("numbered", False):
             p = tmpdir_factory.mktemp(dirname)
         else:
+            p = tmpdir_factory.getbasetemp().join(dirname)
             if not p.check(dir=1):
                 p = tmpdir_factory.mktemp(dirname, numbered=False)
         return p
-
 
 
 def sample_layout(
@@ -311,8 +311,7 @@ def filetype(src, dst=None, fdir=None, rename=False, outprefix="test", inprefix=
         if request.config.option.ngs_show_fixture:
             logger.info("filetype fixture content")
             logger.info("------------------------")
-            for x in sorted(p.visit()):
-                logger.info(str(x))
+            logger.info(str(p))
         return p
     return filetype_fixture
 
@@ -358,5 +357,33 @@ def fileset(src, dst=None, fdir=None, **kwargs):
     return fileset_fixture
 
 
+def application_output(application, command, version, end="se", **kwargs):
+    """
+    Fixture factory to generate application output.
 
-__all__ = ('sample_layout', 'reference_layout')
+    Params:
+      application (str): application name
+      command (str): application command name
+      version (str): application version
+      end (str): paired end or single end
+
+    Returns:
+      func: a filetype fixture function
+    """
+    from pytest_ngsfixtures.config import application_config as conf
+    assert application in conf.keys(), "no such application '{}'".format(application)
+    assert command in conf[application].keys(), "no such command '{}'".format(command)
+    assert type(version) is str, "version must be string"
+    if "_versions" in conf[application][command].keys():
+        _versions = [str(x) for x in conf[application][command]["_versions"]]
+    else:
+        _versions = [str(x) for x in conf[application]["_versions"]]
+    assert version in _versions, "no such application output for version '{}', application '{}'".format(version, application)
+    assert end in ["se", "pe"], "end must be either se or pe"
+    params = {'version': version, 'end': end}
+    output = conf[application][command]['output'].format(**params)
+    src = os.path.join("applications", application, output)
+    return filetype(src, **kwargs)
+
+
+__all__ = ('sample_layout', 'reference_layout', 'filetype', 'fileset')

@@ -1,0 +1,68 @@
+This is cutadapt 1.11 with Python 3.5.3
+Command line parameters: ../../yuge/CHS.HG00512_1.fastq.gz ../../yuge/CHS.HG00512_2.fastq.gz -a AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC -A AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT -o /dev/null -p /dev/null
+Trimming 2 adapters with at most 10.0% errors in paired-end mode ...
+Finished in 0.92 s (30 us/read; 2.00 M reads/minute).
+
+=== Summary ===
+
+Total read pairs processed:             30,483
+  Read 1 with adapter:                     792 (2.6%)
+  Read 2 with adapter:                     780 (2.6%)
+Pairs written (passing filters):        30,483 (100.0%)
+
+Total basepairs processed:     4,632,972 bp
+  Read 1:     2,316,542 bp
+  Read 2:     2,316,430 bp
+Total written (filtered):      4,627,811 bp (99.9%)
+  Read 1:     2,313,984 bp
+  Read 2:     2,313,827 bp
+
+=== First read: Adapter 1 ===
+
+Sequence: AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC; Type: regular 3'; Length: 34; Trimmed: 792 times.
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20-29 bp: 2; 30-34 bp: 3
+
+Bases preceding removed adapters:
+  A: 29.2%
+  C: 23.6%
+  G: 30.1%
+  T: 16.9%
+  none/other: 0.3%
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	637	476.3	0	637
+4	130	119.1	0	130
+5	23	29.8	0	23
+6	2	7.4	0	2
+
+=== Second read: Adapter 2 ===
+
+Sequence: AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT; Type: regular 3'; Length: 58; Trimmed: 780 times.
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20-29 bp: 2; 30-39 bp: 3; 40-49 bp: 4; 50-58 bp: 5
+
+Bases preceding removed adapters:
+  A: 27.2%
+  C: 27.1%
+  G: 29.5%
+  T: 16.3%
+  none/other: 0.0%
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	641	476.3	0	641
+4	108	119.1	0	108
+5	20	29.8	0	20
+6	2	7.4	0	2
+7	2	1.9	0	2
+9	1	0.1	0	0 1
+10	2	0.0	1	1 1
+15	1	0.0	1	1
+19	1	0.0	1	0 1
+26	1	0.0	2	0 0 1
+33	1	0.0	3	0 1
+
