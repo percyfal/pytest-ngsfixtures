@@ -83,12 +83,14 @@ release: clean clean-snakemake ## package and upload a release
 	python setup.py sdist upload
 	python setup.py bdist_wheel upload
 
+current=$(shell git rev-parse --abbrev-ref HEAD)
 conda: ## package and upload a conda release
 	git checkout conda
+	git merge $(current)
 	$(MAKE) clean clean-snakemake
 	conda build conda
 	anaconda upload $(shell conda build conda --output)
-	git checkout develop
+	git checkout $(current)
 
 dist: clean ## builds source and wheel package
 	python setup.py sdist
