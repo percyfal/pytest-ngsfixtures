@@ -5,16 +5,16 @@ import py
 import logging
 import itertools
 import pytest
-from pytest_ngsfixtures.config import conf
+from pytest_ngsfixtures.config import sample_conf
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Make py.path objects?
 ROOTDIR = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 DATADIR = os.path.realpath(os.path.join(ROOTDIR, "pytest_ngsfixtures", "data"))
 REPO = "https://raw.githubusercontent.com/percyfal/pytest-ngsfixtures/master"
 DOWNLOAD_SIZES = ["yuge"]
+
 
 class ParameterException(Exception):
     pass
@@ -34,8 +34,8 @@ ref_always=['ERCC_spikes.gb', 'pAcGFP1-N1.fasta']
 
 def check_samples(samples):
     """Check the sample names are ok"""
-    if not all(x in conf.SAMPLES for x in samples):
-        raise SampleException("invalid sample name: choose from {}".format(conf.SAMPLES))
+    if not all(x in sample_conf.SAMPLES for x in samples):
+        raise SampleException("invalid sample name: choose from {}".format(sample_conf.SAMPLES))
 
 
 def get_config(request):
@@ -356,6 +356,34 @@ def fileset(src, dst=None, fdir=None, **kwargs):
         return p
     return fileset_fixture
 
+
+def application_output(application, command, version, end="se", **kwargs):
+    """
+    Fixture factory to generate application output.
+
+    Params:
+      application (str): application name
+      command (str): application command name
+      version (str): application version
+      end (str): paired end or single end
+
+    Returns:
+      func: a filetype fixture function
+    """
+    from pytest_ngsfixtures.config import application_config as conf
+    assert application in conf.keys(), "no such application '{}'".format(application)
+    assert command in conf[application].keys(), "no such command '{}'".format(command)
+    assert type(version) is str, "version must be string"
+    if "_versions" in conf[application][command].keys():
+        _versions = [str(x) for x in conf[application][command]["_versions"]]
+    else:
+        _versions = [str(x) for x in conf[application]["_versions"]]
+    assert version in _versions, "no such application output for version '{}', application '{}'".format(version, application)
+    assert end in ["se", "pe"], "end must be either se or pe"
+    params = {'version': version, 'end': end}
+    output = conf[application][command]['output'].format(**params)
+    src = os.path.join("applications", application, output)
+    return filetype(src, **kwargs)
 
 
 __all__ = ('sample_layout', 'reference_layout', 'filetype', 'fileset')
