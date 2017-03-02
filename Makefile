@@ -86,11 +86,11 @@ release: clean clean-snakemake ## package and upload a release
 current=$(shell git rev-parse --abbrev-ref HEAD)
 conda: ## package and upload a conda release
 	git checkout conda
-	git checkout $(current) conda/meta.yaml
-	$(MAKE) clean clean-snakemake
-	conda build conda
-	anaconda upload $(shell conda build conda --output)
-	git checkout $(current)
+	git merge --no-commit --no-ff $(current)
+	# $(MAKE) clean clean-snakemake
+	# conda build conda
+	# anaconda upload $(shell conda build conda --output)
+	# git checkout $(current)
 
 dist: clean ## builds source and wheel package
 	python setup.py sdist
