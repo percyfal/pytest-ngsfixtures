@@ -111,14 +111,14 @@ def safe_mktemp(tmpdir_factory, dirname=None, **kwargs):
     if dirname is None:
         return tmpdir_factory.getbasetemp()
     else:
-        p = tmpdir_factory.getbasetemp().join(dirname)
+        p = tmpdir_factory.getbasetemp().join(os.path.dirname(dirname)).ensure(dir=True)
         if kwargs.get("numbered", False):
             p = tmpdir_factory.mktemp(dirname)
         else:
+            p = tmpdir_factory.getbasetemp().join(dirname)
             if not p.check(dir=1):
                 p = tmpdir_factory.mktemp(dirname, numbered=False)
         return p
-
 
 
 def sample_layout(

@@ -30,12 +30,17 @@ def test_wrong_sample():
 def test_safe_mktemp(tmpdir_factory):
     bn = tmpdir_factory.getbasetemp()
     p = safe_mktemp(tmpdir_factory)
-    assert str(p) == str(bn)
+    assert p == bn
     p = safe_mktemp(tmpdir_factory, dirname="foo")
-    assert p.basename == "foo"
+    assert p == bn.join("foo")
     p = safe_mktemp(tmpdir_factory, dirname="foo", numbered=True)
-    assert p.basename == "foo0"
-
+    assert p == bn.join("foo0")
+    p = safe_mktemp(tmpdir_factory, dirname=os.curdir)
+    assert p == bn
+    p = safe_mktemp(tmpdir_factory, dirname="foo/bar")
+    assert p == bn.join("foo/bar")
+    p = safe_mktemp(tmpdir_factory, dirname="foo/bar", numbered=True)
+    assert p == bn.join("foo/bar0")
 
 def test_safe_symlink(tmpdir_factory, bam):
     p = tmpdir_factory.mktemp("safe_symlink")
