@@ -19,6 +19,7 @@ DOWNLOAD_SIZES = ["yuge"]
 class ParameterException(Exception):
     pass
 
+
 class SampleException(Exception):
     pass
 
@@ -29,7 +30,7 @@ for f in os.listdir(os.path.join(DATADIR, "ref")):
         continue
     ref_dict[f] = os.path.join(DATADIR, "ref", f)
 
-ref_always=['ERCC_spikes.gb', 'pAcGFP1-N1.fasta']
+ref_always = ['ERCC_spikes.gb', 'pAcGFP1-N1.fasta']
 
 
 def check_samples(samples):
@@ -57,7 +58,7 @@ def _download_sample_file(fn, size):
 
     Setup urllib connection and download data file.
     """
-    if not size in DOWNLOAD_SIZES:
+    if size not in DOWNLOAD_SIZES:
         return
     if os.path.exists(fn):
         return
@@ -67,6 +68,8 @@ def _download_sample_file(fn, size):
         logger.info("File '{}' doesn't exist; downloading it from git repo to local pytest_ngsfixtures installation location".format(fn))
         url = os.path.join(REPO, os.path.relpath(fn, ROOTDIR))
         try:
+            if not os.path.exists(os.path.dirname(fn)):
+                os.makedirs(os.path.dirname(fn))
             with urllib.request.urlopen(url) as response, open(fn, 'wb') as fh:
                 shutil.copyfileobj(response, fh)
         except Exception as e:
@@ -122,9 +125,9 @@ def safe_mktemp(tmpdir_factory, dirname=None, **kwargs):
 
 
 def sample_layout(
-        runfmt = "{SM}",
+        runfmt="{SM}",
         sample_prefix="s",
-        use_short_sample_names = True,
+        use_short_sample_names=True,
         read1_suffix="_1.fastq.gz",
         read2_suffix="_2.fastq.gz",
         dirname=None,
@@ -202,7 +205,6 @@ def sample_layout(
         _batches = batches
         _pu = platform_units
         _pe = paired_end
-        _aliases = sample_aliases
         _keys = ['POP', 'PU', 'SM', 'BATCH', 'PE']
         _param_names = ['populations', 'platform_units', 'samples', 'batches', 'paired_end']
         _keys_to_param_names = dict(zip(_keys, _param_names))
@@ -210,7 +212,6 @@ def sample_layout(
         _layout = [dict(zip(_keys, p)) for p in combinator(_pop, _pu, _samples, _batches, _pe)]
         _sample_counter = 1
         _sample_map = {}
-        _sampleinfo = []
         p = safe_mktemp(tmpdir_factory, dirname, **kwargs)
         for l in _layout:
             srckeys = l.copy()
@@ -220,19 +221,20 @@ def sample_layout(
             if use_short_sample_names:
                 l['SM'] = _sample_map[l['SM']]
             if len(sample_aliases) > 0:
-                l['SM'] = sample_aliases.pop()
+                l['SM'] = sample_aliases.pop(0)
             src = os.path.join(DATADIR, config['size'], srckeys['SM'] + "_1.fastq.gz")
             _download_sample_file(src, config['size'])
             safe_symlink(p, os.path.join(DATADIR, config['size'], srckeys['SM'] + "_1.fastq.gz"),
-                    runfmt.format(**l) + read1_suffix)
+                         runfmt.format(**l) + read1_suffix)
             if l['PE']:
                 safe_symlink(p, os.path.join(DATADIR, config['size'], srckeys['SM'] + "_2.fastq.gz"),
-                        runfmt.format(**l) + read2_suffix)
+                             runfmt.format(**l) + read2_suffix)
 
         if sampleinfo:
             outkeys = set([x for x in re.split("[{}/_]", runfmt) if x != ""] + ["fastq"])
             if any(len(x[0]) != len(x[1]) for x in itertools.combinations((_param_dict[y] for y in outkeys if not y == "fastq"), 2)):
                 raise ParameterException("all parameters {} must be of equal length for sampleinfo file".format(",".join(_keys_to_param_names[y] for y in outkeys if not y == "fastq")))
+            outkeys = sorted(outkeys)
             info = [",".join(outkeys)]
             for l in _layout:
                 logger.debug("updating layout: {}".format(l))
@@ -241,8 +243,7 @@ def sample_layout(
                 if l['PE']:
                     l['fastq'] = runfmt.format(**l) + read2_suffix
                     info.append(",".join([l[k] for k in outkeys]))
-            info.append("\n")
-            p.join("sampleinfo.csv").write("\n".join(info))
+            p.join("sampleinfo.csv").write("\n".join(info) + "\n")
         # Alternatively print as debug
         if request.config.option.ngs_show_fixture:
             logger.info("sample_layout")
@@ -271,7 +272,7 @@ def reference_layout(label="ref", dirname="ref", **kwargs):
         for dst, src in ref_dict.items():
             if dst in ref_always:
                 safe_symlink(p, src, dst)
-            if not label in dst:
+            if label not in dst:
                 continue
             if dst.endswith("chrom.sizes"):
                 dst = "chrom.sizes"
@@ -303,6 +304,7 @@ def filetype(src, dst=None, fdir=None, rename=False, outprefix="test", inprefix=
     if rename:
         pat = "(" + "|".join(inprefix) + ")"
         dst = re.sub(pat, outprefix, dst)
+
     @pytest.fixture(scope=kwargs.get("scope", "function"), autouse=kwargs.get("autouse", False))
     def filetype_fixture(request, tmpdir_factory):
         """Filetype fixture"""
@@ -332,6 +334,7 @@ def fileset(src, dst=None, fdir=None, **kwargs):
     assert dst is None or isinstance(dst, list), "not a list"
     if dst is None:
         dst = [None]
+
     @pytest.fixture(scope=kwargs.get("scope", "function"), autouse=kwargs.get("autouse", False))
     def fileset_fixture(request, tmpdir_factory):
         """Fileset factory

@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
-import yaml
-import copy
 from snakemake.io import expand
-from pytest_ngsfixtures import ROOT_DIR
 
-BIOCONDA="""channels:
+BIOCONDA = """channels:
   - bioconda
 dependencies:
   - {application}=={version}
 """
+
 
 def make_conda_env_file(output, conda=BIOCONDA, **kw):
     with open(output, "w") as fh:
