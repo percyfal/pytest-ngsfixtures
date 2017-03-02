@@ -6,7 +6,7 @@
 	   :target: https://anaconda.org/percyfal/pytest-ngsfixtures
 
 About
-======
+=====
 
 This is a `pytest plugin
 <http://doc.pytest.org/en/latest/plugins.html>`_ that enables next
@@ -20,7 +20,7 @@ using fixture factories.
 * Free software: GNU General Public License v3
 
 Features
----------
+--------
 
 - ngs data sets of different sizes
 - predefined sample layouts
@@ -39,8 +39,8 @@ Installation
 Usage
 =====
 
-Layout fixtures
-----------------
+Layout fixture factories
+------------------------
 
 The plugin contains two fixture factories that generate sample layouts
 (**sample_layout**) and reference data (**reference_layout**). A
@@ -99,14 +99,44 @@ depends on the sample fixture:
    INFO:pytest_ngsfixtures.factories:/tmp/pytest-of-user/pytest-1/sample0/s2/s2_010101_AAABBB11XX_2.fastq.gz
    INFO:pytest_ngsfixtures.factories:/tmp/pytest-of-user/pytest-1/sample0/sampleinfo.csv
 
-       
-Application fixtures
---------------------
+   
+File fixture factories
+----------------------
 
-TODO
+In addition to sequence and reference input data, there is a
+collection of downstream files, such as bam files, and application
+output files, e.g. from samtools and fastqc. As of version 0.3.0,
+there are two fixture factory functions, **filetype** and **fileset**,
+that create file fixtures and fileset fixtures, respectively. The
+filetype factory generates a fixture for a single file, returning the
+path to the file, whereas the fileset factory generates a fixture for
+several files, returning the path to the directory in which the files
+reside.
+
+.. code-block:: python
+
+   from pytest_ngsfixtures import factories
+   
+   bam = factories.filetype("applications/pe/PUR.HG00731.tiny.bam", scope="function")
+
+   def test_bam(bam):
+       # Do something with bam file
+
+   
+   bamset = factories.fileset(src=["applications/pe/PUR.HG00731.tiny.bam",
+		                   "applications/pe/PUR.HG00733.tiny.bam"],
+                                   fdir="bamset", scope="function")
+
+   def test_bamset(bamset):
+       # Do something with bamset
+
+
+Note that currently you need to provide the path to the file *relative
+to* ``pytest_ngsfixtures/data``.
        
+
 Files
-======
+=====
 
 Fixture files live in subdirectories of the
 ``pytest_ngsfixtures/data`` directory:
@@ -129,25 +159,41 @@ tiny/
 yuge/
   yuge sequence files
 
-Each sequence directory contain the same samples in different sizes.
-The sequence files consist of six files from the 1000 genomes project,
-two each from the populations CHS (Han-Chinese), PUR (Puerto Rico) and
-YRI (Yoruban). They have been selected based on mappings to a variable
-region on chromosome 6 to ensure that running variant callers on the
-different data sets will generate differing variant call sets. When
-setting up a fixture with the sample_layout factory function, bear in
-mind that the parameter ``samples`` **must** be one or several of
-CHS.HG00512, CHS.HG00513, PUR.HG00731, PUR.HG00733, YRI.NA19238, and
-YRI.NA19239.
+Each sequence directory contain the same samples in different sizes:
 
+::
+   
+   File name                   Sample ID         Type                Population      
+   --------------------------  ------------      -----------------   ------------    
+   CHS.HG00512_1.fastq.gz      CHS.HG00512       Individual	     Han-Chinese     
+   CHS.HG00513_1.fastq.gz      CHS.HG00513       Individual	     Han-Chinese     
+   CHS_1.fastq.gz              CHS               Pool		     Han-Chinese     
+   PUR.HG00731.A_1.fastq.gz    PUR.HG00731.A     Individual, run A   Puerto Rico     
+   PUR.HG00731.B_1.fastq.gz    PUR.HG00731.B     Individual, run B   Puerto Rico     
+   PUR.HG00733.A_1.fastq.gz    PUR.HG00733.A     Individual, run A   Puerto Rico     
+   PUR.HG00733.B_1.fastq.gz    PUR.HG00733.B     Individual, run B   Puerto Rico     
+   PUR_1.fastq.gz              PUR               Pool, run A	     Puerto Rico     
+   YRI.NA19238_1.fastq.gz      YRI.NA19238       Individual	     Yoruban         
+   YRI.NA19239_1.fastq.gz      YRI.NA19238       Individual	     Yoruban         
+   YRI_1.fastq.gz              YRI               Pool		     Yoruban         
+
+
+and similarly for read 2. The sequence files have been generated from
+the 1000 genomes project, two each from the populations CHS
+(Han-Chinese), PUR (Puerto Rico) and YRI (Yoruban). They have been
+selected based on mappings to a variable region on chromosome 6 to
+ensure that running variant callers on the different data sets will
+generate differing variant call sets. When setting up a fixture with
+the sample_layout factory function, bear in mind that the parameter
+``samples`` **must** be one or several of the labels in the *Sample
+ID* column in the table above. The pools are simply concatenated
+versions of the individual files, with a ploidy of 4.
 		
-
-       
 Advanced usage
 ==============
 
 Custom sample layouts
------------------------------------
+---------------------
 
 In addition to the predefined sample layouts, it is possible to define
 custom layouts by use of the ``sample_layout`` factory function.
@@ -210,7 +256,7 @@ The plugin defines three options that can be used to select and show
 predefined fixtures.
 
 -X, --ngs-size
----------------
+--------------
 
 Select the size of the sequence fixtures (fastq files). There are
 currently four sizes to choose from:
@@ -242,7 +288,7 @@ of the predefined sample layouts. Example:
    pytest -L sample sample_data		
 
 -F, --ngs-show-fixture
------------------------
+----------------------
 
 Print information on the files that are setup in the fixture.
 
