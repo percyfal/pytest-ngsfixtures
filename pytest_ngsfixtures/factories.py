@@ -220,7 +220,7 @@ def sample_layout(
             if use_short_sample_names:
                 l['SM'] = _sample_map[l['SM']]
             if len(sample_aliases) > 0:
-                l['SM'] = sample_aliases.pop()
+                l['SM'] = sample_aliases.pop(0)
             src = os.path.join(DATADIR, config['size'], srckeys['SM'] + "_1.fastq.gz")
             _download_sample_file(src, config['size'])
             safe_symlink(p, os.path.join(DATADIR, config['size'], srckeys['SM'] + "_1.fastq.gz"),
@@ -233,6 +233,7 @@ def sample_layout(
             outkeys = set([x for x in re.split("[{}/_]", runfmt) if x != ""] + ["fastq"])
             if any(len(x[0]) != len(x[1]) for x in itertools.combinations((_param_dict[y] for y in outkeys if not y == "fastq"), 2)):
                 raise ParameterException("all parameters {} must be of equal length for sampleinfo file".format(",".join(_keys_to_param_names[y] for y in outkeys if not y == "fastq")))
+            outkeys = sorted(outkeys)
             info = [",".join(outkeys)]
             for l in _layout:
                 logger.debug("updating layout: {}".format(l))
@@ -241,8 +242,7 @@ def sample_layout(
                 if l['PE']:
                     l['fastq'] = runfmt.format(**l) + read2_suffix
                     info.append(",".join([l[k] for k in outkeys]))
-            info.append("\n")
-            p.join("sampleinfo.csv").write("\n".join(info))
+            p.join("sampleinfo.csv").write("\n".join(info) + "\n")
         # Alternatively print as debug
         if request.config.option.ngs_show_fixture:
             logger.info("sample_layout")
