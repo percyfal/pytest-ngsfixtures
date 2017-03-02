@@ -15,9 +15,9 @@ from pytest_ngsfixtures import factories
 from pytest_ngsfixtures.factories import safe_mktemp, safe_symlink
 
 # Filetypes
-bamfile_realpath = os.path.realpath(os.path.join(os.path.dirname(__file__), os.pardir, "pytest_ngsfixtures", "data", "applications", "PUR.HG00731.bam"))
-PURHG00731 = os.path.join("applications", "PUR.HG00731.bam")
-PURHG00733 = os.path.join("applications", "PUR.HG00733.bam")
+bamfile_realpath = os.path.realpath(os.path.join(os.path.dirname(__file__), os.pardir, "pytest_ngsfixtures", "data", "applications", "pe", "PUR.HG00731.tiny.bam"))
+PURHG00731 = os.path.join("applications", "pe", "PUR.HG00731.tiny.bam")
+PURHG00733 = os.path.join("applications", "pe", "PUR.HG00733.tiny.bam")
 PURFILES = [PURHG00731, PURHG00733]
 bamfile = PURHG00731
 bam = factories.filetype(bamfile, fdir="bamfoo", scope="function", numbered=True)
@@ -61,15 +61,17 @@ def test_safe_symlink(tmpdir_factory, bam):
 
 
 def test_bam(bam):
-    assert not re.search("bamfoo\d+/PUR.HG00731.bam", str(bam)) is None
+    assert not re.search("bamfoo\d+/PUR.HG00731.tiny.bam", str(bam)) is None
     assert bam.realpath() == bamfile_realpath
+    assert bam.realpath().exists()
 
-
+    
 def test_bam_rename(renamebam):
-    assert not re.search("renamebamfoo\d+/s.bam", str(renamebam)) is None
+    assert not re.search("renamebamfoo\d+/s.tiny.bam", str(renamebam)) is None
     assert renamebam.realpath() == bamfile_realpath
+    assert renamebam.realpath().exists()
 
-
+    
 @pytest.fixture(scope="function")
 def combinedbam(tmpdir_factory, bam, renamebam):
     p = tmpdir_factory.mktemp("combined")
@@ -79,10 +81,14 @@ def combinedbam(tmpdir_factory, bam, renamebam):
 
 
 def test_combine_fixtures(combinedbam):
+    flist = sorted([x for x in combinedbam.visit()])
+    assert len(flist) == 2
+    assert flist[0].dirname == flist[1].dirname
     flist = sorted([x.basename for x in combinedbam.visit()])
-    assert flist == ['PUR.HG00731.bam', 's.bam']
+    assert flist == ['PUR.HG00731.tiny.bam', 's.tiny.bam']
     fset = set([str(x.realpath()) for x in combinedbam.visit()])
     assert fset == set([bamfile_realpath])
+
 
 custom_samples = factories.sample_layout(
     dirname="foo",
