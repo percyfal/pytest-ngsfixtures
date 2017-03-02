@@ -1,10 +1,16 @@
 # -*- coding: utf-8 -*-
 """Configuration settings for pytest-ngsfixtures"""
+import os
+import yaml
 from collections import namedtuple
+from pytest_ngsfixtures import ROOT_DIR
+
+DATADIR = os.path.join(ROOT_DIR, "data", "applications")
+configfile = os.path.join(DATADIR, "config.yaml")
 
 Config = namedtuple('Config', 'SIZES SAMPLES POPULATIONS SAMPLE_LAYOUTS')
 
-conf = Config(SIZES = ["tiny", "small", "medium", "yuge"],
+sample_conf = Config(SIZES = ["tiny", "small", "medium", "yuge"],
               SAMPLES = ['CHS.HG00512', 'CHS.HG00513',
                          'PUR.HG00731', 'PUR.HG00733',
                          'PUR.HG00731.A', 'PUR.HG00731.B',
@@ -15,3 +21,6 @@ conf = Config(SIZES = ["tiny", "small", "medium", "yuge"],
                                "pop_sample", "pop_sample_run", "pop_project_sample_run"]
 )
 
+
+with open(configfile, 'r') as fh:
+    application_config = yaml.load(fh)
