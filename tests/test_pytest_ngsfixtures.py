@@ -7,8 +7,7 @@ test_pytest_ngsfixtures
 
 Tests for `pytest_ngsfixtures` module.
 """
-import os
-import pytest
+
 
 def test_flat(flat):
     l = [x for x in sorted(flat.listdir()) if str(x).endswith(".gz")]

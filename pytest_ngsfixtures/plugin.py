@@ -1,26 +1,13 @@
 # -*- coding: utf-8 -*-
 """Plugin configuration module for pytest-ngsfixtures"""
-import itertools
-from collections import namedtuple
 from pytest_ngsfixtures import factories
+from pytest_ngsfixtures.config import sample_conf
 
-Config = namedtuple('Config', 'SIZES SAMPLES POPULATIONS SAMPLE_LAYOUTS')
+_help_ngs_size = "select sample size (choices: {})".format(", ".join("'{}'".format(x) for x in sample_conf.SIZES))
+_help_ngs_layout = "select predefined sample layout(s) (allowed choices: {})".format(", ".join("'{}'".format(x) for x in sample_conf.SAMPLE_LAYOUTS))
+_help_ngs_show_fixture = "show fixture layout"
+_help_ngs_threads = "set the number of threads to use in test"
 
-conf = Config(SIZES = ["tiny", "small", "medium", "yuge"],
-              SAMPLES = ['CHS.HG00512', 'CHS.HG00513',
-                         'PUR.HG00731', 'PUR.HG00733',
-                         'PUR.HG00731.A', 'PUR.HG00731.B',
-                         'PUR.HG00733.A', 'PUR.HG00733.B',
-                         'YRI.NA19238', 'YRI.NA19239'],
-              POPULATIONS = ["CHS", "PUR", "YRI"],
-              SAMPLE_LAYOUTS= ["sample", "sample_run", "project_sample_run",
-                               "pop_sample", "pop_sample_run", "pop_project_sample_run"]
-)
-
-_help_ngs_size = "select sample size (choices: {})".format(", ".join("'{}'".format(x) for x in conf.SIZES))
-_help_ngs_layout="select predefined sample layout(s) (allowed choices: {})".format(", ".join("'{}'".format(x) for x in conf.SAMPLE_LAYOUTS))
-_help_ngs_show_fixture="show fixture layout"
-_help_ngs_threads="set the number of threads to use in test"
 
 def pytest_addoption(parser):
     group = parser.getgroup("ngsfixtures", "next-generation sequencing fixture options")
@@ -31,7 +18,7 @@ def pytest_addoption(parser):
         dest='ngs_size',
         default='tiny',
         help=_help_ngs_size,
-        choices=conf.SIZES,
+        choices=sample_conf.SIZES,
         metavar="size",
     )
     group.addoption(
@@ -43,7 +30,7 @@ def pytest_addoption(parser):
         help=_help_ngs_layout,
         nargs="+",
         metavar="layout",
-        choices=conf.SAMPLE_LAYOUTS,
+        choices=sample_conf.SAMPLE_LAYOUTS,
     )
     group.addoption(
         '-F',
@@ -65,9 +52,10 @@ def pytest_addoption(parser):
 
 flat = factories.sample_layout(samples=['CHS.HG00512'])
 
-kwargs =  {'samples' : ['PUR.HG00731.A', 'PUR.HG00731.B', 'PUR.HG00733.A'],
-           'platform_units' : ['010101_AAABBB11XX', '020202_AAABBB22XX', '010101_AAABBB11XX'],
-           'paired_end' : [True] * 3, 'numbered': True,
+kwargs = {
+    'samples': ['PUR.HG00731.A', 'PUR.HG00731.B', 'PUR.HG00733.A'],
+    'platform_units': ['010101_AAABBB11XX', '020202_AAABBB22XX', '010101_AAABBB11XX'],
+    'paired_end': [True] * 3, 'numbered': True,
 }
 
 
@@ -91,12 +79,13 @@ sample_project_run = factories.sample_layout(
 )
 
 
-kwargs =  {'samples' :  ['PUR.HG00731.A', 'PUR.HG00731.B', 'PUR.HG00733.A'] + ['CHS.HG00512', 'CHS.HG00513'] + ['YRI.NA19238', 'YRI.NA19239'],
-           'platform_units' : ['010101_AAABBB11XX', '020202_AAABBB22XX', '010101_AAABBB11XX'] + ['010101_AAABBB11XX', '020202_AAABBB22XX'] * 2,
-           'populations' : ['PUR'] * 3 + ['CHS'] * 2 + ['YRI'] * 2,
-           'paired_end' : [True] * 7,
-           'use_short_sample_names' : False,
-           'numbered': True,
+kwargs = {
+    'samples':  ['PUR.HG00731.A', 'PUR.HG00731.B', 'PUR.HG00733.A'] + ['CHS.HG00512', 'CHS.HG00513'] + ['YRI.NA19238', 'YRI.NA19239'],
+    'platform_units': ['010101_AAABBB11XX', '020202_AAABBB22XX', '010101_AAABBB11XX'] + ['010101_AAABBB11XX', '020202_AAABBB22XX'] * 2,
+    'populations': ['PUR'] * 3 + ['CHS'] * 2 + ['YRI'] * 2,
+    'paired_end': [True] * 7,
+    'use_short_sample_names': False,
+    'numbered': True,
 }
 
 pop_sample = factories.sample_layout(
@@ -119,5 +108,4 @@ pop_sample_project_run = factories.sample_layout(
 )
 
 ref = factories.reference_layout(dirname="ref")
-scaffolds= factories.reference_layout(label="scaffolds", dirname="scaffolds")
-
+scaffolds = factories.reference_layout(label="scaffolds", dirname="scaffolds")

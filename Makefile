@@ -1,4 +1,4 @@
-.PHONY: clean clean-test clean-pyc clean-build docs help
+.PHONY: clean clean-test clean-pyc clean-build docs help conda
 .DEFAULT_GOAL := help
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
@@ -47,6 +47,10 @@ clean-test: ## remove test and coverage artifacts
 	rm -f .coverage
 	rm -fr htmlcov/
 
+clean-snakemake: ## remove snakemake directories
+	find . -name '.snakemake' -exec rm -fr {} +
+
+
 lint: ## check style with flake8
 	flake8 pytest_ngsfixtures tests
 
@@ -75,13 +79,18 @@ docs: ## generate Sphinx HTML documentation, including API docs
 servedocs: docs ## compile the docs watching for changes
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
-release: clean ## package and upload a release
+release: clean clean-snakemake ## package and upload a release
 	python setup.py sdist upload
 	python setup.py bdist_wheel upload
 
-conda: clean ## package and upload a conda release
+current=$(shell git rev-parse --abbrev-ref HEAD)
+conda: ## package and upload a conda release
+	git checkout conda
+	git merge $(current)
+	$(MAKE) clean clean-snakemake
 	conda build conda
 	anaconda upload $(shell conda build conda --output)
+	git checkout $(current)
 
 dist: clean ## builds source and wheel package
 	python setup.py sdist
