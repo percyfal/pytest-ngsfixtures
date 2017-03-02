@@ -8,7 +8,9 @@ test_pytest_factories
 Tests for `pytest_ngsfixtures.factories` module.
 """
 import os
+import re
 import py
+import itertools
 import pytest
 from pytest_ngsfixtures import factories
 from pytest_ngsfixtures.factories import safe_mktemp, safe_symlink
@@ -19,8 +21,8 @@ PURHG00731 = os.path.join("applications", "PUR.HG00731.bam")
 PURHG00733 = os.path.join("applications", "PUR.HG00733.bam")
 PURFILES = [PURHG00731, PURHG00733]
 bamfile = PURHG00731
-bam = factories.filetype(bamfile, fdir="bamfoo", scope="function")
-renamebam = factories.filetype(bamfile, fdir="renamebamfoo", rename=True, outprefix="s", scope="function")
+bam = factories.filetype(bamfile, fdir="bamfoo", scope="function", numbered=True)
+renamebam = factories.filetype(bamfile, fdir="renamebamfoo", rename=True, outprefix="s", scope="function", numbered=True)
 
 def test_wrong_sample():
     with pytest.raises(factories.SampleException):
@@ -58,11 +60,11 @@ def test_safe_symlink(tmpdir_factory, bam):
 
 
 def test_bam(bam):
-    assert str(bam).endswith("bamfoo/PUR.HG00731.bam")
+    assert not re.search("bamfoo\d+/PUR.HG00731.bam", str(bam)) is None
     assert bam.realpath() == bamfile_realpath
 
 def test_bam_rename(renamebam):
-    assert str(renamebam).endswith("renamebamfoo/s.bam")
+    assert not re.search("renamebamfoo\d+/s.bam", str(renamebam)) is None
     assert renamebam.realpath() == bamfile_realpath
 
 
@@ -170,3 +172,74 @@ def test_fileset_fixture_dst(bamset2):
     assert flist == sorted(dstfiles)
     flist = sorted([x.realpath() for x in bamset2.visit() if x.basename != ".lock"])
     assert flist[0] == bamfile_realpath
+
+
+##############################
+# Applications
+##############################
+# Application test config
+
+def _application_fixtures():
+    fixtures = []
+    from pytest_ngsfixtures.config import application_config as conf
+    for app, d in conf.items():
+        if app in ['basedir', 'end', 'input', 'params']:
+            continue
+        _default_versions = [str(x) for x in conf[app]['_conda_versions']]
+        for command, params in d.items():
+            if command.startswith("_"):
+                continue
+            versions = [str(x) for x in params.get("_versions", _default_versions)]
+            _raw_output = params["output"]
+            _ends = ["se", "pe"]
+            if isinstance(_raw_output, dict):
+                if not any("{end}" in x for x in _raw_output.values()):
+                    _ends = ["se"]
+                output = itertools.product([app], [command],  versions, _ends, [v for k,v in _raw_output.items()])
+            else:
+                if "{end}" not in _raw_output:
+                    _ends = ["se"]
+                output = itertools.product([app], [command], versions, _ends, [_raw_output])
+            fixtures.append(list(output))
+    return [x for l in fixtures for x in l]
+
+fixtures = _application_fixtures()
+
+@pytest.fixture(scope="function", autouse=False, params=fixtures,
+                ids=["{} {}:{}/{}".format(x[0], x[1], x[2], x[3]) for x in fixtures])
+def ao(request, tmpdir_factory):
+    app, command, version, end, fmt = request.param
+    params = {'version': version, 'end': end}
+    output = fmt.format(**params)
+    src = os.path.join("applications", app, output)
+    dst = os.path.basename(src)
+    fdir = os.path.join(app, version, command, end)
+    p = safe_mktemp(tmpdir_factory, fdir)
+    p = safe_symlink(p, src, dst)
+    if request.config.option.ngs_show_fixture:
+        logger.info("filetype fixture content")
+        logger.info("------------------------")
+        logger.info(str(p))
+    return p
+
+
+def test_application_output(ao):
+    assert ao.exists()
+
+
+def test_call_application_output():
+    with pytest.raises(AssertionError):
+        factories.application_output("foo", "bar", "0.0")
+    factories.application_output("samtools", "samtools_flagstat", "1.2")
+
+
+appout = factories.application_output("samtools", "samtools_flagstat", "1.2")
+
+def test_factory_application_output(appout):
+    assert appout.exists()
+
+appout_dir = factories.application_output("samtools", "samtools_flagstat", "1.2", fdir="samtools/samtools_flagstat")
+
+def test_factory_application_output_fdir(appout_dir):
+    assert appout_dir.exists()
+    assert "samtools/samtools_flagstat" in str(appout_dir)
