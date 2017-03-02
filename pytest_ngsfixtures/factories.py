@@ -68,6 +68,8 @@ def _download_sample_file(fn, size):
         logger.info("File '{}' doesn't exist; downloading it from git repo to local pytest_ngsfixtures installation location".format(fn))
         url = os.path.join(REPO, os.path.relpath(fn, ROOTDIR))
         try:
+            if not os.path.exists(os.path.dirname(fn)):
+                os.makedirs(os.path.dirname(fn))
             with urllib.request.urlopen(url) as response, open(fn, 'wb') as fh:
                 shutil.copyfileobj(response, fh)
         except Exception as e:
