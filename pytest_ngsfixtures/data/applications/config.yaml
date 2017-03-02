@@ -39,8 +39,7 @@ fastqc:
   _versions: [0.7.2, 0.10.1, 0.11.2, 0.11.5]
   _conda_versions: [0.10.1, 0.11.2, 0.11.5]
   fastqc:
-    output:
-      zipfile: "{version}/{end}/medium_fastqc.zip"
+    output: "{version}/{end}/medium_fastqc.zip"
 
 qualimap:
   _default: 2.2.2a
@@ -51,8 +50,8 @@ qualimap:
   
 samtools:
   _default: 1.3.1
-  _conda_versions: [1.2, 1.3.1]
-  _versions: [1.2, 1.3.1]
+  _conda_versions: ["1.2", "1.3.1"]
+  _versions: ["1.2", "1.3.1"]
   samtools_flagstat:
     output: "{version}/{end}/medium.flagstat.txt"
   samtools_depth:
