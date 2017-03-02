@@ -86,7 +86,7 @@ release: clean clean-snakemake ## package and upload a release
 current=$(shell git rev-parse --abbrev-ref HEAD)
 conda: ## package and upload a conda release
 	git checkout conda
-	git merge $(current)
+	git checkout $(current) conda/meta.yaml
 	$(MAKE) clean clean-snakemake
 	conda build conda
 	anaconda upload $(shell conda build conda --output)
