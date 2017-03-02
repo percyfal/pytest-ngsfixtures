@@ -1,0 +1,35 @@
+This is cutadapt 1.12 with Python 3.5.3
+Command line parameters: ../../yuge/CHS.HG00512_1.fastq.gz -a AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC -o /dev/null
+Trimming 1 adapter with at most 10.0% errors in single-end mode ...
+Finished in 0.40 s (13 us/read; 4.61 M reads/minute).
+
+=== Summary ===
+
+Total reads processed:                  30,483
+Reads with adapters:                       792 (2.6%)
+Reads written (passing filters):        30,483 (100.0%)
+
+Total basepairs processed:     2,316,542 bp
+Total written (filtered):      2,313,984 bp (99.9%)
+
+=== Adapter 1 ===
+
+Sequence: AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC; Type: regular 3'; Length: 34; Trimmed: 792 times.
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20-29 bp: 2; 30-34 bp: 3
+
+Bases preceding removed adapters:
+  A: 29.2%
+  C: 23.6%
+  G: 30.1%
+  T: 16.9%
+  none/other: 0.3%
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	637	476.3	0	637
+4	130	119.1	0	130
+5	23	29.8	0	23
+6	2	7.4	0	2
+

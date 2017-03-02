@@ -1,0 +1,14 @@
+[M::main_mem] read 60966 sequences (4632972 bp)...
+[M::mem_pestat] # candidate unique pairs for (FF, FR, RF, RR): (4, 26312, 1, 3)
+[M::mem_pestat] skip orientation FF as there are not enough pairs
+[M::mem_pestat] analyzing insert size distribution for orientation FR...
+[M::mem_pestat] (25, 50, 75) percentile: (466, 475, 484)
+[M::mem_pestat] low and high boundaries for computing mean and std.dev: (430, 520)
+[M::mem_pestat] mean and std.dev: (474.71, 13.40)
+[M::mem_pestat] low and high boundaries for proper pairs: (412, 538)
+[M::mem_pestat] skip orientation RF as there are not enough pairs
+[M::mem_pestat] skip orientation RR as there are not enough pairs
+[M::mem_process_seqs] Processed 60966 reads in 2.692 CPU sec, 7.209 real sec
+[main] Version: 0.7.8-r455
+[main] CMD: bwa mem 0.7.8/scaffoldsN.fa ../../yuge/CHS.HG00512_1.fastq.gz ../../yuge/CHS.HG00512_2.fastq.gz
+[main] Real time: 7.475 sec; CPU: 2.780 sec

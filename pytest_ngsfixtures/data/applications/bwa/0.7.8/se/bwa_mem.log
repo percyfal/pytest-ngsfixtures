@@ -1,0 +1,5 @@
+[M::main_mem] read 30483 sequences (2316542 bp)...
+[M::mem_process_seqs] Processed 30483 reads in 1.056 CPU sec, 1.092 real sec
+[main] Version: 0.7.8-r455
+[main] CMD: bwa mem 0.7.8/scaffoldsN.fa ../../yuge/CHS.HG00512_1.fastq.gz
+[main] Real time: 1.143 sec; CPU: 1.100 sec

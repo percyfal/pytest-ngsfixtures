@@ -15,6 +15,7 @@ with open('HISTORY.rst') as history_file:
 
 requirements = [
     'pytest>=3.0.0',
+    'pyyaml',
 ]
 
 test_requirements = [
@@ -48,10 +49,7 @@ setup(
     url='https://github.com/percyfal/pytest-ngsfixtures',
     packages=[
         'pytest_ngsfixtures',
-        'pytest_ngsfixtures.applications',
     ],
-    # package_dir={'pytest_ngsfixtures':
-    #              'pytest_ngsfixtures'},
     package_data={'pytest_ngsfixtures/data': package_data},
     include_package_data=True,
     license="GNU General Public License v3",

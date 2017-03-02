@@ -1,0 +1,14 @@
+# -*- snakemake -*-
+import os
+
+configfile: "../config.yaml"
+include: "../rules.sm"
+
+rule bwa_mem:
+    input: ref = "scaffoldsN.fa",
+           read1=os.path.join(config["basedir"], "{size}/{prefix}_1.fastq.gz"),
+           index = "scaffoldsN.fa.sa"
+    output: "{prefix}.{size}.mem.bam"
+    log: "{prefix}.{size}.mem.bam.log"
+    shell: "bwa mem {input.ref} {input.read1} 2>{log} | samtools view -Sb - > {output}"
+
