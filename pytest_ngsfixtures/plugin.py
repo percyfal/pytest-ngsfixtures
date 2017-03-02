@@ -2,10 +2,10 @@
 """Plugin configuration module for pytest-ngsfixtures"""
 import itertools
 from pytest_ngsfixtures import factories
-from pytest_ngsfixtures.config import conf
+from pytest_ngsfixtures.config import sample_conf
 
-_help_ngs_size = "select sample size (choices: {})".format(", ".join("'{}'".format(x) for x in conf.SIZES))
-_help_ngs_layout="select predefined sample layout(s) (allowed choices: {})".format(", ".join("'{}'".format(x) for x in conf.SAMPLE_LAYOUTS))
+_help_ngs_size = "select sample size (choices: {})".format(", ".join("'{}'".format(x) for x in sample_conf.SIZES))
+_help_ngs_layout="select predefined sample layout(s) (allowed choices: {})".format(", ".join("'{}'".format(x) for x in sample_conf.SAMPLE_LAYOUTS))
 _help_ngs_show_fixture="show fixture layout"
 _help_ngs_threads="set the number of threads to use in test"
 
@@ -18,7 +18,7 @@ def pytest_addoption(parser):
         dest='ngs_size',
         default='tiny',
         help=_help_ngs_size,
-        choices=conf.SIZES,
+        choices=sample_conf.SIZES,
         metavar="size",
     )
     group.addoption(
@@ -30,7 +30,7 @@ def pytest_addoption(parser):
         help=_help_ngs_layout,
         nargs="+",
         metavar="layout",
-        choices=conf.SAMPLE_LAYOUTS,
+        choices=sample_conf.SAMPLE_LAYOUTS,
     )
     group.addoption(
         '-F',
