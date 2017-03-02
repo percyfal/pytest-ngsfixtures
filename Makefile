@@ -26,7 +26,7 @@ BROWSER := python -c "$$BROWSER_PYSCRIPT"
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
-clean: clean-build clean-pyc clean-test clean-snakemake ## remove all build, test, coverage and Python artifacts
+clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
 
 
 clean-build: ## remove build artifacts
@@ -79,13 +79,16 @@ docs: ## generate Sphinx HTML documentation, including API docs
 servedocs: docs ## compile the docs watching for changes
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
-release: clean ## package and upload a release
+release: clean clean-snakemake ## package and upload a release
 	python setup.py sdist upload
 	python setup.py bdist_wheel upload
 
-conda: clean ## package and upload a conda release
+conda: ## package and upload a conda release
+	git checkout conda
+	$(MAKE) clean clean-snakemake
 	conda build conda
 	anaconda upload $(shell conda build conda --output)
+	git checkout develop
 
 dist: clean ## builds source and wheel package
 	python setup.py sdist
