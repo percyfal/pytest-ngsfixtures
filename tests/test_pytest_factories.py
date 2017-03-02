@@ -245,9 +245,9 @@ def test_factory_application_output_fdir(appout_dir):
     assert "samtools/samtools_flagstat" in str(appout_dir)
 
 # Test pool fixtures; these are not defined by default
-kwargs =  {'samples' :  ['PUR', 'CHS', 'YRI'],
+kwargs =  {'samples' :  ['CHS', 'PUR', 'YRI'],
            'platform_units' : ['010101_AAABBB11XX', '020202_AAABBB22XX', '010101_AAABBB11XX'],
-           'populations' : ['PUR', 'CHS', 'YRI'],
+           'populations' : ['CHS', 'PUR', 'YRI'],
            'paired_end' : [True] * 3,
            'use_short_sample_names' : False,
            'numbered': True,
@@ -266,7 +266,7 @@ def test_pool_pop_sample(pool_pop_sample):
             assert not re.search("tiny/(CHS|PUR|YRI)_\d+.fastq.gz$", str(x.realpath())) is None
 
 pool_pop_sample_aliases = factories.sample_layout(
-    dirname="pool_pop_sample",
+    dirname="pool_pop_sample_aliases",
     runfmt="{POP}/{SM}/{SM}_{PU}",
     sample_aliases=["CHS.pool", "PUR.pool", "YRI.pool"],
     **kwargs,
@@ -275,6 +275,5 @@ pool_pop_sample_aliases = factories.sample_layout(
 
 def test_pool_pop_sample_aliases(pool_pop_sample_aliases):
     p = pool_pop_sample_aliases
-    for x in sorted(p.visit()):
-        if x.basename == "sampleinfo.csv":
-            print(x.readlines())
+    sampleinfo = p.join("sampleinfo.csv")
+    assert not re.search(",CHS.pool,", sampleinfo.readlines()[1]) is None
