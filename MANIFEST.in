@@ -14,4 +14,4 @@ include versioneer.py
 include pytest_ngsfixtures/_version.py
 include pytest_ngsfixtures/*.py
 recursive-include pytest_ngsfixtures/data *
-
+prune pytest_ngsfixtures/data/yuge
