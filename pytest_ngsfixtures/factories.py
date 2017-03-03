@@ -87,7 +87,7 @@ def _check_file_exists(fn, size):
     else:
         logger.info("Sequence data in {} is not bundled with conda/PyPI packages to save space".format(size))
         logger.info("")
-        logger.info("Launch script 'download_ngsfixtures_data.py' to download missing files")
+        logger.info("   Launch script 'download_ngsfixtures_data.py' to download missing files")
         logger.info("")
         raise FileNotFoundError
 
