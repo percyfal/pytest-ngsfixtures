@@ -2,6 +2,28 @@
 History
 =======
 
+0.3.1 (2017-03-03)
+------------------
+
+Defer download to script, minor bug fixes
+
+* Add application_fixtures to config module
+* Fix sample_alias bug (#4)
+* Add script download_ngsfixtures_data.py for manual download of data (#5)
+
+
+0.3.0 (2017-03-02)
+------------------
+
+Add application data, pool data, and functions for downloading data
+
+* Add application data for cutadapt, fastqc, qualimap and samtools
+* Add pooled sequencing data
+* Add functionality for downloading large data sets
+* Improve make targets for easier releases  
+* Minor bug fixes
+
+
 0.2.0 (2017-02-24)
 ------------------
 
