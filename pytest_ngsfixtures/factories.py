@@ -53,7 +53,7 @@ def get_config(request):
     return config
 
 
-def _download_sample_file(fn, size):
+def download_sample_file(fn, size, dry_run=False):
     """Download sample file if it doesn't yet exist
 
     Setup urllib connection and download data file.
@@ -66,6 +66,8 @@ def _download_sample_file(fn, size):
         import urllib.request
         import shutil
         logger.info("File '{}' doesn't exist; downloading it from git repo to local pytest_ngsfixtures installation location".format(fn))
+        if dry_run:
+            return
         url = os.path.join(REPO, os.path.relpath(fn, ROOTDIR))
         try:
             if not os.path.exists(os.path.dirname(fn)):
@@ -75,6 +77,18 @@ def _download_sample_file(fn, size):
         except Exception as e:
             logger.error("Downloading '{}' failed: {}".format(url, e))
             raise
+
+
+def _check_file_exists(fn, size):
+    if size not in DOWNLOAD_SIZES:
+        return
+    try:
+        os.path.exists(fn)
+    except Exception as e:
+        logger.info(e)
+        logger.info("Sequence data in {} is not bundled with conda/PyPI packages to save space".format(size))
+        logger.info("Launch script 'download_ngsfixtures_data.py' to download missing files")
+        raise
 
 
 def safe_symlink(p, src, dst):
@@ -227,7 +241,7 @@ def sample_layout(
                 l['SM'] = sample_aliases[i]
                 i += 1
             src = os.path.join(DATADIR, config['size'], srckeys['SM'] + "_1.fastq.gz")
-            _download_sample_file(src, config['size'])
+            _check_file_exists(src, config['size'])
             safe_symlink(p, os.path.join(DATADIR, config['size'], srckeys['SM'] + "_1.fastq.gz"),
                          runfmt.format(**l) + read1_suffix)
             if l['PE']:
