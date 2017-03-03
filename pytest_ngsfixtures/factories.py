@@ -193,11 +193,13 @@ def sample_layout(
       p (py.path.local): tmp directory with sample layout setup
 
     """
+    if len(sample_aliases) > 0:
+        assert len(sample_aliases) == len(samples), "length of sample_aliases ({}) and samples ({}) must be equal".format(len(sample_aliases), len(samples))
+
     @pytest.fixture(autouse=False)
     def sample_layout_fixture(request, tmpdir_factory):
         """Sample layout fixture. Setup sequence input files according to a
         specified sample organization"""
-
         check_samples(samples)
         config = get_config(request)
         _samples = samples
@@ -213,6 +215,7 @@ def sample_layout(
         _sample_counter = 1
         _sample_map = {}
         p = safe_mktemp(tmpdir_factory, dirname, **kwargs)
+        i = 0
         for l in _layout:
             srckeys = l.copy()
             if not l["SM"] in _sample_map.keys():
@@ -221,7 +224,8 @@ def sample_layout(
             if use_short_sample_names:
                 l['SM'] = _sample_map[l['SM']]
             if len(sample_aliases) > 0:
-                l['SM'] = sample_aliases.pop(0)
+                l['SM'] = sample_aliases[i]
+                i += 1
             src = os.path.join(DATADIR, config['size'], srckeys['SM'] + "_1.fastq.gz")
             _download_sample_file(src, config['size'])
             safe_symlink(p, os.path.join(DATADIR, config['size'], srckeys['SM'] + "_1.fastq.gz"),

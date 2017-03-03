@@ -65,13 +65,13 @@ def test_bam(bam):
     assert bam.realpath() == bamfile_realpath
     assert bam.realpath().exists()
 
-    
+
 def test_bam_rename(renamebam):
     assert not re.search("renamebamfoo\d+/s.tiny.bam", str(renamebam)) is None
     assert renamebam.realpath() == bamfile_realpath
     assert renamebam.realpath().exists()
 
-    
+
 @pytest.fixture(scope="function")
 def combinedbam(tmpdir_factory, bam, renamebam):
     p = tmpdir_factory.mktemp("combined")

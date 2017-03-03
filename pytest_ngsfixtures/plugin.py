@@ -54,6 +54,7 @@ flat = factories.sample_layout(samples=['CHS.HG00512'])
 
 kwargs = {
     'samples': ['PUR.HG00731.A', 'PUR.HG00731.B', 'PUR.HG00733.A'],
+    'sample_aliases': ['s1', 's1', 's2'],
     'platform_units': ['010101_AAABBB11XX', '020202_AAABBB22XX', '010101_AAABBB11XX'],
     'paired_end': [True] * 3, 'numbered': True,
 }
@@ -81,6 +82,7 @@ sample_project_run = factories.sample_layout(
 
 kwargs = {
     'samples':  ['PUR.HG00731.A', 'PUR.HG00731.B', 'PUR.HG00733.A'] + ['CHS.HG00512', 'CHS.HG00513'] + ['YRI.NA19238', 'YRI.NA19239'],
+    'sample_aliases':  ['PUR.HG00731', 'PUR.HG00731', 'PUR.HG00733'] + ['CHS.HG00512', 'CHS.HG00513'] + ['YRI.NA19238', 'YRI.NA19239'],
     'platform_units': ['010101_AAABBB11XX', '020202_AAABBB22XX', '010101_AAABBB11XX'] + ['010101_AAABBB11XX', '020202_AAABBB22XX'] * 2,
     'populations': ['PUR'] * 3 + ['CHS'] * 2 + ['YRI'] * 2,
     'paired_end': [True] * 7,
