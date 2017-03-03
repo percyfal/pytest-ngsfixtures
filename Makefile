@@ -89,7 +89,7 @@ conda: ## package and upload a conda release
 	git merge $(current)
 	$(MAKE) clean clean-snakemake
 	conda build conda
-	anaconda upload $(shell conda build conda --output)
+	anaconda upload $(shell conda build conda --output) --interactive
 	git checkout $(current)
 
 dist: clean ## builds source and wheel package
