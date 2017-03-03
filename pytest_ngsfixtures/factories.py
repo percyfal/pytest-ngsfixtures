@@ -82,13 +82,14 @@ def download_sample_file(fn, size, dry_run=False):
 def _check_file_exists(fn, size):
     if size not in DOWNLOAD_SIZES:
         return
-    try:
-        os.path.exists(fn)
-    except Exception as e:
-        logger.info(e)
+    if os.path.exists(fn):
+        return
+    else:
         logger.info("Sequence data in {} is not bundled with conda/PyPI packages to save space".format(size))
+        logger.info("")
         logger.info("Launch script 'download_ngsfixtures_data.py' to download missing files")
-        raise
+        logger.info("")
+        raise FileNotFoundError
 
 
 def safe_symlink(p, src, dst):
