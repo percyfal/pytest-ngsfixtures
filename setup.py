@@ -24,6 +24,9 @@ test_requirements = [
 
 package_data = []
 
+scripts = ['scripts/download_ngsfixtures_data.py']
+
+
 def package_path(path, filters=()):
     if not os.path.exists(path):
         raise RuntimeError("packaging non-existent path: %s" % path)
@@ -73,4 +76,5 @@ setup(
     setup_requires=['pytest-runner'],
     tests_require=test_requirements,
     entry_points = {'pytest11':['pytest_ngsfixtures = pytest_ngsfixtures.plugin']},
+    scripts = scripts,
 )
