@@ -9,10 +9,10 @@ Tests for `pytest_ngsfixtures.factories` module.
 """
 import os
 import re
-import itertools
 import pytest
 from pytest_ngsfixtures import factories
 from pytest_ngsfixtures.factories import safe_mktemp, safe_symlink
+from pytest_ngsfixtures.config import application_fixtures
 
 # Filetypes
 bamfile_realpath = os.path.realpath(os.path.join(os.path.dirname(__file__), os.pardir, "pytest_ngsfixtures", "data", "applications", "pe", "PUR.HG00731.tiny.bam"))
@@ -65,13 +65,13 @@ def test_bam(bam):
     assert bam.realpath() == bamfile_realpath
     assert bam.realpath().exists()
 
-    
+
 def test_bam_rename(renamebam):
     assert not re.search("renamebamfoo\d+/s.tiny.bam", str(renamebam)) is None
     assert renamebam.realpath() == bamfile_realpath
     assert renamebam.realpath().exists()
 
-    
+
 @pytest.fixture(scope="function")
 def combinedbam(tmpdir_factory, bam, renamebam):
     p = tmpdir_factory.mktemp("combined")
@@ -115,12 +115,12 @@ def test_download_url_fail(tmpdir_factory):
     import urllib.request
     bn = tmpdir_factory.mktemp("foo").join("foo.bar")
     with pytest.raises(urllib.error.HTTPError):
-        factories._download_sample_file(str(bn), "yuge")
+        factories.download_sample_file(str(bn), "yuge")
 
 
 def test_download_url_wrong_size(tmpdir_factory):
     bn = tmpdir_factory.mktemp("foo").join("foo.bar")
-    factories._download_sample_file(str(bn), "tiny")
+    factories.download_sample_file(str(bn), "tiny")
     assert not bn.exists()
 
 
@@ -130,7 +130,7 @@ def test_download_url(tmpdir_factory, monkeypatch):
     def mockreturn(*args):
         return "https://raw.githubusercontent.com/percyfal/pytest-ngsfixtures/master/pytest_ngsfixtures/data/tiny/CHS.HG00512_1.fastq.gz"
     monkeypatch.setattr(os.path, 'join', mockreturn)
-    factories._download_sample_file(str(bn), "yuge")
+    factories.download_sample_file(str(bn), "yuge")
     import gzip
     with gzip.open(str(bn), 'rb') as fh:
         assert fh.readlines()[0].strip() == b'@ERR016116.1225854/1'
@@ -139,7 +139,7 @@ def test_download_url(tmpdir_factory, monkeypatch):
 def test_download_url_exists(tmpdir_factory):
     bn = tmpdir_factory.mktemp("foo").join("foo.bar.gz")
     bn.write("foo.bar")
-    factories._download_sample_file(str(bn), "yuge")
+    factories.download_sample_file(str(bn), "yuge")
     assert "foo.bar" == "".join(bn.readlines())
 
 
@@ -192,33 +192,7 @@ def test_fileset_fixture_dst(bamset2):
 # Applications
 ##############################
 # Application test config
-
-
-def _application_fixtures():
-    fixtures = []
-    from pytest_ngsfixtures.config import application_config as conf
-    for app, d in conf.items():
-        if app in ['basedir', 'end', 'input', 'params']:
-            continue
-        _default_versions = [str(x) for x in conf[app]['_conda_versions']]
-        for command, params in d.items():
-            if command.startswith("_"):
-                continue
-            versions = [str(x) for x in params.get("_versions", _default_versions)]
-            _raw_output = params["output"]
-            _ends = ["se", "pe"]
-            if isinstance(_raw_output, dict):
-                if not any("{end}" in x for x in _raw_output.values()):
-                    _ends = ["se"]
-                output = itertools.product([app], [command],  versions, _ends, [v for k, v in _raw_output.items()])
-            else:
-                if "{end}" not in _raw_output:
-                    _ends = ["se"]
-                output = itertools.product([app], [command], versions, _ends, [_raw_output])
-            fixtures.append(list(output))
-    return [x for l in fixtures for x in l]
-
-fixtures = _application_fixtures()
+fixtures = application_fixtures()
 
 
 @pytest.fixture(scope="function", autouse=False, params=fixtures,

@@ -53,7 +53,7 @@ def get_config(request):
     return config
 
 
-def _download_sample_file(fn, size):
+def download_sample_file(fn, size, dry_run=False):
     """Download sample file if it doesn't yet exist
 
     Setup urllib connection and download data file.
@@ -66,6 +66,8 @@ def _download_sample_file(fn, size):
         import urllib.request
         import shutil
         logger.info("File '{}' doesn't exist; downloading it from git repo to local pytest_ngsfixtures installation location".format(fn))
+        if dry_run:
+            return
         url = os.path.join(REPO, os.path.relpath(fn, ROOTDIR))
         try:
             if not os.path.exists(os.path.dirname(fn)):
@@ -75,6 +77,19 @@ def _download_sample_file(fn, size):
         except Exception as e:
             logger.error("Downloading '{}' failed: {}".format(url, e))
             raise
+
+
+def _check_file_exists(fn, size):
+    if size not in DOWNLOAD_SIZES:
+        return
+    if os.path.exists(fn):
+        return
+    else:
+        logger.info("Sequence data in {} is not bundled with conda/PyPI packages to save space".format(size))
+        logger.info("")
+        logger.info("   Launch script 'download_ngsfixtures_data.py' to download missing files")
+        logger.info("")
+        raise FileNotFoundError
 
 
 def safe_symlink(p, src, dst):
@@ -193,11 +208,13 @@ def sample_layout(
       p (py.path.local): tmp directory with sample layout setup
 
     """
+    if len(sample_aliases) > 0:
+        assert len(sample_aliases) == len(samples), "length of sample_aliases ({}) and samples ({}) must be equal".format(len(sample_aliases), len(samples))
+
     @pytest.fixture(autouse=False)
     def sample_layout_fixture(request, tmpdir_factory):
         """Sample layout fixture. Setup sequence input files according to a
         specified sample organization"""
-
         check_samples(samples)
         config = get_config(request)
         _samples = samples
@@ -213,6 +230,7 @@ def sample_layout(
         _sample_counter = 1
         _sample_map = {}
         p = safe_mktemp(tmpdir_factory, dirname, **kwargs)
+        i = 0
         for l in _layout:
             srckeys = l.copy()
             if not l["SM"] in _sample_map.keys():
@@ -221,9 +239,10 @@ def sample_layout(
             if use_short_sample_names:
                 l['SM'] = _sample_map[l['SM']]
             if len(sample_aliases) > 0:
-                l['SM'] = sample_aliases.pop(0)
+                l['SM'] = sample_aliases[i]
+                i += 1
             src = os.path.join(DATADIR, config['size'], srckeys['SM'] + "_1.fastq.gz")
-            _download_sample_file(src, config['size'])
+            _check_file_exists(src, config['size'])
             safe_symlink(p, os.path.join(DATADIR, config['size'], srckeys['SM'] + "_1.fastq.gz"),
                          runfmt.format(**l) + read1_suffix)
             if l['PE']:
