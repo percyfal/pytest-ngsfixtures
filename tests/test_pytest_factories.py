@@ -9,10 +9,10 @@ Tests for `pytest_ngsfixtures.factories` module.
 """
 import os
 import re
-import itertools
 import pytest
 from pytest_ngsfixtures import factories
 from pytest_ngsfixtures.factories import safe_mktemp, safe_symlink
+from pytest_ngsfixtures.config import application_fixtures
 
 # Filetypes
 bamfile_realpath = os.path.realpath(os.path.join(os.path.dirname(__file__), os.pardir, "pytest_ngsfixtures", "data", "applications", "pe", "PUR.HG00731.tiny.bam"))
@@ -192,33 +192,7 @@ def test_fileset_fixture_dst(bamset2):
 # Applications
 ##############################
 # Application test config
-
-
-def _application_fixtures():
-    fixtures = []
-    from pytest_ngsfixtures.config import application_config as conf
-    for app, d in conf.items():
-        if app in ['basedir', 'end', 'input', 'params']:
-            continue
-        _default_versions = [str(x) for x in conf[app]['_conda_versions']]
-        for command, params in d.items():
-            if command.startswith("_"):
-                continue
-            versions = [str(x) for x in params.get("_versions", _default_versions)]
-            _raw_output = params["output"]
-            _ends = ["se", "pe"]
-            if isinstance(_raw_output, dict):
-                if not any("{end}" in x for x in _raw_output.values()):
-                    _ends = ["se"]
-                output = itertools.product([app], [command],  versions, _ends, [v for k, v in _raw_output.items()])
-            else:
-                if "{end}" not in _raw_output:
-                    _ends = ["se"]
-                output = itertools.product([app], [command], versions, _ends, [_raw_output])
-            fixtures.append(list(output))
-    return [x for l in fixtures for x in l]
-
-fixtures = _application_fixtures()
+fixtures = application_fixtures()
 
 
 @pytest.fixture(scope="function", autouse=False, params=fixtures,
