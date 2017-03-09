@@ -26,8 +26,8 @@ rule conda:
 
 rule clean:
     run:
-        patterns = config[APPLICATION].get("_patterns", []) + ["{}*.yaml".format(APPLICATION)]
-        for p in patterns:
+        clean = config[APPLICATION].get("_clean", []) + ["{}*.yaml".format(APPLICATION)]
+        for p in clean:
             shell("for f in `find . -name '{pattern}'`; do rm -f $f; done".format(pattern=p))
 
 

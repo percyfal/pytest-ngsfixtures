@@ -203,7 +203,7 @@ def ao(request, tmpdir_factory):
     output = fmt.format(**params)
     src = os.path.join("applications", app, output)
     dst = os.path.basename(src)
-    fdir = os.path.join(app, version, command, end)
+    fdir = os.path.join(app, str(version), command, end)
     p = safe_mktemp(tmpdir_factory, fdir)
     p = safe_symlink(p, src, dst)
     return p

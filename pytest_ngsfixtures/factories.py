@@ -392,7 +392,8 @@ def application_output(application, command, version, end="se", **kwargs):
     Returns:
       func: a filetype fixture function
     """
-    from pytest_ngsfixtures.config import application_config as conf
+    from pytest_ngsfixtures.config import application_config
+    conf = application_config()
     assert application in conf.keys(), "no such application '{}'".format(application)
     assert command in conf[application].keys(), "no such command '{}'".format(command)
     assert type(version) is str, "version must be string"
