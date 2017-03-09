@@ -20,15 +20,17 @@ rule make_conda_env_file:
 
 rule conda:
     """Pseudorule for generating all conda files"""
-    input: [r.input.conda.format(version=x) for x in helpers.get_versions(config[APPLICATION]) for r in workflow.rules if "conda" in r.input.keys()]
+    input: [r.input.conda.format(version=x) for x in \
+            helpers.get_versions(config[APPLICATION]) for r in workflow.rules \
+            if "conda" in r.input.keys()]
 
 rule clean:
     run:
-        patterns = config[APPLICATION].get("_patterns", [])
+        patterns = config[APPLICATION].get("_patterns", []) + ["{}*.yaml".format(APPLICATION)]
         for p in patterns:
             shell("for f in `find . -name '{pattern}'`; do rm -f $f; done".format(pattern=p))
 
-           
+
 rule link_version_ref:
     input: os.path.join(ROOT_DIR, config["basedir"], "ref", config["input"]["ref"])
     output: temporary(os.path.join("{version}", config["input"]["ref"]))
