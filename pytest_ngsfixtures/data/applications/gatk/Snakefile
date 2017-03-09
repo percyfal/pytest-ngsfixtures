@@ -1,0 +1,30 @@
+# -*- snakemake -*-
+import os
+
+configfile: "../config.yaml"
+
+APPLICATION = "gatk"
+
+param = {
+    'end': config['end'],
+}
+
+inputfiles = {
+    'bam': os.path.join("../{end}", config['input']['bam']),
+    'bai': os.path.join("../{end}", config['input']['bai']),
+    'ref': os.path.join("../../ref", config['input']['ref']),
+    'refidx': os.path.join("../../ref", config['input']['ref']),
+    'dict': os.path.join("../../ref", config['input']['dict']),
+    'conda': "gatk-{version}.yaml",
+    'gatk': "GenomeAnalysisTK-{version}.tar.bz2",
+}
+
+rule gatk_haplotype_caller:
+    input: **inputfiles
+    output: config[APPLICATION]["gatk_haplotype_caller"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell:
+        "gatk-register {input.gatk};" \
+        "gatk -T HaplotypeCaller -I {input.bam} -R {input.ref} | bgzip > {output};"
+
+include: "../fileutils.sm"           
