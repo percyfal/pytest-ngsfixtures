@@ -31,14 +31,14 @@ def application_config():
     return application_config
 
 
-def application_fixtures(use_conda_versions=True):
+def application_fixtures():
     """Return the application fixtures.
 
     Returns the application fixtures defined in the application config
     file (data/applications/config.yaml).
 
     Params:
-      use_conda_versions (bool): use the conda versions for each application
+
 
     Returns:
       list of fixtures, where each entry consists of application,
@@ -59,7 +59,7 @@ def application_fixtures(use_conda_versions=True):
             if isinstance(_raw_output, dict):
                 if not any("{end}" in x for x in _raw_output.values()):
                     _ends = ["se"]
-                output = itertools.product([app], [command],  versions, _ends, [v for k, v in _raw_output.items()])
+                output = itertools.product([app], [command], versions, _ends, [v for k, v in _raw_output.items()])
             else:
                 if "{end}" not in _raw_output:
                     _ends = ["se"]

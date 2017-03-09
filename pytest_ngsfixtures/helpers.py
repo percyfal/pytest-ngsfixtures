@@ -14,7 +14,7 @@ def make_conda_env_file(output, conda=BIOCONDA, **kw):
         fh.write(conda.format(**kw))
 
 
-def get_versions(subconfig, versions=None, version_keys = ['_versions', '_conda_versions']):
+def get_versions(subconfig, versions=None, version_keys=['_versions', '_conda_versions']):
     if versions is None:
         try:
             versions = set(subconfig["_versions"])
@@ -24,7 +24,8 @@ def get_versions(subconfig, versions=None, version_keys = ['_versions', '_conda_
     for k in version_keys:
         versions = versions.intersection(subconfig.get(k, versions))
     return versions
-        
+
+
 def make_targets(rules, config, application, **kw):
     TARGETS = []
     versions = get_versions(config[application])
