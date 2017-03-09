@@ -21,6 +21,7 @@ params:
 #   _versions: list of versions for which there is output
 #   _conda_versions: list of available conda versions
 #   _conda_dependencies: list of extra dependencies
+#   _clean: list of patterns to clean
 #   subtool: output(s)
 #     _exlude: versions
 
@@ -29,6 +30,7 @@ bcftools:
   _versions: [1.2, 1.3, 1.3.1]
   _conda_versions: [1.2, 1.3, 1.3.1]
   _conda_dependencies: ['samtools=={version}']
+  _clean: ["*.fai"]
   bcftools_call:
     output: "{version}/{end}/medium.call.vcf.gz"
 
@@ -59,7 +61,7 @@ freebayes:
   _versions: [1.0.2.29, 1.1.0]
   _conda_versions: [0.9.21.26, 0.9.21.7, 1.0.1, 1.0.2, 1.0.2.29, 1.1.0]
   _conda_dependencies: ["htslib"]
-  _patterns: ["*.fai"]
+  _clean: ["*.fai"]
   freebayes:
     output: "{version}/{end}/medium.freebayes.vcf.gz"
 
@@ -68,7 +70,7 @@ gatk:
   _versions: [3.5, 3.6, 3.7]
   _conda_versions: [3.5, 3.6, 3.7]
   _conda_dependencies: ["htslib"]
-  _patterns: []
+  _clean: []
   gatk_haplotype_caller:
     output: "{version}/{end}/medium.haplotype_caller.vcf.gz"
     _versions: [3.7]
