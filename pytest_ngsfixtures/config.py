@@ -31,7 +31,7 @@ def application_config():
     return application_config
 
 
-def application_fixtures():
+def application_fixtures(application=None):
     """Return the application fixtures.
 
     Returns the application fixtures defined in the application config
@@ -48,6 +48,8 @@ def application_fixtures():
     conf = application_config()
     for app, d in conf.items():
         if app in ['basedir', 'end', 'input', 'params']:
+            continue
+        if not application is None and app != application:
             continue
         versions = helpers.get_versions(conf[app])
         for command, params in d.items():
