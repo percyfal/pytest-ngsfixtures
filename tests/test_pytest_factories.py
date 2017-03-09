@@ -213,6 +213,11 @@ def test_application_output(ao):
     assert ao.exists()
 
 
+def test_application_fixture_params():
+    c = application_fixtures(application="samtools")
+    assert isinstance(c, list)
+
+
 def test_call_application_output():
     with pytest.raises(AssertionError):
         factories.application_output("foo", "bar", "0.0")
