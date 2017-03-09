@@ -152,7 +152,7 @@ sample_aliases = factories.sample_layout(
     runfmt="{SM}/{SM}_{PU}",
     numbered=True,
     scope="function",
- )
+)
 
 
 def test_sample_aliases(sample_aliases):
@@ -234,7 +234,7 @@ def test_factory_application_output_fdir(appout_dir):
 
 # Test pool fixtures; these are not defined by default
 kwargs = {
-    'samples':  ['CHS', 'PUR', 'YRI'],
+    'samples': ['CHS', 'PUR', 'YRI'],
     'platform_units': ['010101_AAABBB11XX', '020202_AAABBB22XX', '010101_AAABBB11XX'],
     'populations': ['CHS', 'PUR', 'YRI'],
     'paired_end': [True] * 3,
