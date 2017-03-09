@@ -30,7 +30,7 @@ bcftools:
   _conda_versions: [1.2, 1.3, 1.3.1]
   _conda_dependencies: ['samtools=={version}']
   bcftools_call:
-    output: "{version}/{end}/medium.vcf.gz"
+    output: "{version}/{end}/medium.call.vcf.gz"
 
 bwa:
   _default: 0.7.15
@@ -59,18 +59,18 @@ freebayes:
   _versions: [1.0.2.29, 1.1.0]
   _conda_versions: [0.9.21.26, 0.9.21.7, 1.0.1, 1.0.2, 1.0.2.29, 1.1.0]
   _conda_dependencies: ["htslib"]
-  _patterns: ["free*.yaml", "*.fai"]
+  _patterns: ["*.fai"]
   freebayes:
-    output: "{version}/{end}/medium.vcf.gz"
+    output: "{version}/{end}/medium.freebayes.vcf.gz"
 
 gatk:
   _default: 3.7
   _versions: [3.5, 3.6, 3.7]
   _conda_versions: [3.5, 3.6, 3.7]
   _conda_dependencies: ["htslib"]
-  _patterns: ["gatk*yaml"]
+  _patterns: []
   gatk_haplotype_caller:
-    output: "{version}/{end}/medium.vcf.gz"
+    output: "{version}/{end}/medium.haplotype_caller.vcf.gz"
     _versions: [3.7]
 
 qualimap:
