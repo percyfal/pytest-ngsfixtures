@@ -23,10 +23,9 @@ rule conda:
     input: [r.input.conda.format(version=x) for x in helpers.get_versions(config[APPLICATION]) for r in workflow.rules if "conda" in r.input.keys()]
 
 rule clean:
-    params: patterns = param.get('patterns', [])
     run:
-        d = dict(params)
-        for p in d['patterns']:
+        patterns = config[APPLICATION].get("_patterns", [])
+        for p in patterns:
             shell("for f in `find . -name '{pattern}'`; do rm -f $f; done".format(pattern=p))
 
            

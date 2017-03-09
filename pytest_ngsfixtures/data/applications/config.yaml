@@ -59,6 +59,7 @@ freebayes:
   _versions: [1.0.2.29, 1.1.0]
   _conda_versions: [0.9.21.26, 0.9.21.7, 1.0.1, 1.0.2, 1.0.2.29, 1.1.0]
   _conda_dependencies: ["htslib"]
+  _patterns: ["free*.yaml", "*.fai"]
   freebayes:
     output: "{version}/{end}/medium.vcf.gz"
 
@@ -67,6 +68,7 @@ gatk:
   _versions: [3.5, 3.6, 3.7]
   _conda_versions: [3.5, 3.6, 3.7]
   _conda_dependencies: ["htslib"]
+  _patterns: ["gatk*yaml"]
   gatk_haplotype_caller:
     output: "{version}/{end}/medium.vcf.gz"
     _versions: [3.7]
