@@ -1,14 +1,35 @@
 # -*- snakemake -*-
 import os
 import yaml
-from pytest_ngsfixtures.helpers import ROOT_DIR, make_conda_env_file
+from pytest_ngsfixtures import ROOT_DIR, helpers
+
+rule all:
+    """Generate all output files"""
+    input: helpers.make_targets(workflow.rules, config, APPLICATION, end=param['end'])
 
 rule make_conda_env_file:
-    output: yaml = temporary("{application}-{version}.yaml")
+    """Make conda environment file"""
+    output: yaml = "{application}-{version}.yaml"
+    priority: 100
     run:
-        make_conda_env_file(output.yaml, **wildcards)
+        kw = dict(wildcards)
+        extra = config[wildcards.application].get("_conda_dependencies", [])
+        kw['extra'] = "\n".join(["  - {}".format(x.format(**wildcards)) for x in extra])
+        helpers.make_conda_env_file(output.yaml, **kw)
 
-        
+
+rule conda:
+    """Pseudorule for generating all conda files"""
+    input: [r.input.conda.format(version=x) for x in helpers.get_versions(config[APPLICATION]) for r in workflow.rules if "conda" in r.input.keys()]
+
+rule clean:
+    params: patterns = param.get('patterns', [])
+    run:
+        d = dict(params)
+        for p in d['patterns']:
+            shell("for f in `find . -name '{pattern}'`; do rm -f $f; done".format(pattern=p))
+
+           
 rule link_version_ref:
     input: os.path.join(ROOT_DIR, config["basedir"], "ref", config["input"]["ref"])
     output: temporary(os.path.join("{version}", config["input"]["ref"]))

@@ -1,17 +1,15 @@
 # -*- snakemake -*-
 import os
-from pytest_ngsfixtures.helpers import make_targets
 
 configfile: "../config.yaml"
-include: "../fileutils.sm"
 
 APPLICATION = "fastqc"
 param = {
     'ref' : os.path.join("{version}", config['input']['ref']),
     'end': config['end'],
-    'version': config[APPLICATION]['_conda_versions'],
     'regions': config['params']['regions'],
 }
+
 BAM = os.path.join("../{end}", config['input']['bam'])
 
 
@@ -23,6 +21,4 @@ rule fastqc:
         "mkdir -p {wildcards.version} && " + \
             "fastqc --noextract {input.bam} -o {wildcards.version}/{wildcards.end}"
 
-
-rule all:
-    input: make_targets(workflow.rules, config, APPLICATION, end=param['end'], version=param['version'])
+include: "../fileutils.sm"
