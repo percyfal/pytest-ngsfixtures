@@ -4,7 +4,7 @@ import os
 import yaml
 import itertools
 from collections import namedtuple
-from pytest_ngsfixtures import ROOT_DIR
+from pytest_ngsfixtures import ROOT_DIR, helpers
 
 DATADIR = os.path.join(ROOT_DIR, "data", "applications")
 configfile = os.path.join(DATADIR, "config.yaml")
@@ -25,8 +25,10 @@ sample_conf = Config(
 )
 
 
-with open(configfile, 'r') as fh:
-    application_config = yaml.load(fh)
+def application_config():
+    with open(configfile, 'r') as fh:
+        application_config = yaml.load(fh)
+    return application_config
 
 
 def application_fixtures(use_conda_versions=True):
@@ -42,19 +44,16 @@ def application_fixtures(use_conda_versions=True):
       list of fixtures, where each entry consists of application,
       command, version, end, and the raw output.
     """
-    use_versions = "_conda_versions"
-    if not use_conda_versions:
-        use_versions = "_versions"
     fixtures = []
-    conf = application_config
+    conf = application_config()
     for app, d in conf.items():
         if app in ['basedir', 'end', 'input', 'params']:
             continue
-        _default_versions = [str(x) for x in conf[app][use_versions]]
+        versions = helpers.get_versions(conf[app])
         for command, params in d.items():
             if command.startswith("_"):
                 continue
-            versions = [str(x) for x in params.get("_versions", _default_versions)]
+            versions = helpers.get_versions(conf[app][command], versions)
             _raw_output = params["output"]
             _ends = ["se", "pe"]
             if isinstance(_raw_output, dict):
