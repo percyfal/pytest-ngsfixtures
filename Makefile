@@ -88,7 +88,7 @@ gh-pages: ## generate Sphinx HTML documentation, including API docs, for gh-page
 	sphinx-apidoc -o docs/ pytest_ngsfixtures
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
-	mv -fv docs/_build/html/* ./
+	rsync -av docs/_build/html/* ./
 	rm -rf $(GH_PAGES_SOURCES) _build .version __pycache__
 	git add -A -f $(GH_PAGES_DOCS)
 	git commit -m "Generated gh-pages for `git log master -1 --pretty=short --abbrev-commit`" && git push origin gh-pages ; git checkout master
@@ -103,7 +103,7 @@ gh-pages-dev: ## generate Sphinx HTML documentation, including API docs, for gh-
 	sphinx-apidoc -o docs/ pytest_ngsfixtures
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
-	mv -fv docs/_build/html/* ./
+	rsync -av docs/_build/html/* ./
 	rm -rf $(GH_PAGES_SOURCES) _build .version __pycache__
 	git add -A -f $(GH_PAGES_DOCS)
 	git commit -m "Generated gh-pages for `git log develop -1 --pretty=short --abbrev-commit`" && git push origin gh-pages ; git checkout develop
