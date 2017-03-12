@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>lts-workflow documentation &#8212; pytest-ngsfixtures 0.3.1+27.g6412ccc documentation</title>
+    <title>pytest-ngsfixtures documentation &#8212; pytest-ngsfixtures 0.3.1+29.gbd00897 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.3.1+27.g6412ccc',
+        VERSION:     '0.3.1+29.gbd00897',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -42,29 +42,60 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="lts-workflow-documentation">
-<h1>lts-workflow documentation<a class="headerlink" href="#lts-workflow-documentation" title="Permalink to this headline">¶</a></h1>
-<p>The lts-workflow module is a top-level module for workflow
-repositories developed by the <a class="reference external" href="https://www.scilifelab.se/facilities/wabi/">SciLifeLab Bioinformatics Long-term
-Support</a> team.</p>
-<p>Note that this module doesn&#8217;t actually contain any workflows. Rather,
-it provides helper functions and documentation of a more general
-nature that relates to all workflows.</p>
-<p>Contents:</p>
+  <div class="section" id="pytest-ngsfixtures-documentation">
+<h1>pytest-ngsfixtures documentation<a class="headerlink" href="#pytest-ngsfixtures-documentation" title="Permalink to this headline">¶</a></h1>
+</div>
+<div class="section" id="about">
+<h1>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h1>
+<p>This is a <a class="reference external" href="http://doc.pytest.org/en/latest/plugins.html">pytest plugin</a> that enables next
+generation sequencing <a class="reference external" href="http://doc.pytest.org/en/latest/fixture.html">pytest fixtures</a>, including fastq
+files and output files from a variety of bioinformatics applications
+and tools. There are sequencing fixtures for some common sample
+layouts, but it&#8217;s easy to generate additional sample fixture layouts
+using fixture factories.</p>
+<ul class="simple">
+<li>Free software: GNU General Public License v3</li>
+</ul>
+<div class="section" id="features">
+<h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>ngs data sets of different sizes</li>
+<li>predefined sample layouts</li>
+<li>factories for generating new sample layouts</li>
+<li>result files from a variety of bioinformatics applications and tools</li>
+</ul>
+</div>
+</div>
+<div class="section" id="contents">
+<h1>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#stable-release">Stable release</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#from-sources">From sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#developer-mode">Developer mode</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Developer guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="contributing.html#summary">Summary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="contributing.html#setting-up-a-local-copy">Setting up a local copy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="contributing.html#branching-development-model">Branching/development model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="contributing.html#issues">Issues</a></li>
-<li class="toctree-l2"><a class="reference internal" href="contributing.html#adding-a-workflow">Adding a workflow</a></li>
-<li class="toctree-l2"><a class="reference internal" href="contributing.html#continuous-integration">Continuous integration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#layout-fixture-factories">Layout fixture factories</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#file-fixture-factories">File fixture factories</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#files">Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#advanced-usage">Advanced usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#custom-sample-layouts">Custom sample layouts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#parametrizing-existing-sample-layouts">Parametrizing existing sample layouts</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#plugin-options">Plugin options</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#x-ngs-size">-X, &#8211;ngs-size</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#l-ngs-layout">-L, &#8211;ngs-layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#f-ngs-show-fixture">-F, &#8211;ngs-show-fixture</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">pytest_ngsfixtures</a><ul>
@@ -91,7 +122,12 @@ nature that relates to all workflows.</p>
         <div class="sphinxsidebarwrapper">
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">lts-workflow documentation</a></li>
+<li><a class="reference internal" href="#">pytest-ngsfixtures documentation</a></li>
+<li><a class="reference internal" href="#about">About</a><ul>
+<li><a class="reference internal" href="#features">Features</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#contents">Contents</a></li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
 <div class="relations">
