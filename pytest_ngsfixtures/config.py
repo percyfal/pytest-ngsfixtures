@@ -11,6 +11,8 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 DATADIR = os.path.join(ROOT_DIR, "data", "applications")
+APPLICATION_BLACKLIST = ["pe", "se"]
+APPLICATION_DIRECTORIES = sorted([os.path.join(DATADIR, x) for x in os.listdir(DATADIR) if os.path.isdir(os.path.join(DATADIR, x)) and not x in APPLICATION_BLACKLIST])
 configfile = os.path.join(DATADIR, "config.yaml")
 
 Config = namedtuple('Config', 'SIZES SAMPLES POPULATIONS SAMPLE_LAYOUTS')
@@ -32,6 +34,15 @@ sample_conf = Config(
 def application_config():
     with open(configfile, 'r') as fh:
         application_config = yaml.load(fh)
+    for appdir in APPLICATION_DIRECTORIES:
+        cfile = os.path.join(appdir, "config.yaml")
+        try:
+            with open(cfile, 'r') as fh:
+                conf = yaml.load(fh)
+            application_config.update(conf)
+        except Exception as e:
+            print(e)
+            
     return application_config
 
 
