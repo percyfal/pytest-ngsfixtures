@@ -10,11 +10,8 @@ Stable release
 
 To install pytest-ngsfixtures, run this command in your terminal:
 
-.. warning:: WIP: as of yet there is no scilifelab-lts channel. 
-
 .. code-block:: console
 
-    $ # conda install -c scilifelab-lts pytest-ngsfixtures
     $ conda install -c percyfal pytest-ngsfixtures
 
 This is the preferred method to install pytest-ngsfixtures, as it will
@@ -25,13 +22,13 @@ always install the most recent stable release.
 From sources
 ------------
 
-The sources for pytest-ngsfixtures can be downloaded from the `Bitbucket repo`_.
+The sources for pytest-ngsfixtures can be downloaded from the `github repo`_.
 
 You can either clone the public repository:
 
 .. code-block:: console
 
-    $ git clone git@bitbucket.org:scilifelab-lts/pytest-ngsfixtures.git
+    $ git clone git@github.com:percyfal/pytest-ngsfixtures.git
 
 Once you have a copy of the source, you can install it with:
 
@@ -39,6 +36,17 @@ Once you have a copy of the source, you can install it with:
 
     $ python setup.py install
 
+.. _installation-developer-mode:
 
-.. _Bitbucket repo: https://bitbucket.org/scilifelab-lts/pytest-ngsfixtures
+Developer mode
+--------------
+    
+To install in developer mode, issue
+
+.. code-block:: console
+
+    $ python setup.py develop
+
+    
+.. _github repo: https://github.com/percyfal/pytest-ngsfixtures
 
