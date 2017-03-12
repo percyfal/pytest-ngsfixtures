@@ -186,7 +186,7 @@ def create_feature_branch(application):
     application. Fails if develop is dirty.
 
     """
-    application_path = os.path.abspath(os.path.join("data", "applications"))
+    application_path = os.path.abspath(os.path.join(ROOT_DIR, "data", "applications"))
     feature_branch = "feature/application/{}".format(application)
 
     try:
