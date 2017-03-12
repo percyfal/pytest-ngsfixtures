@@ -5,6 +5,7 @@ gatk:
   _conda_dependencies: ["htslib"]
   _clean: []
   gatk_haplotype_caller:
-    output: "{version}/{end}/medium.haplotype_caller.vcf.gz"
+    output:
+      vcfgz: "{version}/{end}/medium.haplotype_caller.vcf.gz"
     _versions: [3.7]
 

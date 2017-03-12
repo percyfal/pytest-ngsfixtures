@@ -3,5 +3,6 @@ fastqc:
   _versions: [0.7.2, 0.10.1, 0.11.2, 0.11.5]
   _conda_versions: [0.10.1, 0.11.2, 0.11.5]
   fastqc:
-    output: "{version}/{end}/medium_fastqc.zip"
+    output:
+      zip: "{version}/{end}/medium_fastqc.zip"
 

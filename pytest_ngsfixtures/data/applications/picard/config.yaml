@@ -40,22 +40,32 @@ picard:
   _clean: [] # Add clean file pattern here
 
   picard_CollectAlignmentSummaryMetrics:
-    output: "{version}/{end}/medium.align_metrics"
+    output:
+      metrics: "{version}/{end}/medium.align_metrics"
   picard_CollectBaseDistributionByCycle:
-    output: "{version}/{end}/medium.basedist_metrics"
+    output:
+      metrics: "{version}/{end}/medium.basedist_metrics"
   picard_CollectGcBiasMetrics:
-    output: "{version}/{end}/medium.gcbias_metrics"
+    output:
+      metrics: "{version}/{end}/medium.gcbias_metrics"
   picard_CollectHsMetrics:
-    output: "{version}/{end}/medium.hs_metrics"
+    output:
+      metrics: "{version}/{end}/medium.hs_metrics"
   picard_CollectInsertSizeMetrics:
-    output: "{version}/{end}/medium.insert_size_metrics"
+    output:
+      metrics: "{version}/{end}/medium.insert_size_metrics"
   picard_MarkDuplicates:
-    output: "{version}/{end}/medium.dup_metrics"
+    output:
+      metrics: "{version}/{end}/medium.dup_metrics"
   picard_CollectOxoGMetrics:
-    output: "{version}/{end}/medium.oxogm_metrics"
+    output:
+      metrics: "{version}/{end}/medium.oxogm_metrics"
   picard_CollectRnaSeqMetrics:
-    output: "{version}/{end}/medium.rnaseq_metrics"
+    output:
+      metrics: "{version}/{end}/medium.rnaseq_metrics"
   picard_CollectRrbsMetrics:
-    output: "{version}/{end}/medium.rrbs_metrics"
+    output:
+      metrics: "{version}/{end}/medium.rrbs_metrics"
   picard_CollectWgsMetrics:
-    output: "{version}/{end}/medium.wgs_metrics"
+    output:
+      metrics: "{version}/{end}/medium.wgs_metrics"
