@@ -3,8 +3,12 @@
 import os
 import yaml
 import itertools
+import logging
 from collections import namedtuple
 from pytest_ngsfixtures import ROOT_DIR, helpers
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 DATADIR = os.path.join(ROOT_DIR, "data", "applications")
 configfile = os.path.join(DATADIR, "config.yaml")
@@ -31,14 +35,37 @@ def application_config():
     return application_config
 
 
-def application_fixtures(application=None):
+def get_application_fixture(application, command, version, end):
+    """Retrieve a application fixture as a formatted string
+
+    Params:
+      application (str): application name
+      command (str): command name
+      version (str): version
+      end (str): se or pe
+
+    Returns:
+      application fixture name formatted as a string
+    """
+    conf = application_config()
+    try:
+        output = conf[application][command]['output']
+    except KeyError as e:
+        logging.error("[pytest_ngs]KeyError: {}".format(e))
+        raise
+    return os.path.join(application, output.format(version=version, end=end))
+
+
+def application_fixtures(application=None, end=None, version=None):
     """Return the application fixtures.
 
     Returns the application fixtures defined in the application config
     file (data/applications/config.yaml).
 
     Params:
-
+      application (str): application name
+      end (str): sequence configuration (single end/paired end)
+      version (str): version identifier
 
     Returns:
       list of fixtures, where each entry consists of application,
@@ -51,13 +78,13 @@ def application_fixtures(application=None):
             continue
         if not application is None and app != application:
             continue
-        versions = helpers.get_versions(conf[app])
+        versions = helpers.get_versions(conf[app]) if version is None else set([version])
         for command, params in d.items():
             if command.startswith("_"):
                 continue
             versions = helpers.get_versions(conf[app][command], versions)
             _raw_output = params["output"]
-            _ends = ["se", "pe"]
+            _ends = ["se", "pe"] if end is None else [end]
             if isinstance(_raw_output, dict):
                 if not any("{end}" in x for x in _raw_output.values()):
                     _ends = ["se"]
