@@ -77,7 +77,7 @@ docs: ## generate Sphinx HTML documentation, including API docs
 	$(BROWSER) docs/_build/html/index.html
 
 GH_PAGES_SOURCES = docs docs/Makefile pytest_ngsfixtures
-GH_PAGES_DOCS = *.html *.inv *.js _* docs
+GH_PAGES_DOCS = *.html *.inv *.js _*
 gh-pages: ## generate Sphinx HTML documentation, including API docs, for gh-pages
 	python setup.py version 2>/dev/null | grep Version | sed "s/Version://" > .version
 	git checkout gh-pages
