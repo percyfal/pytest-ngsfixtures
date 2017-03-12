@@ -76,6 +76,27 @@ docs: ## generate Sphinx HTML documentation, including API docs
 	$(MAKE) -C docs html
 	$(BROWSER) docs/_build/html/index.html
 
+GH_PAGES_SOURCES = docs docs/Makefile pytest_ngsfixtures
+GH_PAGES_DOCS = *.html *.inv *.js _*
+gh-pages: ## generate Sphinx HTML documentation, including API docs, for gh-pages
+	python setup.py version 2>/dev/null | grep Version | sed "s/Version://" > .version
+	git checkout gh-pages
+	rm -f docs/pytest_ngsfixtures.rst
+	rm -f docs/modules.rst
+	git checkout feature/docs $(GH_PAGES_SOURCES)
+	git reset HEAD
+	sphinx-apidoc -o docs/ pytest_ngsfixtures
+	$(MAKE) -C docs clean
+	$(MAKE) -C docs html
+	mv -fv docs/_build/html/* ./
+	rm -rf $(GH_PAGES_SOURCES) _build .version __pycache__
+	git add -A -f $(GH_PAGES_DOCS)
+	git commit -m "Generated gh-pages for `git log master -1 --pretty=short --abbrev-commit`" && git push origin gh-pages ; git checkout feature/docs
+
+
+viewdocs: gh-pages ## View documentation
+	$(BROWSER) docs/_build/html/index.html	
+
 servedocs: docs ## compile the docs watching for changes
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
