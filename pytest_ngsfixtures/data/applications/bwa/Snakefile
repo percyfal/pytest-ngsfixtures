@@ -3,6 +3,7 @@ import os
 import copy
 
 configfile: "../config.yaml"
+configfile: "config.yaml"
 
 APPLICATION = "bwa"
 READ1 = os.path.join("../../yuge/CHS.HG00512_1.fastq.gz")
