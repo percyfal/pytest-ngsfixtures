@@ -83,7 +83,7 @@ gh-pages: ## generate Sphinx HTML documentation, including API docs, for gh-page
 	git checkout gh-pages
 	rm -f docs/pytest_ngsfixtures.rst
 	rm -f docs/modules.rst
-	git checkout master $(GH_PAGES_SOURCES)
+	git checkout feature/docs $(GH_PAGES_SOURCES)
 	git reset HEAD
 	sphinx-apidoc -o docs/ pytest_ngsfixtures
 	$(MAKE) -C docs clean
