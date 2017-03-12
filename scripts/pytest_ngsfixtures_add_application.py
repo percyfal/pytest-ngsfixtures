@@ -35,7 +35,7 @@ def setup(application, source):
     configfile = os.path.join(path, "config.yaml")
     with open(configfile, "w") as fh:
         fh.write(config)
-    snakefile_path = os.path.join(path, "config.yaml")
+    snakefile_path = os.path.join(path, "Snakefile")
     with open(snakefile_path, "w") as fh:
         fh.write(snakefile)
 
