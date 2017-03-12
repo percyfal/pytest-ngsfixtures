@@ -6,8 +6,10 @@ input:
   bam: medium.bam
   bai: medium.bam.bai
   dict: scaffoldsN.dict
+  genepred: scaffolds-transcripts-tiny.genePred
   ref: scaffoldsN.fa
   refidx: scaffoldsN.fa.fai
+  targets: scaffolds-targets.interval_list
 
 # Parameters
 params:
