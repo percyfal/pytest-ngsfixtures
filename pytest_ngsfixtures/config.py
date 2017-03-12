@@ -31,10 +31,22 @@ sample_conf = Config(
 )
 
 
-def application_config():
+def application_config(application=None):
+    """Get application configuration
+
+    Params:
+      application (str): application name
+
+    Return:
+      dict: application configuration
+
+    """
     with open(configfile, 'r') as fh:
         application_config = yaml.load(fh)
     for appdir in APPLICATION_DIRECTORIES:
+        if not application is None:
+            if os.path.basename(appdir) != application:
+                continue
         cfile = os.path.join(appdir, "config.yaml")
         try:
             with open(cfile, 'r') as fh:
@@ -42,7 +54,7 @@ def application_config():
             application_config.update(conf)
         except Exception as e:
             print(e)
-            
+
     return application_config
 
 
