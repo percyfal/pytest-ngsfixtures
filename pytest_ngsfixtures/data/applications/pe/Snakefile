@@ -1,5 +1,6 @@
 # -*- snakemake -*-
 import os
+import itertools
 
 configfile: "../config.yaml"
 include: "../rules.sm"
@@ -13,4 +14,13 @@ rule bwa_mem:
     output: "{prefix}.{size}.mem.bam"
     log: "{prefix}.{size}.mem.bam.log"
     shell: "bwa mem {input.ref} {input.read1} {input.read2} 2>{log} | samtools view -Sb - > {output}"
-    #shell: "bwa mem -H '@HD\tVN: 1.3' -R '@RG\tID:{wildcards.prefix}\tSM:{wildcards.prefix}' {input.ref} {input.read1} {input.read2} 2>{log} | samtools view -Sb - > {output}"
+
+vcfext = [".vcf.gz", ".vcf.gz.tbi"]
+callers = ["bcftools", "haplotype_caller", "freebayes"]
+VCFFILES = expand("medium.{caller}{vcfext}", caller=callers, vcfext=vcfext)
+
+rule vcffiles:
+    input: VCFFILES
+
+rule pe_all:
+    input: rules.vcffiles.input

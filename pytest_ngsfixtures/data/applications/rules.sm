@@ -25,8 +25,18 @@ rule all:
 # - large bams for generating result files for parsing
 ##############################
 rule link_ref:
-    input: os.path.join(ROOT_DIR, config["basedir"], "ref" , config["ref"])
-    output: "scaffoldsN.fa"
+    input: os.path.join(ROOT_DIR, config["basedir"], "ref" , config["input"]["ref"])
+    output: temporary("scaffoldsN.fa")
+    shell: "ln -s {input} {output}"
+
+rule link_ref_index:
+    input: os.path.join(ROOT_DIR, config["basedir"], "ref" , config["input"]["ref"] + ".fai")
+    output: temporary("scaffoldsN.fa.fai")
+    shell: "ln -s {input} {output}"
+
+rule link_ref_dict:
+    input: os.path.join(ROOT_DIR, config["basedir"], "ref" , config["input"]["dict"])
+    output: temporary("scaffoldsN.dict")
     shell: "ln -s {input} {output}"
 
 rule bwa_index:
@@ -99,6 +109,35 @@ rule tiny_bam_fofn:
 rule save:
     input: SAVEFILES
 
+
+##############################
+# Application rules
+##############################
+
+
+####################
+# vcf files
+####################
+rule gatk_haplotype_caller:
+    input: bam = "{prefix}.bam", bai="{prefix}.bam.bai", ref = "scaffoldsN.fa",
+           refidx = "scaffoldsN.fa.fai", dict = "scaffoldsN.dict"
+    output: vcf = "{prefix}.haplotype_caller.vcf"
+    shell: "gatk -T HaplotypeCaller -I {input.bam} -R {input.ref} -o {output.vcf}"
+
+rule freebayes:
+    input: bam = "{prefix}.bam", ref = "scaffoldsN.fa"
+    output: "{prefix}.freebayes.vcf"
+    shell: "freebayes -f {input.ref} {input.bam} > {output}"
+
+rule htslib_bgzip:
+    input: vcf = "{prefix}.vcf"
+    output: bgzip = "{prefix}.vcf.gz"
+    shell: "bgzip -i -@ 1 {input.vcf}"
+    
+rule samtools_tabix:
+    input: "{prefix}.vcf.gz"
+    output: "{prefix}.vcf.gz.tbi"
+    shell: "tabix -p vcf {input}"
            
 ##############################
 # clean etc

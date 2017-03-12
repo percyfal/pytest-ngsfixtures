@@ -12,3 +12,12 @@ rule bwa_mem:
     log: "{prefix}.{size}.mem.bam.log"
     shell: "bwa mem {input.ref} {input.read1} 2>{log} | samtools view -Sb - > {output}"
 
+vcfext = [".vcf.gz", ".vcf.gz.tbi"]
+callers = ["bcftools", "haplotype_caller", "freebayes"]
+VCFFILES = expand("medium.{caller}{vcfext}", caller=callers, vcfext=vcfext)
+
+rule vcffiles:
+    input: VCFFILES
+
+rule pe_all:
+    input: rules.vcffiles.input

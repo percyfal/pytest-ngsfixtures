@@ -1,0 +1,27 @@
+# -*- snakemake -*-
+import os
+import copy
+from pytest_ngsfixtures.helpers import make_targets
+
+configfile: "../config.yaml"
+
+APPLICATION = "bcftools"
+
+param = {
+    'end': config['end'],
+}
+
+inputfiles = {
+    'bam': os.path.join("../{end}", config['input']['bam']),
+    'ref': os.path.join("../../ref", config['input']['ref']),
+    'conda': "bcftools-{version}.yaml",
+}
+
+rule bcftools_call:
+    input: **inputfiles
+    output: config[APPLICATION]["bcftools_call"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "samtools mpileup -ug -f {input.ref} {input.bam} | bcftools call -vmO z -o {output}"
+
+           
+include: "../fileutils.sm"

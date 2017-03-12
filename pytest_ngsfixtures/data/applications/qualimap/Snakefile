@@ -1,14 +1,12 @@
 # -*- snakemake -*-
 import os
-from pytest_ngsfixtures.helpers import make_targets
 
 configfile: "../config.yaml"
-include: "../fileutils.sm"
 
 APPLICATION = "qualimap"
+
 param = {
     'end': config['end'],
-    'version': config[APPLICATION]['_conda_versions'],
 }
 
 BAM = os.path.join("../{end}", config['input']['bam'])
@@ -19,5 +17,4 @@ rule qualimap_bamqc:
     conda: "qualimap-{version}.yaml"
     shell: "qualimap bamqc -bam {input.bam} -outdir {version} > {output}"
            
-rule all:
-    input: make_targets(workflow.rules, config, APPLICATION, end=param['end'], version=param['version'])
+include: "../fileutils.sm"

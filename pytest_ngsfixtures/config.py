@@ -3,8 +3,12 @@
 import os
 import yaml
 import itertools
+import logging
 from collections import namedtuple
-from pytest_ngsfixtures import ROOT_DIR
+from pytest_ngsfixtures import ROOT_DIR, helpers
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 DATADIR = os.path.join(ROOT_DIR, "data", "applications")
 configfile = os.path.join(DATADIR, "config.yaml")
@@ -25,42 +29,66 @@ sample_conf = Config(
 )
 
 
-with open(configfile, 'r') as fh:
-    application_config = yaml.load(fh)
+def application_config():
+    with open(configfile, 'r') as fh:
+        application_config = yaml.load(fh)
+    return application_config
 
 
-def application_fixtures(use_conda_versions=True):
+def get_application_fixture(application, command, version, end):
+    """Retrieve a application fixture as a formatted string
+
+    Params:
+      application (str): application name
+      command (str): command name
+      version (str): version
+      end (str): se or pe
+
+    Returns:
+      application fixture name formatted as a string
+    """
+    conf = application_config()
+    try:
+        output = conf[application][command]['output']
+    except KeyError as e:
+        logging.error("[pytest_ngs]KeyError: {}".format(e))
+        raise
+    return os.path.join(application, output.format(version=version, end=end))
+
+
+def application_fixtures(application=None, end=None, version=None):
     """Return the application fixtures.
 
     Returns the application fixtures defined in the application config
     file (data/applications/config.yaml).
 
     Params:
-      use_conda_versions (bool): use the conda versions for each application
+      application (str): application name
+      end (str): sequence configuration (single end/paired end)
+      version (str): version identifier
 
     Returns:
       list of fixtures, where each entry consists of application,
       command, version, end, and the raw output.
     """
-    use_versions = "_conda_versions"
-    if not use_conda_versions:
-        use_versions = "_versions"
     fixtures = []
-    conf = application_config
+    conf = application_config()
     for app, d in conf.items():
         if app in ['basedir', 'end', 'input', 'params']:
             continue
-        _default_versions = [str(x) for x in conf[app][use_versions]]
+        if not application is None and app != application:
+            continue
+        versions = helpers.get_versions(conf[app]) if version is None else set([version])
         for command, params in d.items():
             if command.startswith("_"):
                 continue
-            versions = [str(x) for x in params.get("_versions", _default_versions)]
+            versions = helpers.get_versions(conf[app][command], versions)
             _raw_output = params["output"]
-            _ends = ["se", "pe"]
+            _ends = ["se", "pe"] if end is None else [end]
             if isinstance(_raw_output, dict):
                 if not any("{end}" in x for x in _raw_output.values()):
                     _ends = ["se"]
-                output = itertools.product([app], [command],  versions, _ends, [v for k, v in _raw_output.items()])
+                output = itertools.product([app], [command], versions, _ends, [v for k, v in _raw_output.items()])
             else:
                 if "{end}" not in _raw_output:
                     _ends = ["se"]

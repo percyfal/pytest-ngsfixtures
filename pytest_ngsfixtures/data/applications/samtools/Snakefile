@@ -1,15 +1,13 @@
 # -*- snakemake -*-
 import os
-from pytest_ngsfixtures.helpers import make_targets
 
 configfile: "../config.yaml"
-include: "../fileutils.sm"
+
 
 APPLICATION = "samtools"
 param = {
     'ref' : os.path.join("{version}", config['input']['ref']),
     'end': config['end'],
-    'version': config[APPLICATION]['_conda_versions'],
     'regions': config['params']['regions'],
 }
 
@@ -52,5 +50,4 @@ rule samtools_stats:
     conda: "samtools-{version}.yaml"
     shell: "samtools stats {input.bam} > {output}"
            
-rule all:
-    input: make_targets(workflow.rules, config, APPLICATION, end=param['end'], version=param['version'])
+include: "../fileutils.sm"
