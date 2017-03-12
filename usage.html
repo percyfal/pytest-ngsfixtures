@@ -1,0 +1,335 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Usage &#8212; pytest-ngsfixtures 0.3.1+29.gbd00897 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.3.1+29.gbd00897',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="&lt;no title&gt;" href="authors.html" />
+    <link rel="prev" title="&lt;no title&gt;" href="readme.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="layout-fixture-factories">
+<h2>Layout fixture factories<a class="headerlink" href="#layout-fixture-factories" title="Permalink to this headline">¶</a></h2>
+<p>The plugin contains two fixture factories that generate sample layouts
+(<strong>sample_layout</strong>) and reference data (<strong>reference_layout</strong>). A
+layout is simply a set of links to the distributed data files, where
+the link organization and naming reflect typical file naming schemes
+of sequencing files delivered by sequence providers or as used in
+projects.</p>
+<p>There are seven predefined sample layouts: <strong>flat</strong>, <strong>sample</strong>,
+<strong>sample_run</strong>, <strong>sample_project_run</strong>, <strong>pop_sample</strong>,
+<strong>pop_sample_run</strong>, and <strong>pop_sample_project_run</strong>, and two reference
+layouts: <strong>ref</strong> and <strong>scaffolds</strong>.</p>
+<p>To use a fixture, simply depend on it in a test, e.g.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">test_foo</span><span class="p">(</span><span class="n">sample</span><span class="p">):</span>
+    <span class="c1"># Do something with sample</span>
+</pre></div>
+</div>
+<p>The predefined sample layouts cover some common cases. However,
+alternative layouts can be added by using the factory function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pytest_ngsfixtures</span> <span class="kn">import</span> <span class="n">factories</span>
+
+<span class="n">custom_samples</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span>
+    <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span>
+    <span class="n">samples</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;CHS.HG00512&quot;</span><span class="p">,</span> <span class="s2">&quot;YRI.NA19238&quot;</span><span class="p">],</span>
+    <span class="n">platform_units</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="s1">&#39;foobar&#39;</span><span class="p">],</span>
+    <span class="n">paired_end</span><span class="o">=</span><span class="p">[</span><span class="bp">True</span><span class="p">,</span> <span class="bp">False</span><span class="p">],</span>
+    <span class="n">use_short_sample_names</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+    <span class="n">runfmt</span><span class="o">=</span><span class="s2">&quot;{SM}/{SM}_{PU}&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">test_custom</span><span class="p">(</span><span class="n">custom_samples</span><span class="p">):</span>
+    <span class="c1"># do something with custom_samples</span>
+</pre></div>
+</div>
+<p>The plugin option <strong>-F</strong> (see <strong>Plugin options</strong> below) shows the
+fixture layout. For instance, using this option with the sample layout
+would generate the following information upon running a test that
+depends on the sample fixture:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="go">INFO:pytest_ngsfixtures.factories:sample_layout</span>
+<span class="go">INFO:pytest_ngsfixtures.factories:-------------</span>
+<span class="go">INFO:pytest_ngsfixtures.factories:/tmp/pytest-of-user/pytest-1/sample0/s1</span>
+<span class="go">INFO:pytest_ngsfixtures.factories:/tmp/pytest-of-user/pytest-1/sample0/s1/s1_010101_AAABBB11XX_1.fastq.gz</span>
+<span class="go">INFO:pytest_ngsfixtures.factories:/tmp/pytest-of-user/pytest-1/sample0/s1/s1_010101_AAABBB11XX_2.fastq.gz</span>
+<span class="go">INFO:pytest_ngsfixtures.factories:/tmp/pytest-of-user/pytest-1/sample0/s1/s1_020202_AAABBB22XX_1.fastq.gz</span>
+<span class="go">INFO:pytest_ngsfixtures.factories:/tmp/pytest-of-user/pytest-1/sample0/s1/s1_020202_AAABBB22XX_2.fastq.gz</span>
+<span class="go">INFO:pytest_ngsfixtures.factories:/tmp/pytest-of-user/pytest-1/sample0/s2</span>
+<span class="go">INFO:pytest_ngsfixtures.factories:/tmp/pytest-of-user/pytest-1/sample0/s2/s2_010101_AAABBB11XX_1.fastq.gz</span>
+<span class="go">INFO:pytest_ngsfixtures.factories:/tmp/pytest-of-user/pytest-1/sample0/s2/s2_010101_AAABBB11XX_2.fastq.gz</span>
+<span class="go">INFO:pytest_ngsfixtures.factories:/tmp/pytest-of-user/pytest-1/sample0/sampleinfo.csv</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="file-fixture-factories">
+<h2>File fixture factories<a class="headerlink" href="#file-fixture-factories" title="Permalink to this headline">¶</a></h2>
+<p>In addition to sequence and reference input data, there is a
+collection of downstream files, such as bam files, and application
+output files, e.g. from samtools and fastqc. As of version 0.3.0,
+there are two fixture factory functions, <strong>filetype</strong> and <strong>fileset</strong>,
+that create file fixtures and fileset fixtures, respectively. The
+filetype factory generates a fixture for a single file, returning the
+path to the file, whereas the fileset factory generates a fixture for
+several files, returning the path to the directory in which the files
+reside.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pytest_ngsfixtures</span> <span class="kn">import</span> <span class="n">factories</span>
+
+<span class="n">bam</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">filetype</span><span class="p">(</span><span class="s2">&quot;applications/pe/PUR.HG00731.tiny.bam&quot;</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;function&quot;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">test_bam</span><span class="p">(</span><span class="n">bam</span><span class="p">):</span>
+    <span class="c1"># Do something with bam file</span>
+
+
+<span class="n">bamset</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">fileset</span><span class="p">(</span><span class="n">src</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;applications/pe/PUR.HG00731.tiny.bam&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;applications/pe/PUR.HG00733.tiny.bam&quot;</span><span class="p">],</span>
+                                <span class="n">fdir</span><span class="o">=</span><span class="s2">&quot;bamset&quot;</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;function&quot;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">test_bamset</span><span class="p">(</span><span class="n">bamset</span><span class="p">):</span>
+    <span class="c1"># Do something with bamset</span>
+</pre></div>
+</div>
+<p>Note that currently you need to provide the path to the file <em>relative
+to</em> <code class="docutils literal"><span class="pre">pytest_ngsfixtures/data</span></code>.</p>
+</div>
+</div>
+<div class="section" id="files">
+<h1>Files<a class="headerlink" href="#files" title="Permalink to this headline">¶</a></h1>
+<p>Fixture files live in subdirectories of the
+<code class="docutils literal"><span class="pre">pytest_ngsfixtures/data</span></code> directory:</p>
+<dl class="docutils">
+<dt>applications/</dt>
+<dd>application output files</dd>
+<dt>ref/</dt>
+<dd>reference data files</dd>
+<dt>medium/</dt>
+<dd>medium sequence files</dd>
+<dt>small/</dt>
+<dd>small sequence files</dd>
+<dt>tiny/</dt>
+<dd>tiny sequence files</dd>
+<dt>yuge/</dt>
+<dd>yuge sequence files</dd>
+</dl>
+<p>Each sequence directory contain the same samples in different sizes:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">File</span> <span class="n">name</span>                   <span class="n">Sample</span> <span class="n">ID</span>         <span class="n">Type</span>                <span class="n">Population</span>
+<span class="o">--------------------------</span>  <span class="o">------------</span>      <span class="o">-----------------</span>   <span class="o">------------</span>
+<span class="n">CHS</span><span class="o">.</span><span class="n">HG00512_1</span><span class="o">.</span><span class="n">fastq</span><span class="o">.</span><span class="n">gz</span>      <span class="n">CHS</span><span class="o">.</span><span class="n">HG00512</span>       <span class="n">Individual</span>          <span class="n">Han</span><span class="o">-</span><span class="n">Chinese</span>
+<span class="n">CHS</span><span class="o">.</span><span class="n">HG00513_1</span><span class="o">.</span><span class="n">fastq</span><span class="o">.</span><span class="n">gz</span>      <span class="n">CHS</span><span class="o">.</span><span class="n">HG00513</span>       <span class="n">Individual</span>          <span class="n">Han</span><span class="o">-</span><span class="n">Chinese</span>
+<span class="n">CHS_1</span><span class="o">.</span><span class="n">fastq</span><span class="o">.</span><span class="n">gz</span>              <span class="n">CHS</span>               <span class="n">Pool</span>                <span class="n">Han</span><span class="o">-</span><span class="n">Chinese</span>
+<span class="n">PUR</span><span class="o">.</span><span class="n">HG00731</span><span class="o">.</span><span class="n">A_1</span><span class="o">.</span><span class="n">fastq</span><span class="o">.</span><span class="n">gz</span>    <span class="n">PUR</span><span class="o">.</span><span class="n">HG00731</span><span class="o">.</span><span class="n">A</span>     <span class="n">Individual</span><span class="p">,</span> <span class="n">run</span> <span class="n">A</span>   <span class="n">Puerto</span> <span class="n">Rico</span>
+<span class="n">PUR</span><span class="o">.</span><span class="n">HG00731</span><span class="o">.</span><span class="n">B_1</span><span class="o">.</span><span class="n">fastq</span><span class="o">.</span><span class="n">gz</span>    <span class="n">PUR</span><span class="o">.</span><span class="n">HG00731</span><span class="o">.</span><span class="n">B</span>     <span class="n">Individual</span><span class="p">,</span> <span class="n">run</span> <span class="n">B</span>   <span class="n">Puerto</span> <span class="n">Rico</span>
+<span class="n">PUR</span><span class="o">.</span><span class="n">HG00733</span><span class="o">.</span><span class="n">A_1</span><span class="o">.</span><span class="n">fastq</span><span class="o">.</span><span class="n">gz</span>    <span class="n">PUR</span><span class="o">.</span><span class="n">HG00733</span><span class="o">.</span><span class="n">A</span>     <span class="n">Individual</span><span class="p">,</span> <span class="n">run</span> <span class="n">A</span>   <span class="n">Puerto</span> <span class="n">Rico</span>
+<span class="n">PUR</span><span class="o">.</span><span class="n">HG00733</span><span class="o">.</span><span class="n">B_1</span><span class="o">.</span><span class="n">fastq</span><span class="o">.</span><span class="n">gz</span>    <span class="n">PUR</span><span class="o">.</span><span class="n">HG00733</span><span class="o">.</span><span class="n">B</span>     <span class="n">Individual</span><span class="p">,</span> <span class="n">run</span> <span class="n">B</span>   <span class="n">Puerto</span> <span class="n">Rico</span>
+<span class="n">PUR_1</span><span class="o">.</span><span class="n">fastq</span><span class="o">.</span><span class="n">gz</span>              <span class="n">PUR</span>               <span class="n">Pool</span><span class="p">,</span> <span class="n">run</span> <span class="n">A</span>         <span class="n">Puerto</span> <span class="n">Rico</span>
+<span class="n">YRI</span><span class="o">.</span><span class="n">NA19238_1</span><span class="o">.</span><span class="n">fastq</span><span class="o">.</span><span class="n">gz</span>      <span class="n">YRI</span><span class="o">.</span><span class="n">NA19238</span>       <span class="n">Individual</span>          <span class="n">Yoruban</span>
+<span class="n">YRI</span><span class="o">.</span><span class="n">NA19239_1</span><span class="o">.</span><span class="n">fastq</span><span class="o">.</span><span class="n">gz</span>      <span class="n">YRI</span><span class="o">.</span><span class="n">NA19238</span>       <span class="n">Individual</span>          <span class="n">Yoruban</span>
+<span class="n">YRI_1</span><span class="o">.</span><span class="n">fastq</span><span class="o">.</span><span class="n">gz</span>              <span class="n">YRI</span>               <span class="n">Pool</span>                <span class="n">Yoruban</span>
+</pre></div>
+</div>
+<p>and similarly for read 2. The sequence files have been generated from
+the 1000 genomes project, two each from the populations CHS
+(Han-Chinese), PUR (Puerto Rico) and YRI (Yoruban). They have been
+selected based on mappings to a variable region on chromosome 6 to
+ensure that running variant callers on the different data sets will
+generate differing variant call sets. When setting up a fixture with
+the sample_layout factory function, bear in mind that the parameter
+<code class="docutils literal"><span class="pre">samples</span></code> <strong>must</strong> be one or several of the labels in the <em>Sample
+ID</em> column in the table above. The pools are simply concatenated
+versions of the individual files, with a ploidy of 4.</p>
+</div>
+<div class="section" id="advanced-usage">
+<h1>Advanced usage<a class="headerlink" href="#advanced-usage" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="custom-sample-layouts">
+<h2>Custom sample layouts<a class="headerlink" href="#custom-sample-layouts" title="Permalink to this headline">¶</a></h2>
+<p>In addition to the predefined sample layouts, it is possible to define
+custom layouts by use of the <code class="docutils literal"><span class="pre">sample_layout</span></code> factory function.
+Basically, the fixture creates links to the data files. The fixture
+link names are determined by the parameter <code class="docutils literal"><span class="pre">runfmt</span></code>, which is a
+<a class="reference external" href="https://docs.python.org/3/library/string.html#formatspec">python mini-format string</a>. The
+format arguments relate to the function parameters as follows:</p>
+<dl class="docutils">
+<dt>SM</dt>
+<dd>samples - list of sample names (one or several of CHS.HG00512, CHS.HG00513, PUR.HG00731, PUR.HG00733,
+YRI.NA19238, and YRI.NA19239.)</dd>
+<dt>PU</dt>
+<dd>platform_units - platform unit names, e.g. flowcell name.</dd>
+<dt>BATCH</dt>
+<dd>batches - batch (project) name, e.g. if a sequencing center run
+several rounds of sequencing of a sample</dd>
+<dt>POP</dt>
+<dd>populations - population names</dd>
+</dl>
+<p><code class="docutils literal"><span class="pre">factories.sample_layout</span></code> generates output file names by iterating
+over the parameters and formatting names according to runfmt. For
+instance, if <code class="docutils literal"><span class="pre">runfmt=&quot;{SM}/{SM}_{PU}&quot;</span></code>, values in <code class="docutils literal"><span class="pre">samples</span></code> and
+<code class="docutils literal"><span class="pre">platform_units</span></code> will be used to produce the final file names. In
+this case, <code class="docutils literal"><span class="pre">samples</span></code> and <code class="docutils literal"><span class="pre">platform_units</span></code> must be of equal length.</p>
+<p>See the predefined fixtures in <code class="docutils literal"><span class="pre">pytest_ngsfixtures.plugin</span></code> and the
+tests for examples.</p>
+</div>
+<div class="section" id="parametrizing-existing-sample-layouts">
+<h2>Parametrizing existing sample layouts<a class="headerlink" href="#parametrizing-existing-sample-layouts" title="Permalink to this headline">¶</a></h2>
+<p>pytest supports parametrizing tests over fixtures. The following code
+example shows how to parametrize over the predefined layouts:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="nd">@pytest.fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;function&quot;</span><span class="p">,</span> <span class="n">autouse</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">request</span><span class="o">.</span><span class="n">getfuncargvalue</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">param</span><span class="p">)</span>
+
+<span class="nd">@pytest.mark.parametrize</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">pytest</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">getoption</span><span class="p">(</span><span class="s2">&quot;ngs_layout&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;sample&quot;</span><span class="p">]),</span> <span class="n">indirect</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_run</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="c1"># Do something with data</span>
+</pre></div>
+</div>
+<p>Here, we define an indirect fixture that calls one of the predefined
+layout fixtures by use of the <code class="docutils literal"><span class="pre">request.getfuncargvalue</span></code> function. In
+addition, the parametrization is done over the plugin option
+<code class="docutils literal"><span class="pre">ngs_layout</span></code>, which enables selecting from the command line what
+layouts to use (see next section).</p>
+</div>
+</div>
+<div class="section" id="plugin-options">
+<h1>Plugin options<a class="headerlink" href="#plugin-options" title="Permalink to this headline">¶</a></h1>
+<p>The plugin defines three options that can be used to select and show
+predefined fixtures.</p>
+<div class="section" id="x-ngs-size">
+<h2>-X, &#8211;ngs-size<a class="headerlink" href="#x-ngs-size" title="Permalink to this headline">¶</a></h2>
+<p>Select the size of the sequence fixtures (fastq files). There are
+currently four sizes to choose from:</p>
+<ol class="arabic simple">
+<li>tiny - 100 sequences (default)</li>
+<li>small - 1000 sequences</li>
+<li>medium - 10000 sequences</li>
+<li>yuge - 1000000000000 sequences!!! No, just kidding, the entire 1000
+genomes bam file is sampled, with a sample maximum at 100000
+sequences</li>
+</ol>
+<p>Example:</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>pytest -X small
+</pre></div>
+</div>
+</div>
+<div class="section" id="l-ngs-layout">
+<h2>-L, &#8211;ngs-layout<a class="headerlink" href="#l-ngs-layout" title="Permalink to this headline">¶</a></h2>
+<p>Select one of the predefined sample layouts. Note that this option
+only affects tests that actually depend on the layouts in some
+parametrized way. See <code class="docutils literal"><span class="pre">pytest_ngsfixtures.plugin</span></code> for the setup
+of the predefined sample layouts. Example:</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>pytest -L sample sample_data
+</pre></div>
+</div>
+</div>
+<div class="section" id="f-ngs-show-fixture">
+<h2>-F, &#8211;ngs-show-fixture<a class="headerlink" href="#f-ngs-show-fixture" title="Permalink to this headline">¶</a></h2>
+<p>Print information on the files that are setup in the fixture.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Usage</a><ul>
+<li><a class="reference internal" href="#layout-fixture-factories">Layout fixture factories</a></li>
+<li><a class="reference internal" href="#file-fixture-factories">File fixture factories</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#files">Files</a></li>
+<li><a class="reference internal" href="#advanced-usage">Advanced usage</a><ul>
+<li><a class="reference internal" href="#custom-sample-layouts">Custom sample layouts</a></li>
+<li><a class="reference internal" href="#parametrizing-existing-sample-layouts">Parametrizing existing sample layouts</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#plugin-options">Plugin options</a><ul>
+<li><a class="reference internal" href="#x-ngs-size">-X, &#8211;ngs-size</a></li>
+<li><a class="reference internal" href="#l-ngs-layout">-L, &#8211;ngs-layout</a></li>
+<li><a class="reference internal" href="#f-ngs-show-fixture">-F, &#8211;ngs-show-fixture</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="readme.html" title="previous chapter">&lt;no title&gt;</a></li>
+      <li>Next: <a href="authors.html" title="next chapter">&lt;no title&gt;</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/usage.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Per Unneberg.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/usage.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Developer guide &#8212; pytest-ngsfixtures 0.3.1+27.g6412ccc documentation</title>
+    <title>Developer guide &#8212; pytest-ngsfixtures 0.3.1+29.gbd00897 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.3.1+27.g6412ccc',
+        VERSION:     '0.3.1+29.gbd00897',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -56,147 +56,6 @@
 <h2>Setting up a local copy<a class="headerlink" href="#setting-up-a-local-copy" title="Permalink to this headline">¶</a></h2>
 <p>See installation section <a class="reference internal" href="installation.html#installation-from-sources"><span class="std std-ref">From sources</span></a>.</p>
 </div>
-<div class="section" id="branching-development-model">
-<h2>Branching/development model<a class="headerlink" href="#branching-development-model" title="Permalink to this headline">¶</a></h2>
-<p>The development model is based on a stable <em>master</em> branch and an
-unstable <em>develop</em> branch. The <em>master</em> branch should be used in
-production. Pushing to master/develop has been disabled; only pull
-requests from feature branches are permitted.</p>
-<p><a class="reference external" href="http://nvie.com/posts/a-successful-git-branching-model/">Vincent Driessen&#8217;s branching model</a> provides a good model for
-organizing the development process, and its adoption is recommended
-here. It adds some more branch types, of which three will be descriped
-below: feature, release and hotfix branches.</p>
-<div class="section" id="feature-branches">
-<h3>Feature branches<a class="headerlink" href="#feature-branches" title="Permalink to this headline">¶</a></h3>
-<p>Feature branches hold new features for upcoming releases and are
-branched off develop. Feature branches should be prefixed with
-&#8220;feature/&#8221;:</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> git checkout develop
-<span class="gp">$</span> git checkout -b <span class="s2">&quot;feature/myfeature&quot;</span>
-</pre></div>
-</div>
-<p>Once you&#8217;ve added the feature you want, push the branch to bitbucket
-and create a pull request to the develop branch.</p>
-</div>
-<div class="section" id="release-branches">
-<h3>Release branches<a class="headerlink" href="#release-branches" title="Permalink to this headline">¶</a></h3>
-<p>Release branches group recent feature changes into a release set. More
-code additions can be made, although they should focus on minor fixes.
-Documentation updates are encouraged.</p>
-<p>When creating a release branch, make sure you branch off develop.
-Furthermore, release branches should be prefixed with &#8220;release/&#8221;:</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> git checkout develop
-<span class="gp">$</span> git checkout -b <span class="s2">&quot;release/X.X.X&quot;</span>
-</pre></div>
-</div>
-<p>Upon creating a release branch, the version number must be bumped,
-preferably with <cite>bumpversion</cite>. First check that the changes do what
-you expect:</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> bumpversion --dry-run --verbose --new-version X.X.X part
-</pre></div>
-</div>
-<p>Note that the part argument should be set to either patch, minor or
-major, depending on what part is to be updated. If everything looks
-ok, bump the version with</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> bumpversion --new-version X.X.X part
-</pre></div>
-</div>
-<p>The configuration is setup not to tag the commit. Since merging is
-done on bitbucket, the release tag must be assigned manually to the
-master branch, once the release been merged.</p>
-<p>When the release branch is finished it is merged into master and
-master is backmerged into develop. See the <a class="reference external" href="https://danielkummer.github.io/git-flow-cheatsheet/">gitflow cheat sheet</a> for
-more information.</p>
-</div>
-<div class="section" id="hotfixes">
-<h3>Hotfixes<a class="headerlink" href="#hotfixes" title="Permalink to this headline">¶</a></h3>
-<p>Occasionally, things break on the master branch that require immediate
-fixing. This is what hotfixes are for. Importantly, updates to master
-must also be merged immediately with develop to keep it in sync.
-gitflow (see following section) has builtin support for hotfixes.</p>
-<p>Ideally, <em>all</em> hotfixes should be accompanied by a regression test, so
-that the error doesn&#8217;t pop up again.</p>
-</div>
-<div class="section" id="using-gitflow">
-<h3>Using gitflow<a class="headerlink" href="#using-gitflow" title="Permalink to this headline">¶</a></h3>
-<p>It may help to use <a class="reference external" href="https://github.com/nvie/gitflow">gitflow</a> to organise work, as it is based on
-<a class="reference external" href="http://nvie.com/posts/a-successful-git-branching-model/">Vincent Driessen&#8217;s branching model</a>. The commands simplify the task
-of creating feature branches and hotfixes.</p>
-<p>To setup gitflow, issue the following in the source code directory:</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> git flow init
-</pre></div>
-</div>
-<p>which produces (press ENTER at each question):</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="go">Which branch should be used for bringing forth production releases?</span>
-<span class="go">   - master</span>
-<span class="go">Branch name for production releases: [master]</span>
-<span class="go">Branch name for &quot;next release&quot; development: [develop]</span>
-
-<span class="go">How to name your supporting branch prefixes?</span>
-<span class="go">Feature branches? [feature/]</span>
-<span class="go">Bugfix branches? [bugfix/]</span>
-<span class="go">Release branches? [release/]</span>
-<span class="go">Hotfix branches? [hotfix/]</span>
-<span class="go">Support branches? [support/]</span>
-<span class="go">Version tag prefix? []</span>
-<span class="go">Hooks and filters directory? [/path/to/source/.git/hooks]</span>
-</pre></div>
-</div>
-<p>Then, to create a feature branch, simply type</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> git flow feature start <span class="nb">test</span>
-</pre></div>
-</div>
-<p>which produces</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="go">Switched to a new branch &#39;feature/test&#39;</span>
-
-<span class="go">Summary of actions:</span>
-<span class="go">  - A new branch &#39;feature/test&#39; was created, based on &#39;develop&#39;</span>
-<span class="go">  - You are now on branch &#39;feature/test&#39;</span>
-
-<span class="go">Now, start committing on your feature. When done, use:</span>
-
-<span class="go">    git flow feature finish test</span>
-</pre></div>
-</div>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">do not issue the finish command locally as it will merge
-the feature branch into develop. Merging is only done on
-bitbucket.</p>
-</div>
-</div>
-</div>
-<div class="section" id="issues">
-<h2>Issues<a class="headerlink" href="#issues" title="Permalink to this headline">¶</a></h2>
-<p>For all problems, small or large, use the issue tracker instead of
-sending emails! The main motivation is that all developers should be
-able to follow the discussion and history of any issue of general
-interest.</p>
-</div>
-<div class="section" id="adding-a-workflow">
-<h2>Adding a workflow<a class="headerlink" href="#adding-a-workflow" title="Permalink to this headline">¶</a></h2>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p>WIP: Describe minimum requirements, including</p>
-<ol class="last arabic simple">
-<li>tests for all sample organizations</li>
-<li>example snakefiles and configurations</li>
-</ol>
-</div>
-</div>
-<div class="section" id="continuous-integration">
-<h2>Continuous integration<a class="headerlink" href="#continuous-integration" title="Permalink to this headline">¶</a></h2>
-<p>As the number of collaborators on a project grows, code integration
-problems frequently occur. <a class="reference external" href="https://en.wikipedia.org/wiki/Continuous_integration">Continuous integration</a> is a method for
-dealing with these issues. Typically, whenever a push is done to the
-repository, tests are automatically run on a test server. bitbucket
-has recently added a service called <em>Pipelines</em> which gives some
-support for CI. It runs integration tests in Docker containers.
-<code class="xref py py-mod docutils literal"><span class="pre">pytest-ngsfixtures</span></code> provides a Docker container that packages the
-basic dependencies for running tests. Each workflow then provides a
-separate Docker container that builds on the pytest-ngsfixtures container,
-adding workflow-specific dependencies, for running tests.</p>
-</div>
 </div>
 
 
@@ -210,16 +69,6 @@ adding workflow-specific dependencies, for running tests.</p>
 <li><a class="reference internal" href="#">Developer guide</a><ul>
 <li><a class="reference internal" href="#summary">Summary</a></li>
 <li><a class="reference internal" href="#setting-up-a-local-copy">Setting up a local copy</a></li>
-<li><a class="reference internal" href="#branching-development-model">Branching/development model</a><ul>
-<li><a class="reference internal" href="#feature-branches">Feature branches</a></li>
-<li><a class="reference internal" href="#release-branches">Release branches</a></li>
-<li><a class="reference internal" href="#hotfixes">Hotfixes</a></li>
-<li><a class="reference internal" href="#using-gitflow">Using gitflow</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#issues">Issues</a></li>
-<li><a class="reference internal" href="#adding-a-workflow">Adding a workflow</a></li>
-<li><a class="reference internal" href="#continuous-integration">Continuous integration</a></li>
 </ul>
 </li>
 </ul>
