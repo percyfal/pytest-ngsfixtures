@@ -3,6 +3,7 @@ import os
 import yaml
 from pytest_ngsfixtures import ROOT_DIR, helpers
 
+
 rule all:
     """Generate all output files"""
     input: helpers.make_targets(workflow.rules, config, APPLICATION, end=param['end'])
@@ -19,7 +20,12 @@ rule make_conda_env_file:
 
 
 rule conda:
-    """Pseudorule for generating all conda files"""
+    """Pseudorule for generating all conda files.
+
+    NB: as of snakemake version 3.10.2, this rule must be run first
+    without the --use-conda flag.
+
+    """
     input: [r.input.conda.format(version=x) for x in \
             helpers.get_versions(config[APPLICATION]) for r in workflow.rules \
             if "conda" in r.input.keys()]
