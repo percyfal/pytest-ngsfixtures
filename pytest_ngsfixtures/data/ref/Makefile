@@ -191,9 +191,11 @@ scaffolds: scaffolds.bed scaffolds.dict scaffolds.fa scaffolds.fa.fai scaffolds-
 
 scaffoldstranscripts:  scaffolds-transcripts.bed12 scaffolds-transcripts.genePred scaffolds-transcripts.gtf scaffolds-transcripts-tiny.bed12 scaffolds-transcripts-tiny.genePred scaffolds-transcripts-tiny.gtf
 
+scaffoldsN: scaffoldsN.bed scaffoldsN.chrom.sizes scaffoldsN.dict scaffoldsN.fa scaffoldsN.fa.fai
+
 .PHONY: all ref reftranscripts scaffolds scaffoldstranscripts knownsites
 
-all: ref reftranscripts scaffolds scaffoldstranscripts chrom.sizes knownsites
+all: ref reftranscripts scaffolds scaffoldstranscripts scaffoldsN chrom.sizes knownsites
 
 clean:
 	$(RM) chr6*
