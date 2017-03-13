@@ -18,7 +18,7 @@ if int(sys.version[0]) != 3:
     logger.error("python version 3 required to run")
     sys.exit(1)
 
-    
+
 def get_info(application, source):
     if source == "bioconda":
         return applications.get_bioconda_info(application)
@@ -26,11 +26,14 @@ def get_info(application, source):
         return applications.get_github_info(application)
     elif source == "other":
         return applications.get_other_info(application)
-    
+
 
 def setup(application, source):
     path = applications.create_feature_branch(application)
     config, snakefile = get_info(application, source)
+
+    if not os.path.exists(path):
+        os.mkdir(path)
 
     configfile = os.path.join(path, "config.yaml")
     with open(configfile, "w") as fh:
@@ -44,7 +47,7 @@ def setup(application, source):
     print("start adding rules to {} and modify {} accordingly".format(snakefile_path, configfile))
     print()
 
-    
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Setup application files for generating test data")
     parser.add_argument('-n', '--dry-run', action='store_true',
