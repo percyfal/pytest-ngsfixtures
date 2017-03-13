@@ -8,6 +8,7 @@ input:
   dict: scaffoldsN.dict
   genepred: scaffolds-transcripts-tiny.genePred
   ref: scaffoldsN.fa
+  refflat: scaffolds-transcripts-tiny.refFlat
   refidx: scaffoldsN.fa.fai
   targets: scaffolds-targets.interval_list
 
