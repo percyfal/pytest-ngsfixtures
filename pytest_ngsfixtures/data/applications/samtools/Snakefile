@@ -17,38 +17,38 @@ BAM = os.path.join("../{end}", config['input']['bam'])
 rule samtools_depth:
     params: regions = param['regions']
     input: bam=BAM, conda="samtools-{version}.yaml"
-    output: config['samtools']['samtools_depth']['output']
+    output: **config['samtools']['samtools_depth']['output']
     conda: "samtools-{version}.yaml"
-    shell: "samtools depth -r {params.regions} {input.bam} > {output}"
+    shell: "samtools depth -r {params.regions} {input.bam} > {output.txt}"
 
 rule samtools_faidx:
     input: ref=param['ref'],  conda="samtools-{version}.yaml"
-    output: config['samtools']['samtools_faidx']['output']
+    output: **config['samtools']['samtools_faidx']['output']
     conda: "samtools-{version}.yaml"
     shell: "samtools faidx {input.ref}"
 
 rule samtools_flagstat:
     input: bam=BAM, conda="samtools-{version}.yaml"
-    output: config['samtools']['samtools_flagstat']['output']
+    output: **config['samtools']['samtools_flagstat']['output']
     conda: "samtools-{version}.yaml"
-    shell: "samtools flagstat {input.bam} > {output}"
+    shell: "samtools flagstat {input.bam} > {output.txt}"
 
 rule samtools_idxstats:
     input: bam=BAM, conda="samtools-{version}.yaml"
-    output: config['samtools']['samtools_idxstats']['output']
+    output: **config['samtools']['samtools_idxstats']['output']
     conda: "samtools-{version}.yaml"
-    shell: "samtools idxstats {input.bam} > {output}"
+    shell: "samtools idxstats {input.bam} > {output.txt}"
 
 rule samtools_rmdup:
     input: bam=BAM, conda="samtools-{version}.yaml"
-    output: config['samtools']['samtools_rmdup']['output']
+    output: **config['samtools']['samtools_rmdup']['output']
     conda: "samtools-{version}.yaml"
-    shell: "options=''; if [[ '{wildcards.end}' == 'se' ]]; then options='-s'; fi; samtools rmdup $options {input.bam} {wildcards.version}/{wildcards.end}/tmp.bam 2> {output}; rm -f {wildcards.version}/{wildcards.end}/tmp.bam"
+    shell: "options=''; if [[ '{wildcards.end}' == 'se' ]]; then options='-s'; fi; samtools rmdup $options {input.bam} {wildcards.version}/{wildcards.end}/tmp.bam 2> {output.txt}; rm -f {wildcards.version}/{wildcards.end}/tmp.bam"
            
 rule samtools_stats:
     input: bam=BAM, conda="samtools-{version}.yaml"
-    output: config['samtools']['samtools_stats']['output']
+    output: **config['samtools']['samtools_stats']['output']
     conda: "samtools-{version}.yaml"
-    shell: "samtools stats {input.bam} > {output}"
+    shell: "samtools stats {input.bam} > {output.txt}"
            
 include: "../fileutils.sm"
