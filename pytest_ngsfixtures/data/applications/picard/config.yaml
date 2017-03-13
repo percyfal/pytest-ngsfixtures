@@ -32,9 +32,10 @@
 # with the format of the output file name.
 #
 
+# Issues with bioconda versions 1.139 and 1.97
 picard:
-  _default: '1.126'
-  _versions: ['1.126', '1.139', '1.141', '1.97', '2.0.1', '2.3.0', '2.5.0', '2.7.1', '2.9.0']
+  _default: '2.9.0'
+  _versions: ['1.126', '1.141', '2.0.1', '2.3.0', '2.5.0', '2.7.1', '2.9.0']
   _conda_versions: ['1.126', '1.139', '1.141', '1.97', '2.0.1', '2.3.0', '2.5.0', '2.7.1', '2.9.0']
   _conda_dependencies: [] # Add extra conda dependencies required for this package here
   _clean: [] # Add clean file pattern here
@@ -48,13 +49,16 @@ picard:
   picard_CollectGcBiasMetrics:
     output:
       metrics: "{version}/{end}/medium.gcbias_metrics"
-  picard_CollectHsMetrics:
+      summary: "{version}/{end}/medium.gcbias_summary_metrics"
+  picard_CalculateHsMetrics:
     output:
       metrics: "{version}/{end}/medium.hs_metrics"
   picard_CollectInsertSizeMetrics:
+    _end: pe
     output:
       metrics: "{version}/{end}/medium.insert_size_metrics"
   picard_MarkDuplicates:
+    _versions: ['1.126', '1.141', '2.0.1', '2.3.0', '2.5.0', '2.7.1', '2.9.0']
     output:
       metrics: "{version}/{end}/medium.dup_metrics"
   picard_CollectOxoGMetrics:
@@ -65,7 +69,8 @@ picard:
       metrics: "{version}/{end}/medium.rnaseq_metrics"
   picard_CollectRrbsMetrics:
     output:
-      metrics: "{version}/{end}/medium.rrbs_metrics"
+      detail: "{version}/{end}/medium.rrbs_detail_metrics"
+      summary: "{version}/{end}/medium.rrbs_summary_metrics"
   picard_CollectWgsMetrics:
     output:
       metrics: "{version}/{end}/medium.wgs_metrics"
