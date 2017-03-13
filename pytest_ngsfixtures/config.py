@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 DATADIR = os.path.join(ROOT_DIR, "data", "applications")
 APPLICATION_BLACKLIST = ["pe", "se"]
-APPLICATION_DIRECTORIES = sorted([os.path.join(DATADIR, x) for x in os.listdir(DATADIR) if os.path.isdir(os.path.join(DATADIR, x)) and not x in APPLICATION_BLACKLIST])
+APPLICATION_DIRECTORIES = sorted([os.path.join(DATADIR, x) for x in os.listdir(DATADIR) if os.path.isdir(os.path.join(DATADIR, x)) and x not in APPLICATION_BLACKLIST])
 configfile = os.path.join(DATADIR, "config.yaml")
 
 Config = namedtuple('Config', 'SIZES SAMPLES POPULATIONS SAMPLE_LAYOUTS')
@@ -44,7 +44,7 @@ def application_config(application=None):
     with open(configfile, 'r') as fh:
         application_config = yaml.load(fh)
     for appdir in APPLICATION_DIRECTORIES:
-        if not application is None:
+        if application is not None:
             if os.path.basename(appdir) != application:
                 continue
         cfile = os.path.join(appdir, "config.yaml")
@@ -58,8 +58,8 @@ def application_config(application=None):
     return application_config
 
 
-def get_application_fixture(application, command, version, end):
-    """Retrieve a application fixture as a formatted string
+def get_application_fixture(application, command, version, end="se"):
+    """Retrieve a application fixture as formatted strings
 
     Params:
       application (str): application name
@@ -68,15 +68,15 @@ def get_application_fixture(application, command, version, end):
       end (str): se or pe
 
     Returns:
-      application fixture name formatted as a string
+      dict: dictionary of application fixture names formatted as a string
     """
-    conf = application_config()
+    conf = application_config(application)
     try:
         output = conf[application][command]['output']
     except KeyError as e:
         logging.error("[pytest_ngs]KeyError: {}".format(e))
         raise
-    return os.path.join(application, output.format(version=version, end=end))
+    return {k: os.path.join(application, o.format(version=version, end=end)) for k, o in output.items()}
 
 
 def application_fixtures(application=None, end=None, version=None):
@@ -95,11 +95,11 @@ def application_fixtures(application=None, end=None, version=None):
       command, version, end, and the raw output.
     """
     fixtures = []
-    conf = application_config()
+    conf = application_config(application)
     for app, d in conf.items():
         if app in ['basedir', 'end', 'input', 'params']:
             continue
-        if not application is None and app != application:
+        if application is not None and app != application:
             continue
         versions = helpers.get_versions(conf[app]) if version is None else set([version])
         for command, params in d.items():
