@@ -52,6 +52,11 @@ tiny-scaffolds-gtf.bed:
 %.genePred: %.gtf
 	$(GTFTOGENEPRED) -ignoreGroupsWithoutExons $< $@
 
+# https://www.snip2code.com/Snippet/77082/Convert-gene-annotations-from-GTF-to-gen
+%.refFlat: %.gtf
+	$(GTFTOGENEPRED) -genePredExt -geneNameAsName2 -ignoreGroupsWithoutExons $< $@.tmp
+	paste <(cut -f 12 $@.tmp) <(cut -f 1-10 $@.tmp) > $@
+
 %-targets.bed: %-transcripts.gtf
 	cat $< | awk '{if ($$3 == "gene") print $$1, $$4, $$5, $$6, 0, $$7; }' | head > $@
 
