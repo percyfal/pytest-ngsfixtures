@@ -50,9 +50,13 @@ BIOCONDA_CONFIG = u"""# Conda configuration file for {application}
   _clean: [] # Add clean file pattern here
 
   # {application}_rule1:
-  #   output: "{{version}}/{{end}}/outputfile.ext"
+  #   output:
+  #     ext: "{{version}}/{{end}}/outputfile.ext"
   # {application}_rule2:
-  #   output: "{{version}}/{{end}}/outputfile.ext"
+  #   _end: pe # only gives meaningful output for paired-end data
+  #   output:
+  #     ext: "{{version}}/{{end}}/outputfile.ext"
+  #     ext2: "{{version}}/{{end}}/outputfile.ext2"
   #   _versions: [] # add specific versions to subcommand if neede
   # and so on
 
@@ -88,13 +92,13 @@ inputfiles = {{
 
 rule {application}_rule1:
     input: **inputfiles
-    output: config[APPLICATION]["{application}_rule1"]["output"]
+    output: **config[APPLICATION]["{application}_rule1"]["output"]
     conda: APPLICATION + "-{{version}}.yaml"
     shell: "{application}"
 
 rule {application}_rule2:
     input: **inputfiles
-    output: config[APPLICATION]["{application}_rule2"]["output"]
+    output: **config[APPLICATION]["{application}_rule2"]["output"]
     conda: APPLICATION + "-{{version}}.yaml"
     shell: "{application}"
 
@@ -125,12 +129,12 @@ inputfiles = {{
 
 rule {application}_rule1:
     input: **inputfiles
-    output: config[APPLICATION]["{application}_rule1"]["output"]
+    output: **config[APPLICATION]["{application}_rule1"]["output"]
     shell: "{application}"
 
 rule {application}_rule2:
     input: **inputfiles
-    output: config[APPLICATION]["{application}_rule2"]["output"]
+    output: **config[APPLICATION]["{application}_rule2"]["output"]
     shell: "{application}"
 
 # Include rules for making the output
