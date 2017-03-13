@@ -198,19 +198,21 @@ fixtures = application_fixtures()
 @pytest.fixture(scope="function", autouse=False, params=fixtures,
                 ids=["{} {}:{}/{}".format(x[0], x[1], x[2], x[3]) for x in fixtures])
 def ao(request, tmpdir_factory):
-    app, command, version, end, fmt = request.param
+    app, command, version, end, fmtdict = request.param
     params = {'version': version, 'end': end}
-    output = fmt.format(**params)
-    src = os.path.join("applications", app, output)
-    dst = os.path.basename(src)
+    outputs = [fmt.format(**params) for fmt in fmtdict.values()]
+    sources = [os.path.join("applications", app, output) for output in outputs]
+    dests = [os.path.basename(src) for src in sources]
     fdir = os.path.join(app, str(version), command, end)
-    p = safe_mktemp(tmpdir_factory, fdir)
-    p = safe_symlink(p, src, dst)
-    return p
+    pdir = safe_mktemp(tmpdir_factory, fdir)
+    for src, dst in zip(sources, dests):
+        p = safe_symlink(pdir, src, dst)
+    return pdir
 
 
 def test_application_output(ao):
-    assert ao.exists()
+    for p in ao.visit():
+        assert p.exists()
 
 
 def test_application_fixture_params():

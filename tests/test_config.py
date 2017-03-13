@@ -62,6 +62,26 @@ def test_get_every_application_fixture():
                 assert os.path.dirname(x).startswith(os.path.join(app, str(version)))
 
 
-def test_output_list():
-    conf = config.application_config()
-    print(conf)
+def test_application_fixtures():
+    fixtures = config.application_fixtures(application="picard", version="2.9.0", end="pe")
+    f = [fixt for fixt in fixtures if fixt[1] == "picard_CollectRrbsMetrics"][0]
+    module, command, version, end, fmtdict = f
+    assert isinstance(fmtdict, dict)
+    assert len(fmtdict.keys()) == 2
+    assert sorted(fmtdict.keys()) == sorted(['summary', 'detail'])
+
+
+def test_application_fixtures_oneend():
+    fixtures = config.application_fixtures(application="picard", version="2.9.0", end="pe")
+    f = [fixt for fixt in fixtures if fixt[1] == "picard_CollectInsertSizeMetrics"]
+    assert len(f) == 1
+    fixtures = config.application_fixtures(application="picard", version="2.9.0", end="se")
+    # should not exist
+    assert len([fixt for fixt in fixtures if fixt[1] == "picard_CollectInsertSizeMetrics"]) == 0
+
+
+def test_all_application_fixtures_oneend():
+    fixtures = config.application_fixtures()
+    # Make sure CollectInsertSizeMetrics lacks se case
+    flist = [fixt for fixt in fixtures if fixt[1] == "picard_CollectInsertSizeMetrics" and fixt[2] == "2.9.0"]
+    assert len(flist) == 1
