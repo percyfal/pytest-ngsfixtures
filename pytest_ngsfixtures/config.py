@@ -107,11 +107,16 @@ def application_fixtures(application=None, end=None, version=None):
                 continue
             versions = helpers.get_versions(conf[app][command], versions)
             _raw_output = params["output"]
-            _ends = ["se", "pe"] if end is None else [end]
+            if end is None:
+                _ends = [params["_end"]] if "_end" in params.keys() else ["se", "pe"]
+            else:
+                if "_end" in params.keys() and params["_end"] != end:
+                    continue
+                _ends = [end]
             if isinstance(_raw_output, dict):
                 if not any("{end}" in x for x in _raw_output.values()):
                     _ends = ["se"]
-                output = itertools.product([app], [command], versions, _ends, [v for k, v in _raw_output.items()])
+                output = itertools.product([app], [command], versions, _ends, [_raw_output])
             else:
                 if "{end}" not in _raw_output:
                     _ends = ["se"]
