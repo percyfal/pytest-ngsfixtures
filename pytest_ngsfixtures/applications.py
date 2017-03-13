@@ -3,7 +3,6 @@
 import os
 import sys
 import re
-import ast
 import subprocess as sp
 from pytest_ngsfixtures import __version__ as ngsfixtures_version, ROOT_DIR
 
@@ -138,15 +137,17 @@ rule {application}_rule2:
 include: "../fileutils.sm"
 """
 
+
 def get_bioconda_info(application):
     output = sp.check_output(['conda', 'search', '-c', 'bioconda', '-f', application, '--json'])
     try:
         versions = sorted(set(re.findall('"version":\s+"([^ ]+)"', output.decode("utf-8"))))
-        d = {'versions': versions,
-             'conda_versions': versions,
-             'default': versions[0],
-             'application': application,
-             'ngsfixtures_version': ngsfixtures_version,
+        d = {
+            'versions': versions,
+            'conda_versions': versions,
+            'default': versions[0],
+            'application': application,
+            'ngsfixtures_version': ngsfixtures_version,
         }
         return BIOCONDA_CONFIG.format(**d), BIOCONDA_SNAKEFILE.format(**d)
     except Exception as e:
@@ -156,21 +157,23 @@ def get_bioconda_info(application):
 
 
 def get_github_info(application, user, repo, path):
-    d = {'user': user,
-         'repo': repo,
-         'path': path,
+    d = {
+        'user': user,
+        'repo': repo,
+        'path': path,
     }
     url = GITHUB_API.format(**d)
-    import requests, json
+    import requests
     dd = requests.get(url)
     data = dd.json()
     versions = []
     for entry in data:
         if entry['type'] == "dir":
             versions.append(entry['name'])
-    d = {'versions': sorted(versions),
-         'default': sorted(versions)[0],
-         'application': application,
+    d = {
+        'versions': sorted(versions),
+        'default': sorted(versions)[0],
+        'application': application,
     }
     return DEFAULT_CONFIG.format(**d), DEFAULT_SNAKEFILE.format(**d)
 
