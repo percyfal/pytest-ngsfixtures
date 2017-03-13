@@ -8,6 +8,14 @@ rule all:
     """Generate all output files"""
     input: helpers.make_targets(workflow.rules, config, APPLICATION, end=param['end'])
 
+
+rule targets:
+    """Print target names"""
+    run:
+        tgts = helpers.make_targets(workflow.rules, config, APPLICATION, end=param['end'])
+        print(" ".join(tgts))
+
+
 rule make_conda_env_file:
     """Make conda environment file"""
     output: yaml = "{application}-{version}.yaml"
@@ -35,9 +43,3 @@ rule clean:
         clean = config[APPLICATION].get("_clean", []) + ["{}*.yaml".format(APPLICATION)]
         for p in clean:
             shell("for f in `find . -name '{pattern}'`; do rm -f $f; done".format(pattern=p))
-
-
-rule link_version_ref:
-    input: os.path.join(ROOT_DIR, config["basedir"], "ref", config["input"]["ref"])
-    output: temporary(os.path.join("{version}", config["input"]["ref"]))
-    shell: "mkdir -p $(dirname {output}); ln -sf {input} {output}"
