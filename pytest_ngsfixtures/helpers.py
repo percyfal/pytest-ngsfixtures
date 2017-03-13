@@ -33,11 +33,12 @@ def make_targets(rules, config, application, **kw):
         p = {}
         if not r.name.startswith(application):
             continue
-        if "{end}" in str(r.output):
-            p['end'] = kw['end']
-        if "{version}" in str(r.output):
-            versions = get_versions(config[application][r.name], versions)
-            p['version'] = versions
-        TMP = expand(r.output, **p)
-        TARGETS = TARGETS + list(TMP)
+        for label, out in r.output.items():
+            if "{end}" in str(out):
+                p['end'] = config[application][r.name].get("_end", kw['end'])
+            if "{version}" in str(out):
+                versions = get_versions(config[application][r.name], versions)
+                p['version'] = versions
+            TMP = expand(out, **p)
+            TARGETS = TARGETS + list(TMP)
     return TARGETS
