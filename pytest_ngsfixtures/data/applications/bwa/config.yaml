@@ -1,0 +1,9 @@
+bwa:
+  _default: 0.7.15
+  _versions: [0.5.9, 0.6.2, 0.7.8, 0.7.12, 0.7.13, 0.7.15]
+  _conda_versions: [0.5.9, 0.6.2, 0.7.8, 0.7.12, 0.7.13, 0.7.15]
+  bwa_mem:
+    output:
+      log: "{version}/{end}/bwa_mem.log"
+    _versions: [0.7.8, 0.7.12, 0.7.13, 0.7.15]
+

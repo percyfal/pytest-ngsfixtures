@@ -4,6 +4,7 @@ import copy
 from pytest_ngsfixtures.helpers import make_targets
 
 configfile: "../config.yaml"
+configfile: "config.yaml"
 
 APPLICATION = "bcftools"
 

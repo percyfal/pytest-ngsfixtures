@@ -2,6 +2,7 @@
 import os
 
 configfile: "../config.yaml"
+configfile: "config.yaml"
 
 APPLICATION = "freebayes"
 
