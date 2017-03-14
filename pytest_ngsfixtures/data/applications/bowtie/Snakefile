@@ -34,17 +34,16 @@ rule _bowtie_build:
     conda: APPLICATION + "-{version}.yaml"
     shell: "bowtie-build {input.ref} {input.ref}"
 
-rule bowtie_align_se:
+rule bowtie:
     input: **inputfiles, index=rules._bowtie_build.output
-    output: **config[APPLICATION]["bowtie_align_se"]["output"]
+    output: **config[APPLICATION]["bowtie"]["output"]
     conda: APPLICATION + "-{version}.yaml"
-    shell: "bowtie {input.ref} --12 <(gunzip -c {input.read1}) > /dev/null 2> {output.log}" 
-
-rule bowtie_align_pe:
-    input: **inputfiles, index=rules._bowtie_build.output
-    output: **config[APPLICATION]["bowtie_align_pe"]["output"]
-    conda: APPLICATION + "-{version}.yaml"
-    shell: "bowtie {input.ref} -1 <(gunzip -c {input.read1}) -2 <(gunzip -c {input.read2}) > /dev/null 2> {output.log}" 
+    shell:
+        "if [[ '{wildcards.end}' == 'se' ]]; then\n"
+        "    bowtie {input.ref} --12 <(gunzip -c {input.read1}) > /dev/null 2> {output.log}\n"
+        "else\n"
+        "bowtie {input.ref} -1 <(gunzip -c {input.read1}) -2 <(gunzip -c {input.read2}) > /dev/null 2> {output.log}"
+        "fi\n"
 
 # Include rules for making the output
 include: "../fileutils.sm"

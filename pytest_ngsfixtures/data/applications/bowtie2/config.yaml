@@ -39,10 +39,6 @@ bowtie2:
   _conda_dependencies: [] # Add extra conda dependencies required for this package here
   _clean: [] # Add clean file pattern here
 
-  bowtie2_align_se:
+  bowtie2:
     output:
-      log: "{version}/se/bowtie2.log"
-
-  bowtie2_align_pe:
-    output:
-      log: "{version}/pe/bowtie2.log"
+      log: "{version}/{end}/bowtie2.log"
