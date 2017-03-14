@@ -1,0 +1,50 @@
+# -*- snakemake -*-
+import os
+
+configfile: "../config.yaml"
+configfile: "config.yaml"
+
+APPLICATION = "bowtie"
+
+param = {
+    'end': config['end'],
+    'build_ext': [".1.ebwt", ".2.ebwt", ".3.ebwt",
+                  ".4.ebwt", ".rev.1.ebwt", ".rev.2.ebwt"],
+}
+
+# Add required inputfiles here, or specify separately for each rule.
+# The conda parameter is required.
+inputfiles = {
+    'conda': "bowtie-{version}.yaml",
+    'ref': os.path.join("{version}", config['input']['ref']),
+    'read1': os.path.join("../../yuge/CHS.HG00512_1.fastq.gz"),
+    'read2': os.path.join("../../yuge/CHS.HG00512_2.fastq.gz"),
+}
+
+
+rule _symlink_ref:
+    input: os.path.abspath(os.path.join("../../ref", config['input']['ref']))
+    output: temporary(os.path.join("{version}", config['input']['ref']))
+    shell: "ln -s {input} {output}"
+           
+
+rule _bowtie_build:
+    input: **inputfiles
+    output: temporary(expand("{ref}{ext}", ref=inputfiles['ref'], ext=param['build_ext']))
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "bowtie-build {input.ref} {input.ref}"
+
+rule bowtie_align_se:
+    input: **inputfiles, index=rules._bowtie_build.output
+    output: **config[APPLICATION]["bowtie_align_se"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "bowtie {input.ref} --12 <(gunzip -c {input.read1}) > /dev/null 2> {output.log}" 
+
+rule bowtie_align_pe:
+    input: **inputfiles, index=rules._bowtie_build.output
+    output: **config[APPLICATION]["bowtie_align_pe"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "bowtie {input.ref} -1 <(gunzip -c {input.read1}) -2 <(gunzip -c {input.read2}) > /dev/null 2> {output.log}" 
+
+# Include rules for making the output
+include: "../fileutils.sm"

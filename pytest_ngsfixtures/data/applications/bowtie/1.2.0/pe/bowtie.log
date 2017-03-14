@@ -1,0 +1,5 @@
+Warning: Exhausted best-first chunk memory for read ERR016116.16115249/1 (patid 21607); skipping read
+# reads processed: 30483
+# reads with at least one reported alignment: 55 (0.18%)
+# reads that failed to align: 30428 (99.82%)
+Reported 55 paired-end alignments to 1 output stream(s)
