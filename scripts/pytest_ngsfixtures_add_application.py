@@ -43,7 +43,7 @@ def setup(application, source, dry_run=False):
 
     if dry_run:
         logger.dry_run("setup new application directory {}".format(path))
-        logger.dry_run("saving {} and {}".format(config, snakefile))
+        logger.dry_run("saving {} and {}".format(configfile, snakefile_path))
     else:
         with open(configfile, "w") as fh:
             fh.write(config)
