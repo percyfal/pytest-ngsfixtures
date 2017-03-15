@@ -38,14 +38,15 @@ def setup(application, source, dry_run=False):
     if not os.path.exists(path):
         os.mkdir(path)
 
+    configfile = os.path.join(path, "config.yaml")
+    snakefile_path = os.path.join(path, "Snakefile")
+
     if dry_run:
         logger.dry_run("setup new application directory {}".format(path))
         logger.dry_run("saving {} and {}".format(config, snakefile))
     else:
-        configfile = os.path.join(path, "config.yaml")
         with open(configfile, "w") as fh:
             fh.write(config)
-        snakefile_path = os.path.join(path, "Snakefile")
         with open(snakefile_path, "w") as fh:
             fh.write(snakefile)
 
