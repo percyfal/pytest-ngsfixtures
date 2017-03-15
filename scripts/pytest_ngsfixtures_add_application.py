@@ -10,7 +10,10 @@ import os
 import sys
 import argparse
 import subprocess as sp
+import logging
 from pytest_ngsfixtures import applications, ROOT_DIR
+
+logger = logging.getLogger(__name__)
 
 SOURCES = ["bioconda", "github", "other"]
 
@@ -28,25 +31,36 @@ def get_info(application, source):
         return applications.get_other_info(application)
 
 
-def setup(application, source):
-    path = applications.create_feature_branch(application)
+def setup(application, source, dry_run=False):
+    path = applications.create_feature_branch(application, dry_run)
     config, snakefile = get_info(application, source)
 
     if not os.path.exists(path):
         os.mkdir(path)
 
-    configfile = os.path.join(path, "config.yaml")
-    with open(configfile, "w") as fh:
-        fh.write(config)
-    snakefile_path = os.path.join(path, "Snakefile")
-    with open(snakefile_path, "w") as fh:
-        fh.write(snakefile)
+    if dry_run:
+        logger.dry_run("setup new application directory {}".format(path))
+        logger.dry_run("saving {} and {}".format(config, snakefile))
+    else:
+        configfile = os.path.join(path, "config.yaml")
+        with open(configfile, "w") as fh:
+            fh.write(config)
+        snakefile_path = os.path.join(path, "Snakefile")
+        with open(snakefile_path, "w") as fh:
+            fh.write(snakefile)
 
     print()
-    print("all set to go!")
-    print("start adding rules to {} and modify {} accordingly".format(snakefile_path, configfile))
+    print("All set to go!")
     print()
-
+    print("  1. cd to {}".format(path))
+    print("  2. Start adding rules to {} and modify {} accordingly".format(os.path.basename(snakefile_path),
+                                                                           os.path.basename(configfile)))
+    print("  3. run 'snakemake conda' to generate conda files")
+    print("  4. run 'snakemake --use-conda' to generate output")
+    print("  5. (optional): run 'snakemake clean' to remove excess output")
+    print("  6. run 'git add Snakefile config.yaml FILENAMES' to add output")
+    print("  7. submit pull request to https://github.com/percyfal/pytest-ngsfixtures")
+    print()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Setup application files for generating test data")
@@ -59,4 +73,4 @@ if __name__ == '__main__':
 
 
     args = parser.parse_args()
-    setup(args.application, args.source)
+    setup(args.application, args.source, args.dry_run)
