@@ -7,6 +7,7 @@ input:
   bai: medium.bam.bai
   dict: scaffoldsN.dict
   genepred: scaffolds-transcripts-tiny.genePred
+  gtf: scaffolds-transcripts-tiny.gtf
   ref: scaffoldsN.fa
   refflat: scaffolds-transcripts-tiny.refFlat
   refidx: scaffoldsN.fa.fai

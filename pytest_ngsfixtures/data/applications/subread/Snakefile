@@ -1,0 +1,29 @@
+# -*- snakemake -*-
+import os
+
+configfile: "../config.yaml"
+configfile: "config.yaml"
+
+APPLICATION = "subread"
+
+param = {
+    'end': config['end'],
+}
+
+# Add required inputfiles here, or specify separately for each rule.
+# The conda parameter is required.
+inputfiles = {
+    'conda': "subread-{version}.yaml",
+    'bam': os.path.join("../{end}", config['input']['bam']),
+    'gtf': os.path.join("../../ref", config['input']['gtf']),
+}
+
+
+rule subread_featureCounts:
+    input: **inputfiles
+    output: **config[APPLICATION]["subread_featureCounts"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "featureCounts -a {input.gtf} -o {output.counts} {input.bam}"
+
+# Include rules for making the output
+include: "../fileutils.sm"
