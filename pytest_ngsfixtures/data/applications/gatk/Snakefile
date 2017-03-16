@@ -10,22 +10,39 @@ param = {
     'end': config['end'],
 }
 
+# Add required inputfiles here, or specify separately for each rule.
+# The conda parameter is required.
 inputfiles = {
+    'conda': "gatk-{version}.yaml",
     'bam': os.path.join("../{end}", config['input']['bam']),
     'bai': os.path.join("../{end}", config['input']['bai']),
     'ref': os.path.join("../../ref", config['input']['ref']),
     'refidx': os.path.join("../../ref", config['input']['ref']),
     'dict': os.path.join("../../ref", config['input']['dict']),
-    'conda': "gatk-{version}.yaml",
-    'gatk': "GenomeAnalysisTK-{version}.tar.bz2",
+    'known': os.path.join("../../ref", config['input']['known']),
 }
 
 rule gatk_haplotype_caller:
-    input: **inputfiles
-    output: config[APPLICATION]["gatk_haplotype_caller"]["output"]
+    input: gatk = "GenomeAnalysisTK-{version}.tar.bz2", **inputfiles
+    output: **config[APPLICATION]["gatk_haplotype_caller"]["output"]
     conda: APPLICATION + "-{version}.yaml"
     shell:
-        "gatk-register {input.gatk};" \
+        "if [ -e {input.gatk} ]; then gatk-register {input.gatk}; fi; mv {input.gatk} {input.gatk}.old; \n"
         "gatk -T HaplotypeCaller -I {input.bam} -R {input.ref} | bgzip > {output};"
 
-include: "../fileutils.sm"           
+
+rule tabix:
+    input: "{prefix}.vcf.gz"
+    output: "{prefix}.vcf.gz.tbi"
+    shell: "tabix {input}"
+        
+rule gatk_varianteval:
+    input: vcf=rules.gatk_haplotype_caller.output, **inputfiles
+    output: **config[APPLICATION]["gatk_varianteval"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell:
+        "gatk -T VariantEval -R {input.ref} --dbsnp {input.known} --eval {input.vcf} -o {output.stats}"
+
+
+# Include rules for making the output
+include: "../fileutils.sm"

@@ -8,6 +8,7 @@ input:
   dict: scaffoldsN.dict
   genepred: scaffolds-transcripts-tiny.genePred
   gtf: scaffolds-transcripts-tiny.gtf
+  known: known.scaffolds.vcf
   ref: scaffoldsN.fa
   refflat: scaffolds-transcripts-tiny.refFlat
   refidx: scaffoldsN.fa.fai
