@@ -57,7 +57,7 @@ def setup(application, source, dry_run=False):
     print("  2. Start adding rules to {} and modify {} accordingly".format(os.path.basename(snakefile_path),
                                                                            os.path.basename(configfile)))
     print("  3. run 'snakemake conda' to generate conda files")
-    print("  4. run 'snakemake --use-conda' to generate output")
+    print("  4. run 'snakemake --use-conda all' to generate output")
     print("  5. (optional): run 'snakemake clean' to remove excess output")
     print("  6. run 'git add Snakefile config.yaml FILENAMES' to add output")
     print("  7. submit pull request to https://github.com/percyfal/pytest-ngsfixtures")
