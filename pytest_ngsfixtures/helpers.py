@@ -31,7 +31,7 @@ def make_targets(rules, config, application, **kw):
     versions = get_versions(config[application])
     for r in rules:
         p = {}
-        if not r.name.startswith(application):
+        if not r.name.startswith(application.replace("-", "_")):
             continue
         for label, out in r.output.items():
             if "{end}" in str(out):

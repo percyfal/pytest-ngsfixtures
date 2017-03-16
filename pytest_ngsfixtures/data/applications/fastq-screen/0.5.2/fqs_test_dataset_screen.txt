@@ -1,0 +1,5 @@
+#Fastq_screen version: 0.5.2	#Reads in subset: 100000
+Genome	#Reads_processed	#Unmapped	%Unmapped	#One_hit_one_genome	%One_hit_one_genome	#Multiple_hits_one_genome	%Multiple_hits_one_genome	#One_hit_multiple_genomes	%One_hit_multiple_genomes	Multiple_hits_multiple_genomes	%Multiple_hits_multiple_genomes
+Ref	1000	991	99.10	0	0.00	9	0.90	0	0.00	0	0.00
+
+%Hit_no_genomes: 91.70
