@@ -1,0 +1,5 @@
+# Program:featureCounts v1.5.0-p3; Command:"featureCounts" "-a" "../../ref/scaffolds-transcripts-tiny.gtf" "-o" "1.5.0p3/pe/featureCounts.tsv" "../pe/medium.bam" 
+Geneid	Chr	Start	End	Strand	Length	../pe/medium.bam
+ENSG00000237541.3	scaffold1;scaffold1;scaffold1;scaffold1;scaffold1	891341;895159;895791;896241;896581	891524;895408;896072;896414;897216	+;+;+;+;+	1526	377
+ENSG00000263649.1	scaffold1	899913	899980	-	68	28
+ENSG00000096395.8	scaffold9;scaffold9;scaffold9;scaffold9;scaffold9	4673;5505;9105;11049;13953	4836;5604;9220;11168;14012	-;-;-;-;-	560	116
