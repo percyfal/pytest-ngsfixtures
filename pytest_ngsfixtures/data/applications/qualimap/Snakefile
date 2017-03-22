@@ -14,8 +14,8 @@ BAM = os.path.join("../{end}", config['input']['bam'])
 
 rule qualimap_bamqc:
     input: bam=BAM, conda="qualimap-{version}.yaml"
-    output: config["qualimap"]["qualimap_bamqc"]["output"]
+    output: **config["qualimap"]["qualimap_bamqc"]["output"]
     conda: "qualimap-{version}.yaml"
-    shell: "qualimap bamqc -bam {input.bam} -outdir {version} > {output}"
+    shell: "qualimap bamqc -bam {input.bam} -outdir {wildcards.version}/{wildcards.end} > $(basename {output}.log)"
            
 include: "../fileutils.sm"
