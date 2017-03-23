@@ -5,7 +5,7 @@ qualimap:
   _clean: ["images_qualimapReport*", "css*", "*.html"]
   qualimap_bamqc:
     output:
-      txt: "{version}/{end}/genome_results.txt"
+      genome_results: "{version}/{end}/genome_results.txt"
       coverage_across_reference: "{version}/{end}/raw_data_qualimapReport/coverage_across_reference.txt"
       coverage_histogram: "{version}/{end}/raw_data_qualimapReport/coverage_histogram.txt"
       duplication_rate_histogram: "{version}/{end}/raw_data_qualimapReport/duplication_rate_histogram.txt"
