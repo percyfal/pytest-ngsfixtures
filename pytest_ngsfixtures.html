@@ -1,53 +1,498 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>pytest_ngsfixtures package &#8212; pytest-ngsfixtures 0.3.1+30.gc4c8228 documentation</title>
-    
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '0.3.1+30.gc4c8228',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="pytest_ngsfixtures" href="modules.html" />
-   
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
   
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
-  </head>
-  <body role="document">
+  <title>pytest_ngsfixtures package &mdash; pytest-ngsfixtures 0.4.0+1.g7f3ccdb documentation</title>
   
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="pytest-ngsfixtures 0.4.0+1.g7f3ccdb documentation" href="index.html"/>
+        <link rel="up" title="pytest_ngsfixtures" href="modules.html"/>
+        <link rel="prev" title="pytest_ngsfixtures" href="modules.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pytest-ngsfixtures
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.4.0+1.g7f3ccdb
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Developer guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#files">Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#advanced-usage">Advanced usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#plugin-options">Plugin options</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">pytest_ngsfixtures</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">pytest_ngsfixtures package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.applications">pytest_ngsfixtures.applications module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.config">pytest_ngsfixtures.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.factories">pytest_ngsfixtures.factories module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.filetypes">pytest_ngsfixtures.filetypes module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.helpers">pytest_ngsfixtures.helpers module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.plugin">pytest_ngsfixtures.plugin module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.utils">pytest_ngsfixtures.utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">pytest-ngsfixtures</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="modules.html">pytest_ngsfixtures</a> &raquo;</li>
+      
+    <li>pytest_ngsfixtures package</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/pytest_ngsfixtures.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="pytest-ngsfixtures-package">
 <h1>pytest_ngsfixtures package<a class="headerlink" href="#pytest-ngsfixtures-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
+<div class="section" id="module-pytest_ngsfixtures.applications">
+<span id="pytest-ngsfixtures-applications-module"></span><h2>pytest_ngsfixtures.applications module<a class="headerlink" href="#module-pytest_ngsfixtures.applications" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="pytest_ngsfixtures.applications.create_feature_branch">
+<code class="descclassname">pytest_ngsfixtures.applications.</code><code class="descname">create_feature_branch</code><span class="sig-paren">(</span><em>application</em>, <em>dry_run=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/applications.html#create_feature_branch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.applications.create_feature_branch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checkout feature branch from develop.</p>
+<p>Will try to checkout develop and create feature branch for
+application. Fails if develop is dirty.</p>
+<dl class="docutils">
+<dt>Params:</dt>
+<dd>application (str): application name
+dry_run (bool): dry run</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Path to application</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.applications.dry_run">
+<code class="descclassname">pytest_ngsfixtures.applications.</code><code class="descname">dry_run</code><span class="sig-paren">(</span><em>self</em>, <em>message</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/applications.html#dry_run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.applications.dry_run" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.applications.get_bioconda_info">
+<code class="descclassname">pytest_ngsfixtures.applications.</code><code class="descname">get_bioconda_info</code><span class="sig-paren">(</span><em>application</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/applications.html#get_bioconda_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.applications.get_bioconda_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.applications.get_github_info">
+<code class="descclassname">pytest_ngsfixtures.applications.</code><code class="descname">get_github_info</code><span class="sig-paren">(</span><em>application</em>, <em>user</em>, <em>repo</em>, <em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/applications.html#get_github_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.applications.get_github_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.applications.get_other_info">
+<code class="descclassname">pytest_ngsfixtures.applications.</code><code class="descname">get_other_info</code><span class="sig-paren">(</span><em>application</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/applications.html#get_other_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.applications.get_other_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-pytest_ngsfixtures.config">
+<span id="pytest-ngsfixtures-config-module"></span><h2>pytest_ngsfixtures.config module<a class="headerlink" href="#module-pytest_ngsfixtures.config" title="Permalink to this headline">¶</a></h2>
+<p>Configuration settings for pytest-ngsfixtures</p>
+<dl class="class">
+<dt id="pytest_ngsfixtures.config.Config">
+<em class="property">class </em><code class="descclassname">pytest_ngsfixtures.config.</code><code class="descname">Config</code><span class="sig-paren">(</span><em>SIZES</em>, <em>SAMPLES</em>, <em>POPULATIONS</em>, <em>SAMPLE_LAYOUTS</em><span class="sig-paren">)</span><a class="headerlink" href="#pytest_ngsfixtures.config.Config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></p>
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.config.Config.POPULATIONS">
+<code class="descname">POPULATIONS</code><a class="headerlink" href="#pytest_ngsfixtures.config.Config.POPULATIONS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.config.Config.SAMPLES">
+<code class="descname">SAMPLES</code><a class="headerlink" href="#pytest_ngsfixtures.config.Config.SAMPLES" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.config.Config.SAMPLE_LAYOUTS">
+<code class="descname">SAMPLE_LAYOUTS</code><a class="headerlink" href="#pytest_ngsfixtures.config.Config.SAMPLE_LAYOUTS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.config.Config.SIZES">
+<code class="descname">SIZES</code><a class="headerlink" href="#pytest_ngsfixtures.config.Config.SIZES" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.config.application_config">
+<code class="descclassname">pytest_ngsfixtures.config.</code><code class="descname">application_config</code><span class="sig-paren">(</span><em>application=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/config.html#application_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.config.application_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get application configuration</p>
+<dl class="docutils">
+<dt>Params:</dt>
+<dd>application (str): application name</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">application configuration</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.config.application_fixtures">
+<code class="descclassname">pytest_ngsfixtures.config.</code><code class="descname">application_fixtures</code><span class="sig-paren">(</span><em>application=None</em>, <em>end=None</em>, <em>version=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/config.html#application_fixtures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.config.application_fixtures" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the application fixtures.</p>
+<p>Returns the application fixtures defined in the application config
+file (data/applications/config.yaml).</p>
+<dl class="docutils">
+<dt>Params:</dt>
+<dd>application (str): application name
+end (str): sequence configuration (single end/paired end)
+version (str): version identifier</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of fixtures, where each entry consists of application,
+command, version, end, and the raw output.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.config.get_application_fixture">
+<code class="descclassname">pytest_ngsfixtures.config.</code><code class="descname">get_application_fixture</code><span class="sig-paren">(</span><em>application</em>, <em>command</em>, <em>version</em>, <em>end='se'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/config.html#get_application_fixture"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.config.get_application_fixture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve a application fixture as formatted strings</p>
+<dl class="docutils">
+<dt>Params:</dt>
+<dd>application (str): application name
+command (str): command name
+version (str): version
+end (str): se or pe</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dictionary of application fixture names formatted as a string</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pytest_ngsfixtures.factories">
+<span id="pytest-ngsfixtures-factories-module"></span><h2>pytest_ngsfixtures.factories module<a class="headerlink" href="#module-pytest_ngsfixtures.factories" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="pytest_ngsfixtures.factories.sample_layout">
+<code class="descclassname">pytest_ngsfixtures.factories.</code><code class="descname">sample_layout</code><span class="sig-paren">(</span><em>runfmt='{SM}', sample_prefix='s', use_short_sample_names=True, read1_suffix='_1.fastq.gz', read2_suffix='_2.fastq.gz', dirname=None, sampleinfo=True, combinator=&lt;class 'itertools.zip_longest'&gt;, sample_aliases=[], samples=[None], platform_units=[None], batches=[None], populations=[None], paired_end=[True], **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/factories.html#sample_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.factories.sample_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fixture factory for pytest-ngsfixtures sample layouts.</p>
+<p>Generates a directory structure by linking to data files in
+pytest-ngsfixtures data directory. A certain amount of generality
+is allowed in that platform units and batches can be named at
+will. Short sample names can also be used.</p>
+<p>Briefly, sample file names are generated by combining labels in
+the lists <strong>samples</strong> (SM), <strong>platform_units</strong> (PU), <strong>batches</strong>
+(BATCH), and <strong>populations</strong> (POP), and formatting the directory
+structure following the <em>runfmt</em> format specification. For
+instance, with samples = [&#8220;CHR.HG00512&#8221;], populations=None,
+batches=None, platform_units=[&#8220;010101_AAABBB11XX&#8221;], and
+runfmt=&#8221;{SM}/{PU}/{SM}_{PU}&#8221;, input files will be organized as
+&#8220;CHR.HG00512/010101_AAABBB11XX/CHR.HG00512_010101_AAABBB11XX_1.fastq.gz&#8221;
+and similarly for the second read.</p>
+<p>Usage:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pytest_ngsfixtures</span> <span class="kn">import</span> <span class="n">factories</span>
+<span class="n">my_layout</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span>
+    <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span>
+    <span class="n">samples</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;CHR.HG00512&quot;</span><span class="p">],</span>
+    <span class="n">platform_units</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;010101_AAABBB11XX&quot;</span><span class="p">],</span>
+    <span class="n">populations</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;CHR&quot;</span><span class="p">],</span>
+    <span class="n">batches</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;batch1&quot;</span><span class="p">],</span>
+    <span class="n">runfmt</span><span class="o">=</span><span class="s2">&quot;{POP}/{SM}/{BATCH}/{PU}/{SM}_{PU}&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>Params:</dt>
+<dd>runfmt (str): run format string
+sample_prefix (str): sample prefix for short names
+use_short_sample_names (bool): use short sample names
+read1_suffix (str): read1 suffix
+read2_suffix (str): read2 suffix
+dirname (str): data directory name
+sampleinfo (bool): create sampleinfo file
+combinator (fun): function to combine sample, platform unit, batch, population labels
+sample_aliases (list): list of sample alias names
+samples (list): list of sample names
+platform_units (list): list of platform units
+batches (list): list of batch (project) names
+populations (list): list of population names
+paired_end (list): list of booleans indicating if a sample run is paired end (True) or single end (False)</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">tmp directory with sample layout setup</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">p (py.path.local)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.factories.reference_layout">
+<code class="descclassname">pytest_ngsfixtures.factories.</code><code class="descname">reference_layout</code><span class="sig-paren">(</span><em>label='ref'</em>, <em>dirname='ref'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/factories.html#reference_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.factories.reference_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fixture factory for reference layouts.</p>
+<dl class="docutils">
+<dt>Params:</dt>
+<dd>label (str): ref or scaffolds layout
+dirname (str): reference directory name</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.factories.filetype">
+<code class="descclassname">pytest_ngsfixtures.factories.</code><code class="descname">filetype</code><span class="sig-paren">(</span><em>src, dst=None, fdir=None, rename=False, outprefix='test', inprefix=['PUR.HG00731', 'PUR.HG00733'], **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/factories.html#filetype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.factories.filetype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fixture factory for file types. This factory is atomic in that it
+generates one fixture for one file.</p>
+<dl class="docutils">
+<dt>Params:</dt>
+<dd>src (str): fixture file name source
+dst (str): fixture file name destination; link name
+fdir (str): fixture output directory
+rename (bool): rename fixture links
+outprefix (str): output prefix
+inprefix (list): list of input prefixes to substitute
+kwargs (dict): keyword arguments</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.factories.fileset">
+<code class="descclassname">pytest_ngsfixtures.factories.</code><code class="descname">fileset</code><span class="sig-paren">(</span><em>src</em>, <em>dst=None</em>, <em>fdir=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/factories.html#fileset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.factories.fileset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fixture factory to generate filesets.</p>
+<dl class="docutils">
+<dt>Params:</dt>
+<dd>src (list): list of sources
+dst (list): list of destination; if None, use src basename
+fdir (<code class="xref py py-obj docutils literal"><span class="pre">str</span></code> or <code class="xref py py-obj docutils literal"><span class="pre">py._path.local.LocalPath</span></code>): output directory</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a fixture function</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">func</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pytest_ngsfixtures.filetypes">
+<span id="pytest-ngsfixtures-filetypes-module"></span><h2>pytest_ngsfixtures.filetypes module<a class="headerlink" href="#module-pytest_ngsfixtures.filetypes" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="pytest_ngsfixtures.filetypes.bam">
+<code class="descclassname">pytest_ngsfixtures.filetypes.</code><code class="descname">bam</code><span class="sig-paren">(</span><em>request</em>, <em>tmpdir_factory</em><span class="sig-paren">)</span><a class="headerlink" href="#pytest_ngsfixtures.filetypes.bam" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filetype fixture</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.filetypes.bed12">
+<code class="descclassname">pytest_ngsfixtures.filetypes.</code><code class="descname">bed12</code><span class="sig-paren">(</span><em>request</em>, <em>tmpdir_factory</em><span class="sig-paren">)</span><a class="headerlink" href="#pytest_ngsfixtures.filetypes.bed12" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filetype fixture</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.filetypes.ref_transcripts_bed12">
+<code class="descclassname">pytest_ngsfixtures.filetypes.</code><code class="descname">ref_transcripts_bed12</code><span class="sig-paren">(</span><em>request</em>, <em>tmpdir_factory</em><span class="sig-paren">)</span><a class="headerlink" href="#pytest_ngsfixtures.filetypes.ref_transcripts_bed12" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filetype fixture</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.filetypes.genePred">
+<code class="descclassname">pytest_ngsfixtures.filetypes.</code><code class="descname">genePred</code><span class="sig-paren">(</span><em>request</em>, <em>tmpdir_factory</em><span class="sig-paren">)</span><a class="headerlink" href="#pytest_ngsfixtures.filetypes.genePred" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filetype fixture</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.filetypes.ref_transcripts_genePred">
+<code class="descclassname">pytest_ngsfixtures.filetypes.</code><code class="descname">ref_transcripts_genePred</code><span class="sig-paren">(</span><em>request</em>, <em>tmpdir_factory</em><span class="sig-paren">)</span><a class="headerlink" href="#pytest_ngsfixtures.filetypes.ref_transcripts_genePred" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filetype fixture</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.filetypes.gtf">
+<code class="descclassname">pytest_ngsfixtures.filetypes.</code><code class="descname">gtf</code><span class="sig-paren">(</span><em>request</em>, <em>tmpdir_factory</em><span class="sig-paren">)</span><a class="headerlink" href="#pytest_ngsfixtures.filetypes.gtf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filetype fixture</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.filetypes.ref_transcripts_gtf">
+<code class="descclassname">pytest_ngsfixtures.filetypes.</code><code class="descname">ref_transcripts_gtf</code><span class="sig-paren">(</span><em>request</em>, <em>tmpdir_factory</em><span class="sig-paren">)</span><a class="headerlink" href="#pytest_ngsfixtures.filetypes.ref_transcripts_gtf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filetype fixture</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pytest_ngsfixtures.helpers">
+<span id="pytest-ngsfixtures-helpers-module"></span><h2>pytest_ngsfixtures.helpers module<a class="headerlink" href="#module-pytest_ngsfixtures.helpers" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="pytest_ngsfixtures.helpers.get_versions">
+<code class="descclassname">pytest_ngsfixtures.helpers.</code><code class="descname">get_versions</code><span class="sig-paren">(</span><em>subconfig, versions=None, version_keys=['_versions', '_conda_versions']</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/helpers.html#get_versions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.helpers.get_versions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.helpers.make_conda_env_file">
+<code class="descclassname">pytest_ngsfixtures.helpers.</code><code class="descname">make_conda_env_file</code><span class="sig-paren">(</span><em>output</em>, <em>conda='channels:\n  - bioconda\ndependencies:\n  - {application}=={version}\n{extra}\n'</em>, <em>**kw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/helpers.html#make_conda_env_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.helpers.make_conda_env_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.helpers.make_targets">
+<code class="descclassname">pytest_ngsfixtures.helpers.</code><code class="descname">make_targets</code><span class="sig-paren">(</span><em>rules</em>, <em>config</em>, <em>application</em>, <em>**kw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/helpers.html#make_targets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.helpers.make_targets" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-pytest_ngsfixtures.plugin">
+<span id="pytest-ngsfixtures-plugin-module"></span><h2>pytest_ngsfixtures.plugin module<a class="headerlink" href="#module-pytest_ngsfixtures.plugin" title="Permalink to this headline">¶</a></h2>
+<p>Plugin configuration module for pytest-ngsfixtures</p>
+<dl class="function">
+<dt id="pytest_ngsfixtures.plugin.pytest_addoption">
+<code class="descclassname">pytest_ngsfixtures.plugin.</code><code class="descname">pytest_addoption</code><span class="sig-paren">(</span><em>parser</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/plugin.html#pytest_addoption"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.plugin.pytest_addoption" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-pytest_ngsfixtures.utils">
+<span id="pytest-ngsfixtures-utils-module"></span><h2>pytest_ngsfixtures.utils module<a class="headerlink" href="#module-pytest_ngsfixtures.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="pytest_ngsfixtures.utils.cd">
+<code class="descclassname">pytest_ngsfixtures.utils.</code><code class="descname">cd</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/utils.html#cd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.utils.cd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 <div class="section" id="module-pytest_ngsfixtures">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pytest_ngsfixtures" title="Permalink to this headline">¶</a></h2>
@@ -55,64 +500,69 @@
 </div>
 
 
+           </div>
           </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="modules.html" class="btn btn-neutral" title="pytest_ngsfixtures" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Per Unneberg.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">pytest_ngsfixtures package</a><ul>
-<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
-<li><a class="reference internal" href="#module-pytest_ngsfixtures">Module contents</a></li>
-</ul>
-</li>
-</ul>
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="index.html">Documentation overview</a><ul>
-  <li><a href="modules.html">pytest_ngsfixtures</a><ul>
-      <li>Previous: <a href="modules.html" title="previous chapter">pytest_ngsfixtures</a></li>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/pytest_ngsfixtures.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2017, Per Unneberg.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
-      
-      |
-      <a href="_sources/pytest_ngsfixtures.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
 
-    
+    </section>
 
-    
-  </body>
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.4.0+1.g7f3ccdb',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
 </html>

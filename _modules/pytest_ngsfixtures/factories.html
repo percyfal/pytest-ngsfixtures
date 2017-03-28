@@ -1,0 +1,615 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pytest_ngsfixtures.factories &mdash; pytest-ngsfixtures 0.4.0+1.g7f3ccdb documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="pytest-ngsfixtures 0.4.0+1.g7f3ccdb documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pytest-ngsfixtures
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.4.0+1.g7f3ccdb
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Developer guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html#files">Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html#advanced-usage">Advanced usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html#plugin-options">Plugin options</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">pytest_ngsfixtures</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">pytest-ngsfixtures</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>pytest_ngsfixtures.factories</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pytest_ngsfixtures.factories</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">py</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">from</span> <span class="nn">pytest_ngsfixtures.config</span> <span class="k">import</span> <span class="n">sample_conf</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">ROOTDIR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">pardir</span><span class="p">))</span>
+<span class="n">DATADIR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ROOTDIR</span><span class="p">,</span> <span class="s2">&quot;pytest_ngsfixtures&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">))</span>
+<span class="n">REPO</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/percyfal/pytest-ngsfixtures/master&quot;</span>
+<span class="n">DOWNLOAD_SIZES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;yuge&quot;</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">ParameterException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">SampleException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="n">ref_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATADIR</span><span class="p">,</span> <span class="s2">&quot;ref&quot;</span><span class="p">)):</span>
+    <span class="k">if</span> <span class="n">f</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;Makefile&quot;</span><span class="p">,</span> <span class="s2">&quot;Snakefile.test&quot;</span><span class="p">):</span>
+        <span class="k">continue</span>
+    <span class="n">ref_dict</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATADIR</span><span class="p">,</span> <span class="s2">&quot;ref&quot;</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+
+<span class="n">ref_always</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ERCC_spikes.gb&#39;</span><span class="p">,</span> <span class="s1">&#39;pAcGFP1-N1.fasta&#39;</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">check_samples</span><span class="p">(</span><span class="n">samples</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Check the sample names are ok&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">sample_conf</span><span class="o">.</span><span class="n">SAMPLES</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SampleException</span><span class="p">(</span><span class="s2">&quot;invalid sample name: choose from </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sample_conf</span><span class="o">.</span><span class="n">SAMPLES</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">get_config</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a dictionary with config options.&quot;&quot;&quot;</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;size&#39;</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="k">for</span> <span class="n">option</span> <span class="ow">in</span> <span class="n">options</span><span class="p">:</span>
+        <span class="n">option_name</span> <span class="o">=</span> <span class="s1">&#39;ngs_&#39;</span> <span class="o">+</span> <span class="n">option</span>
+        <span class="n">conf</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">getoption</span><span class="p">(</span><span class="n">option_name</span><span class="p">)</span> <span class="ow">or</span> \
+            <span class="n">request</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">getini</span><span class="p">(</span><span class="n">option_name</span><span class="p">)</span>
+        <span class="n">config</span><span class="p">[</span><span class="n">option</span><span class="p">]</span> <span class="o">=</span> <span class="n">conf</span>
+    <span class="k">return</span> <span class="n">config</span>
+
+
+<span class="k">def</span> <span class="nf">download_sample_file</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">dry_run</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Download sample file if it doesn&#39;t yet exist</span>
+
+<span class="sd">    Setup urllib connection and download data file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">size</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">DOWNLOAD_SIZES</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
+        <span class="k">return</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">urllib.request</span>
+        <span class="kn">import</span> <span class="nn">shutil</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;File &#39;</span><span class="si">{}</span><span class="s2">&#39; doesn&#39;t exist; downloading it from git repo to local pytest_ngsfixtures installation location&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fn</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">dry_run</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">REPO</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">ROOTDIR</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">fn</span><span class="p">)):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">fn</span><span class="p">))</span>
+            <span class="k">with</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+                <span class="n">shutil</span><span class="o">.</span><span class="n">copyfileobj</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">fh</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Downloading &#39;</span><span class="si">{}</span><span class="s2">&#39; failed: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+            <span class="k">raise</span>
+
+
+<span class="k">def</span> <span class="nf">_check_file_exists</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">size</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">DOWNLOAD_SIZES</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
+        <span class="k">return</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Sequence data in </span><span class="si">{}</span><span class="s2"> is not bundled with conda/PyPI packages to save space&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">size</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;   Launch script &#39;download_ngsfixtures_data.py&#39; to download missing files&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span>
+
+
+<span class="k">def</span> <span class="nf">safe_symlink</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Safely make symlink.</span>
+
+<span class="sd">    Make symlink from src to dst in LocalPath p. If src, dst are</span>
+<span class="sd">    strings, they will be joined to p, assuming they are relative to</span>
+<span class="sd">    p. If src, dst are LocalPath instances, they are left alone since</span>
+<span class="sd">    LocalPath objects are always absolute paths.</span>
+
+<span class="sd">    Params:</span>
+<span class="sd">      p (LocalPath): path in which link is setup</span>
+<span class="sd">      src (str, LocalPath): source file that link points to. If string, assume relative to pytest_ngsfixtures data directory</span>
+<span class="sd">      dst (str, LocalPath): link destination name. If string, assume relative to path and concatenate; else leave alone</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      dst (LocalPath): link name</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
+            <span class="n">src</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATADIR</span><span class="p">,</span> <span class="n">src</span><span class="p">)</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="n">py</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">local</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">dst</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dst</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">basename</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">dst</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dst</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">dst</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="n">link</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">dst</span><span class="o">.</span><span class="n">dirpath</span><span class="p">()</span><span class="o">.</span><span class="n">ensure</span><span class="p">(</span><span class="nb">dir</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">dst</span><span class="o">.</span><span class="n">mksymlinkto</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;link </span><span class="si">{dst}</span><span class="s2"> -&gt; </span><span class="si">{src}</span><span class="s2"> already exists! skipping...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">src</span><span class="o">=</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="o">=</span><span class="n">dst</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">dst</span>
+
+
+<span class="k">def</span> <span class="nf">safe_mktemp</span><span class="p">(</span><span class="n">tmpdir_factory</span><span class="p">,</span> <span class="n">dirname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Safely make directory&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">dirname</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">tmpdir_factory</span><span class="o">.</span><span class="n">getbasetemp</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">tmpdir_factory</span><span class="o">.</span><span class="n">getbasetemp</span><span class="p">()</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">dirname</span><span class="p">))</span><span class="o">.</span><span class="n">ensure</span><span class="p">(</span><span class="nb">dir</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;numbered&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">tmpdir_factory</span><span class="o">.</span><span class="n">mktemp</span><span class="p">(</span><span class="n">dirname</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">tmpdir_factory</span><span class="o">.</span><span class="n">getbasetemp</span><span class="p">()</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="nb">dir</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">tmpdir_factory</span><span class="o">.</span><span class="n">mktemp</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">numbered</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">p</span>
+
+
+<div class="viewcode-block" id="sample_layout"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.factories.sample_layout">[docs]</a><span class="k">def</span> <span class="nf">sample_layout</span><span class="p">(</span>
+        <span class="n">runfmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{SM}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">sample_prefix</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span>
+        <span class="n">use_short_sample_names</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">read1_suffix</span><span class="o">=</span><span class="s2">&quot;_1.fastq.gz&quot;</span><span class="p">,</span>
+        <span class="n">read2_suffix</span><span class="o">=</span><span class="s2">&quot;_2.fastq.gz&quot;</span><span class="p">,</span>
+        <span class="n">dirname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">sampleinfo</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">combinator</span><span class="o">=</span><span class="n">itertools</span><span class="o">.</span><span class="n">zip_longest</span><span class="p">,</span>
+        <span class="n">sample_aliases</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">samples</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+        <span class="n">platform_units</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+        <span class="n">batches</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+        <span class="n">populations</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+        <span class="n">paired_end</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">],</span>
+        <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Fixture factory for pytest-ngsfixtures sample layouts.</span>
+
+<span class="sd">    Generates a directory structure by linking to data files in</span>
+<span class="sd">    pytest-ngsfixtures data directory. A certain amount of generality</span>
+<span class="sd">    is allowed in that platform units and batches can be named at</span>
+<span class="sd">    will. Short sample names can also be used.</span>
+
+<span class="sd">    Briefly, sample file names are generated by combining labels in</span>
+<span class="sd">    the lists **samples** (SM), **platform_units** (PU), **batches**</span>
+<span class="sd">    (BATCH), and **populations** (POP), and formatting the directory</span>
+<span class="sd">    structure following the *runfmt* format specification. For</span>
+<span class="sd">    instance, with samples = [&quot;CHR.HG00512&quot;], populations=None,</span>
+<span class="sd">    batches=None, platform_units=[&quot;010101_AAABBB11XX&quot;], and</span>
+<span class="sd">    runfmt=&quot;{SM}/{PU}/{SM}_{PU}&quot;, input files will be organized as</span>
+<span class="sd">    &quot;CHR.HG00512/010101_AAABBB11XX/CHR.HG00512_010101_AAABBB11XX_1.fastq.gz&quot;</span>
+<span class="sd">    and similarly for the second read.</span>
+
+<span class="sd">    Usage:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">       from pytest_ngsfixtures import factories</span>
+<span class="sd">       my_layout = factories.sample_layout(</span>
+<span class="sd">           dirname=&quot;foo&quot;,</span>
+<span class="sd">           samples=[&quot;CHR.HG00512&quot;],</span>
+<span class="sd">           platform_units=[&quot;010101_AAABBB11XX&quot;],</span>
+<span class="sd">           populations=[&quot;CHR&quot;],</span>
+<span class="sd">           batches=[&quot;batch1&quot;],</span>
+<span class="sd">           runfmt=&quot;{POP}/{SM}/{BATCH}/{PU}/{SM}_{PU}&quot;,</span>
+<span class="sd">       )</span>
+
+
+<span class="sd">    Params:</span>
+<span class="sd">      runfmt (str): run format string</span>
+<span class="sd">      sample_prefix (str): sample prefix for short names</span>
+<span class="sd">      use_short_sample_names (bool): use short sample names</span>
+<span class="sd">      read1_suffix (str): read1 suffix</span>
+<span class="sd">      read2_suffix (str): read2 suffix</span>
+<span class="sd">      dirname (str): data directory name</span>
+<span class="sd">      sampleinfo (bool): create sampleinfo file</span>
+<span class="sd">      combinator (fun): function to combine sample, platform unit, batch, population labels</span>
+<span class="sd">      sample_aliases (list): list of sample alias names</span>
+<span class="sd">      samples (list): list of sample names</span>
+<span class="sd">      platform_units (list): list of platform units</span>
+<span class="sd">      batches (list): list of batch (project) names</span>
+<span class="sd">      populations (list): list of population names</span>
+<span class="sd">      paired_end (list): list of booleans indicating if a sample run is paired end (True) or single end (False)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      p (py.path.local): tmp directory with sample layout setup</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_aliases</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_aliases</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">),</span> <span class="s2">&quot;length of sample_aliases (</span><span class="si">{}</span><span class="s2">) and samples (</span><span class="si">{}</span><span class="s2">) must be equal&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sample_aliases</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">))</span>
+
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">autouse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">sample_layout_fixture</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">tmpdir_factory</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sample layout fixture. Setup sequence input files according to a</span>
+<span class="sd">        specified sample organization&quot;&quot;&quot;</span>
+        <span class="n">check_samples</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">get_config</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+        <span class="n">_samples</span> <span class="o">=</span> <span class="n">samples</span>
+        <span class="n">_pop</span> <span class="o">=</span> <span class="n">populations</span>
+        <span class="n">_batches</span> <span class="o">=</span> <span class="n">batches</span>
+        <span class="n">_pu</span> <span class="o">=</span> <span class="n">platform_units</span>
+        <span class="n">_pe</span> <span class="o">=</span> <span class="n">paired_end</span>
+        <span class="n">_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;POP&#39;</span><span class="p">,</span> <span class="s1">&#39;PU&#39;</span><span class="p">,</span> <span class="s1">&#39;SM&#39;</span><span class="p">,</span> <span class="s1">&#39;BATCH&#39;</span><span class="p">,</span> <span class="s1">&#39;PE&#39;</span><span class="p">]</span>
+        <span class="n">_param_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;populations&#39;</span><span class="p">,</span> <span class="s1">&#39;platform_units&#39;</span><span class="p">,</span> <span class="s1">&#39;samples&#39;</span><span class="p">,</span> <span class="s1">&#39;batches&#39;</span><span class="p">,</span> <span class="s1">&#39;paired_end&#39;</span><span class="p">]</span>
+        <span class="n">_keys_to_param_names</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">_keys</span><span class="p">,</span> <span class="n">_param_names</span><span class="p">))</span>
+        <span class="n">_param_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">_keys</span><span class="p">,</span> <span class="p">(</span><span class="n">_pop</span><span class="p">,</span> <span class="n">_pu</span><span class="p">,</span> <span class="n">_samples</span><span class="p">,</span> <span class="n">_batches</span><span class="p">,</span> <span class="n">_pe</span><span class="p">)))</span>
+        <span class="n">_layout</span> <span class="o">=</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">_keys</span><span class="p">,</span> <span class="n">p</span><span class="p">))</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">combinator</span><span class="p">(</span><span class="n">_pop</span><span class="p">,</span> <span class="n">_pu</span><span class="p">,</span> <span class="n">_samples</span><span class="p">,</span> <span class="n">_batches</span><span class="p">,</span> <span class="n">_pe</span><span class="p">)]</span>
+        <span class="n">_sample_counter</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">_sample_map</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">safe_mktemp</span><span class="p">(</span><span class="n">tmpdir_factory</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">_layout</span><span class="p">:</span>
+            <span class="n">srckeys</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">l</span><span class="p">[</span><span class="s2">&quot;SM&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">_sample_map</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">_sample_map</span><span class="p">[</span><span class="n">l</span><span class="p">[</span><span class="s2">&quot;SM&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sample_prefix</span><span class="p">,</span> <span class="n">_sample_counter</span><span class="p">)</span>
+                <span class="n">_sample_counter</span> <span class="o">=</span> <span class="n">_sample_counter</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">use_short_sample_names</span><span class="p">:</span>
+                <span class="n">l</span><span class="p">[</span><span class="s1">&#39;SM&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_sample_map</span><span class="p">[</span><span class="n">l</span><span class="p">[</span><span class="s1">&#39;SM&#39;</span><span class="p">]]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_aliases</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">l</span><span class="p">[</span><span class="s1">&#39;SM&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample_aliases</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">src</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATADIR</span><span class="p">,</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">],</span> <span class="n">srckeys</span><span class="p">[</span><span class="s1">&#39;SM&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_1.fastq.gz&quot;</span><span class="p">)</span>
+            <span class="n">_check_file_exists</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">])</span>
+            <span class="n">safe_symlink</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATADIR</span><span class="p">,</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">],</span> <span class="n">srckeys</span><span class="p">[</span><span class="s1">&#39;SM&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_1.fastq.gz&quot;</span><span class="p">),</span>
+                         <span class="n">runfmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">l</span><span class="p">)</span> <span class="o">+</span> <span class="n">read1_suffix</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">l</span><span class="p">[</span><span class="s1">&#39;PE&#39;</span><span class="p">]:</span>
+                <span class="n">safe_symlink</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATADIR</span><span class="p">,</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">],</span> <span class="n">srckeys</span><span class="p">[</span><span class="s1">&#39;SM&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_2.fastq.gz&quot;</span><span class="p">),</span>
+                             <span class="n">runfmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">l</span><span class="p">)</span> <span class="o">+</span> <span class="n">read2_suffix</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sampleinfo</span><span class="p">:</span>
+            <span class="n">outkeys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;[</span><span class="si">{}</span><span class="s2">/_]&quot;</span><span class="p">,</span> <span class="n">runfmt</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;fastq&quot;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">((</span><span class="n">_param_dict</span><span class="p">[</span><span class="n">y</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">outkeys</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">y</span> <span class="o">==</span> <span class="s2">&quot;fastq&quot;</span><span class="p">),</span> <span class="mi">2</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="n">ParameterException</span><span class="p">(</span><span class="s2">&quot;all parameters </span><span class="si">{}</span><span class="s2"> must be of equal length for sampleinfo file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_keys_to_param_names</span><span class="p">[</span><span class="n">y</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">outkeys</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">y</span> <span class="o">==</span> <span class="s2">&quot;fastq&quot;</span><span class="p">)))</span>
+            <span class="n">outkeys</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">outkeys</span><span class="p">)</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outkeys</span><span class="p">)]</span>
+            <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">_layout</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;updating layout: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
+                <span class="n">l</span><span class="p">[</span><span class="s1">&#39;fastq&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">runfmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">l</span><span class="p">)</span> <span class="o">+</span> <span class="n">read1_suffix</span>
+                <span class="n">info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">l</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">outkeys</span><span class="p">]))</span>
+                <span class="k">if</span> <span class="n">l</span><span class="p">[</span><span class="s1">&#39;PE&#39;</span><span class="p">]:</span>
+                    <span class="n">l</span><span class="p">[</span><span class="s1">&#39;fastq&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">runfmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">l</span><span class="p">)</span> <span class="o">+</span> <span class="n">read2_suffix</span>
+                    <span class="n">info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">l</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">outkeys</span><span class="p">]))</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;sampleinfo.csv&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">info</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># Alternatively print as debug</span>
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_show_fixture</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;sample_layout&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;-------------&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">visit</span><span class="p">()):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">p</span>
+    <span class="k">return</span> <span class="n">sample_layout_fixture</span></div>
+
+
+<div class="viewcode-block" id="reference_layout"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.factories.reference_layout">[docs]</a><span class="k">def</span> <span class="nf">reference_layout</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;ref&quot;</span><span class="p">,</span> <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;ref&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fixture factory for reference layouts.</span>
+
+<span class="sd">    Params:</span>
+<span class="sd">      label (str): ref or scaffolds layout</span>
+<span class="sd">      dirname (str): reference directory name</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;scope&quot;</span><span class="p">,</span> <span class="s2">&quot;session&quot;</span><span class="p">),</span> <span class="n">autouse</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;autouse&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">reference_layout_fixture</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">tmpdir_factory</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reference layout fixture. Setup the one-chromosome reference files</span>
+<span class="sd">        or scaffold reference files in a separate directory&quot;&quot;&quot;</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">safe_mktemp</span><span class="p">(</span><span class="n">tmpdir_factory</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">dst</span><span class="p">,</span> <span class="n">src</span> <span class="ow">in</span> <span class="n">ref_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">dst</span> <span class="ow">in</span> <span class="n">ref_always</span><span class="p">:</span>
+                <span class="n">safe_symlink</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dst</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">dst</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;chrom.sizes&quot;</span><span class="p">):</span>
+                <span class="n">dst</span> <span class="o">=</span> <span class="s2">&quot;chrom.sizes&quot;</span>
+            <span class="n">safe_symlink</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_show_fixture</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&#39;</span><span class="si">{}</span><span class="s2">&#39; reference layout&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">label</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;------------------------------------&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">visit</span><span class="p">()):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">p</span>
+    <span class="k">return</span> <span class="n">reference_layout_fixture</span></div>
+
+
+<div class="viewcode-block" id="filetype"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.factories.filetype">[docs]</a><span class="k">def</span> <span class="nf">filetype</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fdir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rename</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">outprefix</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">inprefix</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;PUR.HG00731&#39;</span><span class="p">,</span> <span class="s1">&#39;PUR.HG00733&#39;</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Fixture factory for file types. This factory is atomic in that it</span>
+<span class="sd">    generates one fixture for one file.</span>
+
+<span class="sd">    Params:</span>
+<span class="sd">      src (str): fixture file name source</span>
+<span class="sd">      dst (str): fixture file name destination; link name</span>
+<span class="sd">      fdir (str): fixture output directory</span>
+<span class="sd">      rename (bool): rename fixture links</span>
+<span class="sd">      outprefix (str): output prefix</span>
+<span class="sd">      inprefix (list): list of input prefixes to substitute</span>
+<span class="sd">      kwargs (dict): keyword arguments</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dst</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">src</span><span class="p">)</span> <span class="k">if</span> <span class="n">dst</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">dst</span>
+    <span class="k">if</span> <span class="n">rename</span><span class="p">:</span>
+        <span class="n">pat</span> <span class="o">=</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">inprefix</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+        <span class="n">dst</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">pat</span><span class="p">,</span> <span class="n">outprefix</span><span class="p">,</span> <span class="n">dst</span><span class="p">)</span>
+
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;scope&quot;</span><span class="p">,</span> <span class="s2">&quot;function&quot;</span><span class="p">),</span> <span class="n">autouse</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;autouse&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">filetype_fixture</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">tmpdir_factory</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Filetype fixture&quot;&quot;&quot;</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">safe_mktemp</span><span class="p">(</span><span class="n">tmpdir_factory</span><span class="p">,</span> <span class="n">fdir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">safe_symlink</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_show_fixture</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;filetype fixture content&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;------------------------&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">p</span>
+    <span class="k">return</span> <span class="n">filetype_fixture</span></div>
+
+
+<div class="viewcode-block" id="fileset"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.factories.fileset">[docs]</a><span class="k">def</span> <span class="nf">fileset</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fdir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fixture factory to generate filesets.</span>
+
+<span class="sd">    Params:</span>
+<span class="sd">      src (list): list of sources</span>
+<span class="sd">      dst (list): list of destination; if None, use src basename</span>
+<span class="sd">      fdir (:obj:`str` or :obj:`py._path.local.LocalPath`): output directory</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      func: a fixture function</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span> <span class="s2">&quot;not a list&quot;</span>
+    <span class="k">assert</span> <span class="n">dst</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span> <span class="s2">&quot;not a list&quot;</span>
+    <span class="k">if</span> <span class="n">dst</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dst</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span>
+
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;scope&quot;</span><span class="p">,</span> <span class="s2">&quot;function&quot;</span><span class="p">),</span> <span class="n">autouse</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;autouse&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">fileset_fixture</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">tmpdir_factory</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Fileset factory</span>
+
+<span class="sd">        Setup a set of files</span>
+
+<span class="sd">        Params:</span>
+<span class="sd">          request (FixtureRequest): fixture request object</span>
+<span class="sd">          tmpdir_factory (py.path.local): fixture request object</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          :obj:`py._path.local.LocalPath`: output directory in which the files reside</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">safe_mktemp</span><span class="p">(</span><span class="n">tmpdir_factory</span><span class="p">,</span> <span class="n">fdir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">zip_longest</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">):</span>
+            <span class="n">safe_symlink</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_show_fixture</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;fileset fixture content&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;-----------------------&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">visit</span><span class="p">()):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">p</span>
+    <span class="k">return</span> <span class="n">fileset_fixture</span></div>
+
+
+<span class="k">def</span> <span class="nf">application_output</span><span class="p">(</span><span class="n">application</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;se&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fixture factory to generate application output.</span>
+
+<span class="sd">    Params:</span>
+<span class="sd">      application (str): application name</span>
+<span class="sd">      command (str): application command name</span>
+<span class="sd">      version (str): application version</span>
+<span class="sd">      end (str): paired end or single end</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      func: a filetype fixture function</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">pytest_ngsfixtures.config</span> <span class="k">import</span> <span class="n">application_config</span>
+    <span class="n">conf</span> <span class="o">=</span> <span class="n">application_config</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">application</span> <span class="ow">in</span> <span class="n">conf</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="s2">&quot;no such application &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">application</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">conf</span><span class="p">[</span><span class="n">application</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="s2">&quot;no such command &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">version</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;version must be string&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;_versions&quot;</span> <span class="ow">in</span> <span class="n">conf</span><span class="p">[</span><span class="n">application</span><span class="p">][</span><span class="n">command</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">_versions</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">conf</span><span class="p">[</span><span class="n">application</span><span class="p">][</span><span class="n">command</span><span class="p">][</span><span class="s2">&quot;_versions&quot;</span><span class="p">]]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_versions</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">conf</span><span class="p">[</span><span class="n">application</span><span class="p">][</span><span class="s2">&quot;_versions&quot;</span><span class="p">]]</span>
+    <span class="k">assert</span> <span class="n">version</span> <span class="ow">in</span> <span class="n">_versions</span><span class="p">,</span> <span class="s2">&quot;no such application output for version &#39;</span><span class="si">{}</span><span class="s2">&#39;, application &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">version</span><span class="p">,</span> <span class="n">application</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">end</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;se&quot;</span><span class="p">,</span> <span class="s2">&quot;pe&quot;</span><span class="p">],</span> <span class="s2">&quot;end must be either se or pe&quot;</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;version&#39;</span><span class="p">:</span> <span class="n">version</span><span class="p">,</span> <span class="s1">&#39;end&#39;</span><span class="p">:</span> <span class="n">end</span><span class="p">}</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">conf</span><span class="p">[</span><span class="n">application</span><span class="p">][</span><span class="n">command</span><span class="p">][</span><span class="s1">&#39;output&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">output</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;applications&quot;</span><span class="p">,</span> <span class="n">application</span><span class="p">,</span> <span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">filetype</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;applications&quot;</span><span class="p">,</span> <span class="n">application</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">output</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">fileset</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;sample_layout&#39;</span><span class="p">,</span> <span class="s1">&#39;reference_layout&#39;</span><span class="p">,</span> <span class="s1">&#39;filetype&#39;</span><span class="p">,</span> <span class="s1">&#39;fileset&#39;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Per Unneberg.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.4.0+1.g7f3ccdb',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

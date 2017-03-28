@@ -1,0 +1,431 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pytest_ngsfixtures.applications &mdash; pytest-ngsfixtures 0.4.0+1.g7f3ccdb documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="pytest-ngsfixtures 0.4.0+1.g7f3ccdb documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pytest-ngsfixtures
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.4.0+1.g7f3ccdb
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Developer guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html#files">Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html#advanced-usage">Advanced usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html#plugin-options">Plugin options</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">pytest_ngsfixtures</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">pytest-ngsfixtures</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>pytest_ngsfixtures.applications</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pytest_ngsfixtures.applications</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># see https://developer.github.com/v3/repos/contents/#get-contents</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">subprocess</span> <span class="k">as</span> <span class="nn">sp</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">pytest_ngsfixtures</span> <span class="k">import</span> <span class="n">__version__</span> <span class="k">as</span> <span class="n">ngsfixtures_version</span><span class="p">,</span> <span class="n">ROOT_DIR</span>
+<span class="kn">from</span> <span class="nn">pytest_ngsfixtures</span> <span class="k">import</span> <span class="n">utils</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">addLevelName</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span> <span class="s2">&quot;DRY_RUN&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="dry_run"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.applications.dry_run">[docs]</a><span class="k">def</span> <span class="nf">dry_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_log</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span> <span class="s2">&quot;DRY RUN: &quot;</span> <span class="o">+</span>  <span class="n">message</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">)</span></div>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="o">.</span><span class="n">dry_run</span> <span class="o">=</span> <span class="n">dry_run</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">GITHUB_API</span> <span class="o">=</span> <span class="s1">&#39;https://api.github.com/repos/</span><span class="si">{user}</span><span class="s1">/</span><span class="si">{repo}</span><span class="s1">/contents/</span><span class="si">{path}</span><span class="s1">&#39;</span>
+<span class="n">BIOCONDA_CONFIG</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">&quot;&quot;&quot;# Conda configuration file for </span><span class="si">{application}</span><span class="s2"></span>
+<span class="s2">#</span>
+<span class="s2"># Generated by pytest_ngsfixtures_add_application.py,</span>
+<span class="s2"># version </span><span class="si">{ngsfixtures_version}</span><span class="s2"></span>
+<span class="s2">#</span>
+<span class="s2"># Application output is output to directories named according to</span>
+<span class="s2"># version number ({{version}} format label) and possibly to</span>
+<span class="s2"># subdirectories named after sequencing configuration, either paired</span>
+<span class="s2"># end (pe) or single end (pe) ({{end}} format label)</span>
+<span class="s2">#</span>
+<span class="s2"># Applications are run from snakemake with the --use-conda option.</span>
+<span class="s2"># This will generate a separate conda environment for each version.</span>
+<span class="s2"># Conda environment files are generated on the fly, listing</span>
+<span class="s2"># </span><span class="si">{application}</span><span class="s2"> as the sole dependency. In some cases additional</span>
+<span class="s2"># depencies are required. Add these to the _conda_dependencies parameter</span>
+<span class="s2"># below.</span>
+<span class="s2">#</span>
+<span class="s2"># The snakemake clean rule is defined in ../fileutils.sm. The _clean</span>
+<span class="s2"># parameter lists additional file patterns targetted for removal.</span>
+<span class="s2">#</span>
+<span class="s2"># Finally, some subcommands aren&#39;t available for all versions of an</span>
+<span class="s2"># application. It is possible to override the global _versions by</span>
+<span class="s2"># adding _versions below the subcommand in question.</span>
+<span class="s2">#</span>
+<span class="s2">#</span>
+<span class="s2"># TODO:</span>
+<span class="s2">#</span>
+<span class="s2"># 1. Set default version to the latest version number in case the</span>
+<span class="s2"># proposed version is wrong</span>
+<span class="s2">#</span>
+<span class="s2"># 2. For each rule added to Snakefile, add a corresponding entry below</span>
+<span class="s2"># with the format of the output file name.</span>
+<span class="s2">#</span>
+
+<span class="si">{application}</span><span class="s2">:</span>
+<span class="s2">  _default: &#39;</span><span class="si">{default}</span><span class="s2">&#39;</span>
+<span class="s2">  _versions: </span><span class="si">{versions}</span><span class="s2"></span>
+<span class="s2">  _conda_versions: </span><span class="si">{conda_versions}</span><span class="s2"></span>
+<span class="s2">  _conda_dependencies: [] # Add extra conda dependencies required for this package here</span>
+<span class="s2">  _clean: [] # Add clean file pattern here</span>
+
+<span class="s2">  # </span><span class="si">{application}</span><span class="s2">_rule1:</span>
+<span class="s2">  #   output:</span>
+<span class="s2">  #     ext: &quot;{{version}}/{{end}}/outputfile.ext&quot;</span>
+<span class="s2">  # </span><span class="si">{application}</span><span class="s2">_rule2:</span>
+<span class="s2">  #   _end: pe # only gives meaningful output for paired-end data</span>
+<span class="s2">  #   output:</span>
+<span class="s2">  #     ext: &quot;{{version}}/{{end}}/outputfile.ext&quot;</span>
+<span class="s2">  #     ext2: &quot;{{version}}/{{end}}/outputfile.ext2&quot;</span>
+<span class="s2">  #   _versions: [] # add specific versions to subcommand if neede</span>
+<span class="s2">  # and so on</span>
+
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">DEFAULT_CONFIG</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{application}</span><span class="s2">:</span>
+<span class="s2">  _default: </span><span class="si">{default}</span><span class="s2"></span>
+<span class="s2">  _versions: </span><span class="si">{versions}</span><span class="s2"></span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">BIOCONDA_SNAKEFILE</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">&quot;&quot;&quot;# -*- snakemake -*-</span>
+<span class="s2">import os</span>
+
+<span class="s2">configfile: &quot;../config.yaml&quot;</span>
+<span class="s2">configfile: &quot;config.yaml&quot;</span>
+
+<span class="s2">APPLICATION = &quot;</span><span class="si">{application}</span><span class="s2">&quot;</span>
+
+<span class="s2">param = {{</span>
+<span class="s2">    &#39;end&#39;: config[&#39;end&#39;],</span>
+<span class="s2">}}</span>
+
+<span class="s2"># Add required inputfiles here, or specify separately for each rule.</span>
+<span class="s2"># The conda parameter is required.</span>
+<span class="s2">inputfiles = {{</span>
+<span class="s2">    &#39;conda&#39;: &quot;</span><span class="si">{application}</span><span class="s2">-{{version}}.yaml&quot;,</span>
+<span class="s2">    # &#39;bam&#39;: os.path.join(&quot;../{{end}}&quot;, config[&#39;input&#39;][&#39;bam&#39;]),</span>
+<span class="s2">    # &#39;ref&#39;: os.path.join(&quot;../../ref&quot;, config[&#39;input&#39;][&#39;ref&#39;]),</span>
+<span class="s2">}}</span>
+
+<span class="s2"># NB: the &#39;rule1&#39;, &#39;rule2&#39; etc labels should preferably map to the</span>
+<span class="s2"># subcommand name itself</span>
+
+<span class="s2">rule </span><span class="si">{application}</span><span class="s2">_rule1:</span>
+<span class="s2">    input: **inputfiles</span>
+<span class="s2">    output: **config[APPLICATION][&quot;</span><span class="si">{application}</span><span class="s2">_rule1&quot;][&quot;output&quot;]</span>
+<span class="s2">    conda: APPLICATION + &quot;-{{version}}.yaml&quot;</span>
+<span class="s2">    shell: &quot;</span><span class="si">{application}</span><span class="s2">&quot;</span>
+
+<span class="s2">rule </span><span class="si">{application}</span><span class="s2">_rule2:</span>
+<span class="s2">    input: **inputfiles</span>
+<span class="s2">    output: **config[APPLICATION][&quot;</span><span class="si">{application}</span><span class="s2">_rule2&quot;][&quot;output&quot;]</span>
+<span class="s2">    conda: APPLICATION + &quot;-{{version}}.yaml&quot;</span>
+<span class="s2">    shell: &quot;</span><span class="si">{application}</span><span class="s2">&quot;</span>
+
+<span class="s2"># Include rules for making the output</span>
+<span class="s2">include: &quot;../fileutils.sm&quot;</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">DEFAULT_SNAKEFILE</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">&quot;&quot;&quot;# -*- snakemake -*-</span>
+<span class="s2">import os</span>
+
+<span class="s2">configfile: &quot;../config.yaml&quot;</span>
+<span class="s2">configfile: &quot;config.yaml&quot;</span>
+
+<span class="s2">APPLICATION = &quot;</span><span class="si">{application}</span><span class="s2">&quot;</span>
+
+<span class="s2">param = {{</span>
+<span class="s2">    &#39;end&#39;: config[&#39;end&#39;],</span>
+<span class="s2">}}</span>
+
+<span class="s2"># Add required inputfiles here, or specify separately for each rule.</span>
+<span class="s2">inputfiles = {{</span>
+<span class="s2">    # &#39;bam&#39;: os.path.join(&quot;../{{end}}&quot;, config[&#39;input&#39;][&#39;bam&#39;]),</span>
+<span class="s2">    # &#39;ref&#39;: os.path.join(&quot;../../ref&quot;, config[&#39;input&#39;][&#39;ref&#39;]),</span>
+<span class="s2">}}</span>
+
+<span class="s2"># NB: the &#39;rule1&#39;, &#39;rule2&#39; etc labels should preferably map to the</span>
+<span class="s2"># subcommand name itself</span>
+
+<span class="s2">rule </span><span class="si">{application}</span><span class="s2">_rule1:</span>
+<span class="s2">    input: **inputfiles</span>
+<span class="s2">    output: **config[APPLICATION][&quot;</span><span class="si">{application}</span><span class="s2">_rule1&quot;][&quot;output&quot;]</span>
+<span class="s2">    shell: &quot;</span><span class="si">{application}</span><span class="s2">&quot;</span>
+
+<span class="s2">rule </span><span class="si">{application}</span><span class="s2">_rule2:</span>
+<span class="s2">    input: **inputfiles</span>
+<span class="s2">    output: **config[APPLICATION][&quot;</span><span class="si">{application}</span><span class="s2">_rule2&quot;][&quot;output&quot;]</span>
+<span class="s2">    shell: &quot;</span><span class="si">{application}</span><span class="s2">&quot;</span>
+
+<span class="s2"># Include rules for making the output</span>
+<span class="s2">include: &quot;../fileutils.sm&quot;</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="get_bioconda_info"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.applications.get_bioconda_info">[docs]</a><span class="k">def</span> <span class="nf">get_bioconda_info</span><span class="p">(</span><span class="n">application</span><span class="p">):</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s1">&#39;conda&#39;</span><span class="p">,</span> <span class="s1">&#39;search&#39;</span><span class="p">,</span> <span class="s1">&#39;-c&#39;</span><span class="p">,</span> <span class="s1">&#39;bioconda&#39;</span><span class="p">,</span> <span class="s1">&#39;-f&#39;</span><span class="p">,</span> <span class="n">application</span><span class="p">,</span> <span class="s1">&#39;--json&#39;</span><span class="p">])</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">versions</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;&quot;version&quot;:\s+&quot;([^ ]+)&quot;&#39;</span><span class="p">,</span> <span class="n">output</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))))</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;versions&#39;</span><span class="p">:</span> <span class="n">versions</span><span class="p">,</span>
+            <span class="s1">&#39;conda_versions&#39;</span><span class="p">:</span> <span class="n">versions</span><span class="p">,</span>
+            <span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="n">versions</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s1">&#39;application&#39;</span><span class="p">:</span> <span class="n">application</span><span class="p">,</span>
+            <span class="s1">&#39;ngsfixtures_version&#39;</span><span class="p">:</span> <span class="n">ngsfixtures_version</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">BIOCONDA_CONFIG</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">d</span><span class="p">),</span> <span class="n">BIOCONDA_SNAKEFILE</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">d</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">traceback</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">())</span>
+        <span class="k">raise</span> <span class="n">e</span></div>
+
+
+<div class="viewcode-block" id="get_github_info"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.applications.get_github_info">[docs]</a><span class="k">def</span> <span class="nf">get_github_info</span><span class="p">(</span><span class="n">application</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;user&#39;</span><span class="p">:</span> <span class="n">user</span><span class="p">,</span>
+        <span class="s1">&#39;repo&#39;</span><span class="p">:</span> <span class="n">repo</span><span class="p">,</span>
+        <span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">GITHUB_API</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">d</span><span class="p">)</span>
+    <span class="kn">import</span> <span class="nn">requests</span>
+    <span class="n">dd</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">dd</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="n">versions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">entry</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;dir&quot;</span><span class="p">:</span>
+            <span class="n">versions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;versions&#39;</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">versions</span><span class="p">),</span>
+        <span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">versions</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="s1">&#39;application&#39;</span><span class="p">:</span> <span class="n">application</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">DEFAULT_CONFIG</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">d</span><span class="p">),</span> <span class="n">DEFAULT_SNAKEFILE</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">d</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_other_info"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.applications.get_other_info">[docs]</a><span class="k">def</span> <span class="nf">get_other_info</span><span class="p">(</span><span class="n">application</span><span class="p">):</span>
+    <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="create_feature_branch"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.applications.create_feature_branch">[docs]</a><span class="k">def</span> <span class="nf">create_feature_branch</span><span class="p">(</span><span class="n">application</span><span class="p">,</span> <span class="n">dry_run</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Checkout feature branch from develop.</span>
+
+<span class="sd">    Will try to checkout develop and create feature branch for</span>
+<span class="sd">    application. Fails if develop is dirty.</span>
+
+<span class="sd">    Params:</span>
+<span class="sd">      application (str): application name</span>
+<span class="sd">      dry_run (bool): dry run</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      str: Path to application</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">application_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ROOT_DIR</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;applications&quot;</span><span class="p">))</span>
+    <span class="n">feature_branch</span> <span class="o">=</span> <span class="s2">&quot;feature/application/</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">application</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">dry_run</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">dry_run</span><span class="p">(</span><span class="s2">&quot;cd </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">application_path</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">dry_run</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;git&#39;</span><span class="p">,</span> <span class="s1">&#39;checkout&#39;</span><span class="p">,</span> <span class="s1">&#39;develop&#39;</span><span class="p">]))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">dry_run</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;git&#39;</span><span class="p">,</span> <span class="s1">&#39;checkout&#39;</span><span class="p">,</span> <span class="s1">&#39;-b&#39;</span><span class="p">,</span> <span class="n">feature_branch</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">application_path</span><span class="p">,</span> <span class="n">application</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">utils</span><span class="o">.</span><span class="n">cd</span><span class="p">(</span><span class="n">application_path</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">sp</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s1">&#39;git&#39;</span><span class="p">,</span> <span class="s1">&#39;checkout&#39;</span><span class="p">,</span> <span class="s1">&#39;develop&#39;</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">sp</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s1">&#39;git&#39;</span><span class="p">,</span> <span class="s1">&#39;checkout&#39;</span><span class="p">,</span> <span class="s1">&#39;-b&#39;</span><span class="p">,</span> <span class="n">feature_branch</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">application_path</span><span class="p">,</span> <span class="n">application</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Per Unneberg.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.4.0+1.g7f3ccdb',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

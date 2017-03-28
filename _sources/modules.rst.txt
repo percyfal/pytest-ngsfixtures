@@ -1,5 +1,5 @@
 pytest_ngsfixtures
-=============
+==================
 
 .. toctree::
    :maxdepth: 4
