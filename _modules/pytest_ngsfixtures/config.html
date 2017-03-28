@@ -1,0 +1,324 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pytest_ngsfixtures.config &mdash; pytest-ngsfixtures 0.4.0+1.g7f3ccdb documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="pytest-ngsfixtures 0.4.0+1.g7f3ccdb documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pytest-ngsfixtures
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.4.0+1.g7f3ccdb
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Developer guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html#files">Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html#advanced-usage">Advanced usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html#plugin-options">Plugin options</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">pytest_ngsfixtures</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">pytest-ngsfixtures</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>pytest_ngsfixtures.config</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pytest_ngsfixtures.config</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Configuration settings for pytest-ngsfixtures&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">pytest_ngsfixtures</span> <span class="k">import</span> <span class="n">ROOT_DIR</span><span class="p">,</span> <span class="n">helpers</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">DATADIR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ROOT_DIR</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;applications&quot;</span><span class="p">)</span>
+<span class="n">APPLICATION_BLACKLIST</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;pe&quot;</span><span class="p">,</span> <span class="s2">&quot;se&quot;</span><span class="p">]</span>
+<span class="n">APPLICATION_DIRECTORIES</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATADIR</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">DATADIR</span><span class="p">)</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATADIR</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span> <span class="ow">and</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">APPLICATION_BLACKLIST</span><span class="p">])</span>
+<span class="n">configfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATADIR</span><span class="p">,</span> <span class="s2">&quot;config.yaml&quot;</span><span class="p">)</span>
+
+<span class="n">Config</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Config&#39;</span><span class="p">,</span> <span class="s1">&#39;SIZES SAMPLES POPULATIONS SAMPLE_LAYOUTS&#39;</span><span class="p">)</span>
+
+<span class="n">sample_conf</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span>
+    <span class="n">SIZES</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;tiny&quot;</span><span class="p">,</span> <span class="s2">&quot;small&quot;</span><span class="p">,</span> <span class="s2">&quot;medium&quot;</span><span class="p">,</span> <span class="s2">&quot;yuge&quot;</span><span class="p">],</span>
+    <span class="n">SAMPLES</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;CHS.HG00512&#39;</span><span class="p">,</span> <span class="s1">&#39;CHS.HG00513&#39;</span><span class="p">,</span> <span class="s1">&#39;CHS&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;PUR.HG00731&#39;</span><span class="p">,</span> <span class="s1">&#39;PUR.HG00733&#39;</span><span class="p">,</span> <span class="s1">&#39;PUR&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;PUR.HG00731.A&#39;</span><span class="p">,</span> <span class="s1">&#39;PUR.HG00731.B&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;PUR.HG00733.A&#39;</span><span class="p">,</span> <span class="s1">&#39;PUR.HG00733.B&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;YRI.NA19238&#39;</span><span class="p">,</span> <span class="s1">&#39;YRI.NA19239&#39;</span><span class="p">,</span> <span class="s1">&#39;YRI&#39;</span><span class="p">],</span>
+    <span class="n">POPULATIONS</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;CHS&quot;</span><span class="p">,</span> <span class="s2">&quot;PUR&quot;</span><span class="p">,</span> <span class="s2">&quot;YRI&quot;</span><span class="p">],</span>
+    <span class="n">SAMPLE_LAYOUTS</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="s2">&quot;sample_run&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;project_sample_run&quot;</span><span class="p">,</span> <span class="s2">&quot;pop_sample&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;pop_sample_run&quot;</span><span class="p">,</span> <span class="s2">&quot;pop_project_sample_run&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="application_config"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.config.application_config">[docs]</a><span class="k">def</span> <span class="nf">application_config</span><span class="p">(</span><span class="n">application</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get application configuration</span>
+
+<span class="sd">    Params:</span>
+<span class="sd">      application (str): application name</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">      dict: application configuration</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">configfile</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+        <span class="n">application_config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">appdir</span> <span class="ow">in</span> <span class="n">APPLICATION_DIRECTORIES</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">application</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">appdir</span><span class="p">)</span> <span class="o">!=</span> <span class="n">application</span><span class="p">:</span>
+                <span class="k">continue</span>
+        <span class="n">cfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">appdir</span><span class="p">,</span> <span class="s2">&quot;config.yaml&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cfile</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+                <span class="n">conf</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
+            <span class="n">application_config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">conf</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">application_config</span></div>
+
+
+<div class="viewcode-block" id="get_application_fixture"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.config.get_application_fixture">[docs]</a><span class="k">def</span> <span class="nf">get_application_fixture</span><span class="p">(</span><span class="n">application</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;se&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Retrieve a application fixture as formatted strings</span>
+
+<span class="sd">    Params:</span>
+<span class="sd">      application (str): application name</span>
+<span class="sd">      command (str): command name</span>
+<span class="sd">      version (str): version</span>
+<span class="sd">      end (str): se or pe</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      dict: dictionary of application fixture names formatted as a string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">conf</span> <span class="o">=</span> <span class="n">application_config</span><span class="p">(</span><span class="n">application</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">conf</span><span class="p">[</span><span class="n">application</span><span class="p">][</span><span class="n">command</span><span class="p">][</span><span class="s1">&#39;output&#39;</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;[pytest_ngs]KeyError: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="k">raise</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">application</span><span class="p">,</span> <span class="n">o</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="n">version</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">output</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
+
+
+<div class="viewcode-block" id="application_fixtures"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.config.application_fixtures">[docs]</a><span class="k">def</span> <span class="nf">application_fixtures</span><span class="p">(</span><span class="n">application</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the application fixtures.</span>
+
+<span class="sd">    Returns the application fixtures defined in the application config</span>
+<span class="sd">    file (data/applications/config.yaml).</span>
+
+<span class="sd">    Params:</span>
+<span class="sd">      application (str): application name</span>
+<span class="sd">      end (str): sequence configuration (single end/paired end)</span>
+<span class="sd">      version (str): version identifier</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      list of fixtures, where each entry consists of application,</span>
+<span class="sd">      command, version, end, and the raw output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fixtures</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">conf</span> <span class="o">=</span> <span class="n">application_config</span><span class="p">(</span><span class="n">application</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">app</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">conf</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">app</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;basedir&#39;</span><span class="p">,</span> <span class="s1">&#39;end&#39;</span><span class="p">,</span> <span class="s1">&#39;input&#39;</span><span class="p">,</span> <span class="s1">&#39;params&#39;</span><span class="p">]:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">application</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">app</span> <span class="o">!=</span> <span class="n">application</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">versions</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">get_versions</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="n">app</span><span class="p">])</span> <span class="k">if</span> <span class="n">version</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">set</span><span class="p">([</span><span class="n">version</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">command</span><span class="p">,</span> <span class="n">params</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">command</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">versions</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">get_versions</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="n">app</span><span class="p">][</span><span class="n">command</span><span class="p">],</span> <span class="n">versions</span><span class="p">)</span>
+            <span class="n">_raw_output</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;output&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">end</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">_ends</span> <span class="o">=</span> <span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;_end&quot;</span><span class="p">]]</span> <span class="k">if</span> <span class="s2">&quot;_end&quot;</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">else</span> <span class="p">[</span><span class="s2">&quot;se&quot;</span><span class="p">,</span> <span class="s2">&quot;pe&quot;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s2">&quot;_end&quot;</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;_end&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">end</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">_ends</span> <span class="o">=</span> <span class="p">[</span><span class="n">end</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_raw_output</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{end}</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">_raw_output</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+                    <span class="n">_ends</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;se&quot;</span><span class="p">]</span>
+                <span class="n">output</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">([</span><span class="n">app</span><span class="p">],</span> <span class="p">[</span><span class="n">command</span><span class="p">],</span> <span class="n">versions</span><span class="p">,</span> <span class="n">_ends</span><span class="p">,</span> <span class="p">[</span><span class="n">_raw_output</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s2">&quot;</span><span class="si">{end}</span><span class="s2">&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_raw_output</span><span class="p">:</span>
+                    <span class="n">_ends</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;se&quot;</span><span class="p">]</span>
+                <span class="n">output</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">([</span><span class="n">app</span><span class="p">],</span> <span class="p">[</span><span class="n">command</span><span class="p">],</span> <span class="n">versions</span><span class="p">,</span> <span class="n">_ends</span><span class="p">,</span> <span class="p">[</span><span class="n">_raw_output</span><span class="p">])</span>
+            <span class="n">fixtures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">output</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">fixtures</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">l</span><span class="p">]</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Per Unneberg.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.4.0+1.g7f3ccdb',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

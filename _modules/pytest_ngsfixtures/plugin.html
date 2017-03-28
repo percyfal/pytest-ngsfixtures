@@ -1,0 +1,312 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pytest_ngsfixtures.plugin &mdash; pytest-ngsfixtures 0.4.0+1.g7f3ccdb documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="pytest-ngsfixtures 0.4.0+1.g7f3ccdb documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pytest-ngsfixtures
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.4.0+1.g7f3ccdb
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Developer guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html#files">Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html#advanced-usage">Advanced usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html#plugin-options">Plugin options</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">pytest_ngsfixtures</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">pytest-ngsfixtures</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>pytest_ngsfixtures.plugin</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pytest_ngsfixtures.plugin</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Plugin configuration module for pytest-ngsfixtures&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">pytest_ngsfixtures</span> <span class="k">import</span> <span class="n">factories</span>
+<span class="kn">from</span> <span class="nn">pytest_ngsfixtures.config</span> <span class="k">import</span> <span class="n">sample_conf</span>
+
+<span class="n">_help_ngs_size</span> <span class="o">=</span> <span class="s2">&quot;select sample size (choices: </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;&#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sample_conf</span><span class="o">.</span><span class="n">SIZES</span><span class="p">))</span>
+<span class="n">_help_ngs_layout</span> <span class="o">=</span> <span class="s2">&quot;select predefined sample layout(s) (allowed choices: </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;&#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sample_conf</span><span class="o">.</span><span class="n">SAMPLE_LAYOUTS</span><span class="p">))</span>
+<span class="n">_help_ngs_show_fixture</span> <span class="o">=</span> <span class="s2">&quot;show fixture layout&quot;</span>
+<span class="n">_help_ngs_threads</span> <span class="o">=</span> <span class="s2">&quot;set the number of threads to use in test&quot;</span>
+
+
+<div class="viewcode-block" id="pytest_addoption"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.plugin.pytest_addoption">[docs]</a><span class="k">def</span> <span class="nf">pytest_addoption</span><span class="p">(</span><span class="n">parser</span><span class="p">):</span>
+    <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">getgroup</span><span class="p">(</span><span class="s2">&quot;ngsfixtures&quot;</span><span class="p">,</span> <span class="s2">&quot;next-generation sequencing fixture options&quot;</span><span class="p">)</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">addoption</span><span class="p">(</span>
+        <span class="s1">&#39;-X&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;--ngs-size&#39;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store&#39;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;ngs_size&#39;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s1">&#39;tiny&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="n">_help_ngs_size</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="n">sample_conf</span><span class="o">.</span><span class="n">SIZES</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;size&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">addoption</span><span class="p">(</span>
+        <span class="s1">&#39;-L&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;--ngs-layout&#39;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store&#39;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;ngs_layout&#39;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">help</span><span class="o">=</span><span class="n">_help_ngs_layout</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;layout&quot;</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="n">sample_conf</span><span class="o">.</span><span class="n">SAMPLE_LAYOUTS</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">addoption</span><span class="p">(</span>
+        <span class="s1">&#39;-F&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;--ngs-show-fixture&#39;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;ngs_show_fixture&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="n">_help_ngs_show_fixture</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">addoption</span><span class="p">(</span>
+        <span class="s1">&#39;--nt&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;--ngs-threads&#39;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;ngs_threads&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="n">_help_ngs_threads</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<span class="n">flat</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span><span class="n">samples</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;CHS.HG00512&#39;</span><span class="p">])</span>
+
+<span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;samples&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;PUR.HG00731.A&#39;</span><span class="p">,</span> <span class="s1">&#39;PUR.HG00731.B&#39;</span><span class="p">,</span> <span class="s1">&#39;PUR.HG00733.A&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;sample_aliases&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;s1&#39;</span><span class="p">,</span> <span class="s1">&#39;s1&#39;</span><span class="p">,</span> <span class="s1">&#39;s2&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;platform_units&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;010101_AAABBB11XX&#39;</span><span class="p">,</span> <span class="s1">&#39;020202_AAABBB22XX&#39;</span><span class="p">,</span> <span class="s1">&#39;010101_AAABBB11XX&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;paired_end&#39;</span><span class="p">:</span> <span class="p">[</span><span class="kc">True</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;numbered&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="n">sample</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span>
+    <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span>
+    <span class="n">runfmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{SM}</span><span class="s2">/</span><span class="si">{SM}</span><span class="s2">_</span><span class="si">{PU}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">sample_run</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span>
+    <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;sample_run&quot;</span><span class="p">,</span>
+    <span class="n">runfmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{SM}</span><span class="s2">/</span><span class="si">{PU}</span><span class="s2">/</span><span class="si">{SM}</span><span class="s2">_</span><span class="si">{PU}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">sample_project_run</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span>
+    <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;sample_project_run&quot;</span><span class="p">,</span>
+    <span class="n">runfmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{SM}</span><span class="s2">/</span><span class="si">{BATCH}</span><span class="s2">/</span><span class="si">{PU}</span><span class="s2">/</span><span class="si">{BATCH}</span><span class="s2">_</span><span class="si">{PU}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="n">batches</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;p1&quot;</span><span class="p">,</span> <span class="s2">&quot;p2&quot;</span><span class="p">,</span> <span class="s2">&quot;p1&quot;</span><span class="p">],</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;samples&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;PUR.HG00731.A&#39;</span><span class="p">,</span> <span class="s1">&#39;PUR.HG00731.B&#39;</span><span class="p">,</span> <span class="s1">&#39;PUR.HG00733.A&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;CHS.HG00512&#39;</span><span class="p">,</span> <span class="s1">&#39;CHS.HG00513&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;YRI.NA19238&#39;</span><span class="p">,</span> <span class="s1">&#39;YRI.NA19239&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;sample_aliases&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;PUR.HG00731&#39;</span><span class="p">,</span> <span class="s1">&#39;PUR.HG00731&#39;</span><span class="p">,</span> <span class="s1">&#39;PUR.HG00733&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;CHS.HG00512&#39;</span><span class="p">,</span> <span class="s1">&#39;CHS.HG00513&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;YRI.NA19238&#39;</span><span class="p">,</span> <span class="s1">&#39;YRI.NA19239&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;platform_units&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;010101_AAABBB11XX&#39;</span><span class="p">,</span> <span class="s1">&#39;020202_AAABBB22XX&#39;</span><span class="p">,</span> <span class="s1">&#39;010101_AAABBB11XX&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;010101_AAABBB11XX&#39;</span><span class="p">,</span> <span class="s1">&#39;020202_AAABBB22XX&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s1">&#39;populations&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;PUR&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;CHS&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;YRI&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s1">&#39;paired_end&#39;</span><span class="p">:</span> <span class="p">[</span><span class="kc">True</span><span class="p">]</span> <span class="o">*</span> <span class="mi">7</span><span class="p">,</span>
+    <span class="s1">&#39;use_short_sample_names&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s1">&#39;numbered&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">pop_sample</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span>
+    <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;pop_sample&quot;</span><span class="p">,</span>
+    <span class="n">runfmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{POP}</span><span class="s2">/</span><span class="si">{SM}</span><span class="s2">/</span><span class="si">{SM}</span><span class="s2">_</span><span class="si">{PU}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">pop_sample_run</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span>
+    <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;pop_sample_run&quot;</span><span class="p">,</span>
+    <span class="n">runfmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{POP}</span><span class="s2">/</span><span class="si">{SM}</span><span class="s2">/</span><span class="si">{PU}</span><span class="s2">/</span><span class="si">{SM}</span><span class="s2">_</span><span class="si">{PU}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">pop_sample_project_run</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span>
+    <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;pop_project_sample_run&quot;</span><span class="p">,</span>
+    <span class="n">runfmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{POP}</span><span class="s2">/</span><span class="si">{SM}</span><span class="s2">/</span><span class="si">{BATCH}</span><span class="s2">/</span><span class="si">{PU}</span><span class="s2">/</span><span class="si">{SM}</span><span class="s2">_</span><span class="si">{PU}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="n">batches</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;p1&quot;</span><span class="p">,</span> <span class="s2">&quot;p2&quot;</span><span class="p">,</span> <span class="s2">&quot;p1&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;p1&quot;</span><span class="p">,</span> <span class="s2">&quot;p2&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ref</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">reference_layout</span><span class="p">(</span><span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;ref&quot;</span><span class="p">)</span>
+<span class="n">scaffolds</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">reference_layout</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;scaffolds&quot;</span><span class="p">,</span> <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;scaffolds&quot;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Per Unneberg.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.4.0+1.g7f3ccdb',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
