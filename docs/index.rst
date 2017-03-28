@@ -32,8 +32,6 @@ Contents
 
    installation
    contributing
-   releasenotes
-   readme
    usage
    authors
    history

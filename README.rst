@@ -4,7 +4,9 @@
 
 .. image:: https://anaconda.org/percyfal/pytest-ngsfixtures/badges/version.svg
 	   :target: https://anaconda.org/percyfal/pytest-ngsfixtures
-
+.. image:: https://img.shields.io/pypi/dm/pytest-ngsfixtures.svg
+	   :target: https://pypi.python.org/pypi/pytest_ngsfixtures
+		
 About
 =====
 
@@ -16,6 +18,8 @@ files and output files from a variety of bioinformatics applications
 and tools. There are sequencing fixtures for some common sample
 layouts, but it's easy to generate additional sample fixture layouts
 using fixture factories.
+
+See the `pytest-ngsfixtures documentation`_ for more information.
 
 * Free software: GNU General Public License v3
 
@@ -43,3 +47,4 @@ This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypack
 
 .. _Cookiecutter: https://github.com/audreyr/cookiecutter
 .. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
+.. _`pytest-ngsfixtures documentation`: https://percyfal.github.io/pytest-ngsfixtures/
