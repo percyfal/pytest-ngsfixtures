@@ -24,7 +24,10 @@ test_requirements = [
 
 package_data = []
 
-scripts = ['scripts/download_ngsfixtures_data.py']
+scripts = [
+    'scripts/download_ngsfixtures_data.py',
+    'scripts/pytest_ngsfixtures_add_application.py',
+]
 
 
 def package_path(path, filters=()):
