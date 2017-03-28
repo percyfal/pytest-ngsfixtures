@@ -42,4 +42,4 @@ rule clean:
     run:
         clean = config[APPLICATION].get("_clean", []) + ["{}*.yaml".format(APPLICATION)]
         for p in clean:
-            shell("for f in `find . -name '{pattern}'`; do rm -f $f; done".format(pattern=p))
+            shell("for f in `find . -name '{pattern}'`; do rm -rf $f; done".format(pattern=p))
