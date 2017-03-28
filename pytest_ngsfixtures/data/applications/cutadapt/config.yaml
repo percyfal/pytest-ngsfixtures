@@ -1,0 +1,8 @@
+cutadapt:
+  _default: 1.12
+  _versions:  [1.8.1, 1.8.3, 1.9.1, "1.10", 1.11, 1.12]
+  _conda_versions: [1.8.1, 1.8.3, 1.9.1, "1.10", 1.11, 1.12]
+  cutadapt:
+    output:
+      metrics: "{version}/{end}/cutadapt_metrics.txt"
+    

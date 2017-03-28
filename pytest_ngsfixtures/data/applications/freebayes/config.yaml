@@ -1,0 +1,10 @@
+freebayes:
+  _default: 1.1.0
+  _versions: [1.0.2.29, 1.1.0]
+  _conda_versions: [0.9.21.26, 0.9.21.7, 1.0.1, 1.0.2, 1.0.2.29, 1.1.0]
+  _conda_dependencies: ["htslib"]
+  _clean: ["*.fai"]
+  freebayes:
+    output:
+      vcfgz: "{version}/{end}/medium.freebayes.vcf.gz"
+

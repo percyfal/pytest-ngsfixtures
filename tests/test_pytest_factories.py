@@ -152,7 +152,7 @@ sample_aliases = factories.sample_layout(
     runfmt="{SM}/{SM}_{PU}",
     numbered=True,
     scope="function",
- )
+)
 
 
 def test_sample_aliases(sample_aliases):
@@ -198,19 +198,26 @@ fixtures = application_fixtures()
 @pytest.fixture(scope="function", autouse=False, params=fixtures,
                 ids=["{} {}:{}/{}".format(x[0], x[1], x[2], x[3]) for x in fixtures])
 def ao(request, tmpdir_factory):
-    app, command, version, end, fmt = request.param
+    app, command, version, end, fmtdict = request.param
     params = {'version': version, 'end': end}
-    output = fmt.format(**params)
-    src = os.path.join("applications", app, output)
-    dst = os.path.basename(src)
-    fdir = os.path.join(app, version, command, end)
-    p = safe_mktemp(tmpdir_factory, fdir)
-    p = safe_symlink(p, src, dst)
-    return p
+    outputs = [fmt.format(**params) for fmt in fmtdict.values()]
+    sources = [os.path.join("applications", app, output) for output in outputs]
+    dests = [os.path.basename(src) for src in sources]
+    fdir = os.path.join(app, str(version), command, end)
+    pdir = safe_mktemp(tmpdir_factory, fdir)
+    for src, dst in zip(sources, dests):
+        p = safe_symlink(pdir, src, dst)
+    return pdir
 
 
 def test_application_output(ao):
-    assert ao.exists()
+    for p in ao.visit():
+        assert p.exists()
+
+
+def test_application_fixture_params():
+    c = application_fixtures(application="samtools")
+    assert isinstance(c, list)
 
 
 def test_call_application_output():
@@ -234,7 +241,7 @@ def test_factory_application_output_fdir(appout_dir):
 
 # Test pool fixtures; these are not defined by default
 kwargs = {
-    'samples':  ['CHS', 'PUR', 'YRI'],
+    'samples': ['CHS', 'PUR', 'YRI'],
     'platform_units': ['010101_AAABBB11XX', '020202_AAABBB22XX', '010101_AAABBB11XX'],
     'populations': ['CHS', 'PUR', 'YRI'],
     'paired_end': [True] * 3,

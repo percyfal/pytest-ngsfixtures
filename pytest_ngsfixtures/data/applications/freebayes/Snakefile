@@ -1,0 +1,22 @@
+# -*- snakemake -*-
+import os
+
+configfile: "../config.yaml"
+configfile: "config.yaml"
+
+APPLICATION = "freebayes"
+
+param = {
+    'ref': os.path.join("{version}", "{end}", config['input']['ref']),
+    'end': config['end'],
+}
+
+BAM = os.path.join("../{end}", config['input']['bam'])
+
+rule freebayes:
+    input: bam = BAM, ref = param['ref'], conda="freebayes-{version}.yaml"
+    output: config[APPLICATION]["freebayes"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "freebayes -f {input.ref} {input.bam} | bgzip > {output}"
+
+include: "../fileutils.sm"           

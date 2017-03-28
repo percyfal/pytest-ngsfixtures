@@ -3,10 +3,16 @@
 import os
 import yaml
 import itertools
+import logging
 from collections import namedtuple
-from pytest_ngsfixtures import ROOT_DIR
+from pytest_ngsfixtures import ROOT_DIR, helpers
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 DATADIR = os.path.join(ROOT_DIR, "data", "applications")
+APPLICATION_BLACKLIST = ["pe", "se"]
+APPLICATION_DIRECTORIES = sorted([os.path.join(DATADIR, x) for x in os.listdir(DATADIR) if os.path.isdir(os.path.join(DATADIR, x)) and x not in APPLICATION_BLACKLIST])
 configfile = os.path.join(DATADIR, "config.yaml")
 
 Config = namedtuple('Config', 'SIZES SAMPLES POPULATIONS SAMPLE_LAYOUTS')
@@ -25,42 +31,92 @@ sample_conf = Config(
 )
 
 
-with open(configfile, 'r') as fh:
-    application_config = yaml.load(fh)
+def application_config(application=None):
+    """Get application configuration
+
+    Params:
+      application (str): application name
+
+    Return:
+      dict: application configuration
+
+    """
+    with open(configfile, 'r') as fh:
+        application_config = yaml.load(fh)
+    for appdir in APPLICATION_DIRECTORIES:
+        if application is not None:
+            if os.path.basename(appdir) != application:
+                continue
+        cfile = os.path.join(appdir, "config.yaml")
+        try:
+            with open(cfile, 'r') as fh:
+                conf = yaml.load(fh)
+            application_config.update(conf)
+        except Exception as e:
+            print(e)
+
+    return application_config
 
 
-def application_fixtures(use_conda_versions=True):
+def get_application_fixture(application, command, version, end="se"):
+    """Retrieve a application fixture as formatted strings
+
+    Params:
+      application (str): application name
+      command (str): command name
+      version (str): version
+      end (str): se or pe
+
+    Returns:
+      dict: dictionary of application fixture names formatted as a string
+    """
+    conf = application_config(application)
+    try:
+        output = conf[application][command]['output']
+    except KeyError as e:
+        logging.error("[pytest_ngs]KeyError: {}".format(e))
+        raise
+    return {k: os.path.join(application, o.format(version=version, end=end)) for k, o in output.items()}
+
+
+def application_fixtures(application=None, end=None, version=None):
     """Return the application fixtures.
 
     Returns the application fixtures defined in the application config
     file (data/applications/config.yaml).
 
     Params:
-      use_conda_versions (bool): use the conda versions for each application
+      application (str): application name
+      end (str): sequence configuration (single end/paired end)
+      version (str): version identifier
 
     Returns:
       list of fixtures, where each entry consists of application,
       command, version, end, and the raw output.
     """
-    use_versions = "_conda_versions"
-    if not use_conda_versions:
-        use_versions = "_versions"
     fixtures = []
-    conf = application_config
+    conf = application_config(application)
     for app, d in conf.items():
         if app in ['basedir', 'end', 'input', 'params']:
             continue
-        _default_versions = [str(x) for x in conf[app][use_versions]]
+        if application is not None and app != application:
+            continue
+        versions = helpers.get_versions(conf[app]) if version is None else set([version])
         for command, params in d.items():
             if command.startswith("_"):
                 continue
-            versions = [str(x) for x in params.get("_versions", _default_versions)]
+            versions = helpers.get_versions(conf[app][command], versions)
             _raw_output = params["output"]
-            _ends = ["se", "pe"]
+            if end is None:
+                _ends = [params["_end"]] if "_end" in params.keys() else ["se", "pe"]
+            else:
+                if "_end" in params.keys() and params["_end"] != end:
+                    continue
+                _ends = [end]
             if isinstance(_raw_output, dict):
                 if not any("{end}" in x for x in _raw_output.values()):
                     _ends = ["se"]
-                output = itertools.product([app], [command],  versions, _ends, [v for k, v in _raw_output.items()])
+                output = itertools.product([app], [command], versions, _ends, [_raw_output])
             else:
                 if "{end}" not in _raw_output:
                     _ends = ["se"]

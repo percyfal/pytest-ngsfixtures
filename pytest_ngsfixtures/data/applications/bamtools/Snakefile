@@ -1,0 +1,28 @@
+# -*- snakemake -*-
+import os
+
+configfile: "../config.yaml"
+configfile: "config.yaml"
+
+APPLICATION = "bamtools"
+
+param = {
+    'end': config['end'],
+}
+
+# Add required inputfiles here, or specify separately for each rule.
+# The conda parameter is required.
+inputfiles = {
+    'conda': "bamtools-{version}.yaml",
+    'bam': os.path.join("../{end}", config['input']['bam']),
+    # 'ref': os.path.join("../../ref", config['input']['ref']),
+}
+
+rule bamtools_stats:
+    input: **inputfiles
+    output: **config[APPLICATION]["bamtools_stats"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "bamtools stats -in {input.bam} > {output.stats}"
+
+# Include rules for making the output
+include: "../fileutils.sm"

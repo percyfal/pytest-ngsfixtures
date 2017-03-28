@@ -1,15 +1,45 @@
 # -*- snakemake -*-
 import os
 import yaml
-from pytest_ngsfixtures.helpers import ROOT_DIR, make_conda_env_file
+from pytest_ngsfixtures import ROOT_DIR, helpers
+
+
+rule all:
+    """Generate all output files"""
+    input: helpers.make_targets(workflow.rules, config, APPLICATION, end=param['end'])
+
+
+rule targets:
+    """Print target names"""
+    run:
+        tgts = helpers.make_targets(workflow.rules, config, APPLICATION, end=param['end'])
+        print(" ".join(tgts))
+
 
 rule make_conda_env_file:
-    output: yaml = temporary("{application}-{version}.yaml")
+    """Make conda environment file"""
+    output: yaml = "{application}-{version}.yaml"
+    priority: 100
     run:
-        make_conda_env_file(output.yaml, **wildcards)
+        kw = dict(wildcards)
+        extra = config[wildcards.application].get("_conda_dependencies", [])
+        kw['extra'] = "\n".join(["  - {}".format(x.format(**wildcards)) for x in extra])
+        helpers.make_conda_env_file(output.yaml, **kw)
 
-        
-rule link_version_ref:
-    input: os.path.join(ROOT_DIR, config["basedir"], "ref", config["input"]["ref"])
-    output: temporary(os.path.join("{version}", config["input"]["ref"]))
-    shell: "mkdir -p $(dirname {output}); ln -sf {input} {output}"
+
+rule conda:
+    """Pseudorule for generating all conda files.
+
+    NB: as of snakemake version 3.10.2, this rule must be run first
+    without the --use-conda flag.
+
+    """
+    input: [r.input.conda.format(version=x) for x in \
+            helpers.get_versions(config[APPLICATION]) for r in workflow.rules \
+            if "conda" in r.input.keys()]
+
+rule clean:
+    run:
+        clean = config[APPLICATION].get("_clean", []) + ["{}*.yaml".format(APPLICATION)]
+        for p in clean:
+            shell("for f in `find . -name '{pattern}'`; do rm -f $f; done".format(pattern=p))

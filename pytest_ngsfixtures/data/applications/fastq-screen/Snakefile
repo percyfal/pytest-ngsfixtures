@@ -1,0 +1,64 @@
+# -*- snakemake -*-
+import os
+
+configfile: "../config.yaml"
+configfile: "config.yaml"
+
+APPLICATION = "fastq-screen"
+
+param = {
+    'end': config['end'],
+    'build_ext': [".1.bt2", ".2.bt2", ".3.bt2", ".4.bt2", ".rev.1.bt2", ".rev.2.bt2"],
+}
+
+FASTQCONF ="""
+THREADS	1
+DATABASE       Ref   {version}/{ref}
+BOWTIE2 bowtie2
+"""
+
+
+# Add required inputfiles here, or specify separately for each rule.
+# The conda parameter is required.
+inputfiles = {
+    'conda': "fastq-screen-{version}.yaml",
+    'fastqconf': "{version}/fastq.conf",
+    'fa': 'fastq_screen_test_dataset/fqs_test_dataset.fastq.gz',
+    'output': 'fastq_screen_test_dataset',
+    'ref': os.path.join("{version}", config['input']['ref']),
+}
+
+rule _test_data:
+    output: "fastq_screen_test_dataset"
+    shell: "wget http://www.bioinformatics.babraham.ac.uk/projects/fastq_screen/fastq_screen_test_dataset.tar.gz; \n"
+           "tar -zxvf fastq_screen_test_dataset.tar.gz"
+
+rule _symlink_ref:
+    input: os.path.abspath(os.path.join("../../ref", config['input']['ref']))
+    output: temporary(os.path.join("{version}", config['input']['ref']))
+    shell: "ln -s {input} {output}"
+           
+
+rule _bowtie2_build:
+    input: **inputfiles
+    output: temporary(expand("{ref}{ext}", ref=inputfiles['ref'], ext=param['build_ext']))
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "bowtie2-build {input.ref} {input.ref}"
+
+rule _fastq_conf:
+    output: conf="{version}/fastq.conf"
+    run:
+        with open(output.conf, "w") as fh:
+            fh.write(FASTQCONF.format(
+                ref=os.path.basename(config['input']['ref']),
+                version=wildcards.version))
+           
+rule fastq_screen:
+    input: **inputfiles, index=rules._bowtie2_build.output
+    output: **config[APPLICATION]["fastq_screen"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "fastq_screen --force --outdir {wildcards.version} --conf {wildcards.version}/fastq.conf --aligner bowtie2 {input.fa}"
+
+
+# Include rules for making the output
+include: "../fileutils.sm"

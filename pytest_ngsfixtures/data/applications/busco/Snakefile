@@ -1,0 +1,40 @@
+# -*- snakemake -*-
+import os
+
+configfile: "../config.yaml"
+configfile: "config.yaml"
+
+APPLICATION = "busco"
+
+param = {
+    'end': config['end'],
+}
+
+# Add required inputfiles here, or specify separately for each rule.
+# The conda parameter is required.
+inputfiles = {
+    'conda': "busco-{version}.yaml",
+    'lineage': "buscogit/sample_data/example/dataset.cfg",
+    'fa': "buscogit/sample_data/target.fa",
+}
+
+rule _get_example_lineage:
+    output: 'buscogit'
+    shell: "if [ ! -e buscogit ]; then git clone https://gitlab.com/ezlab/busco.git buscogit; fi"
+
+rule busco:
+    input: buscogit = rules._get_example_lineage.output, **inputfiles
+    output: **config[APPLICATION]["busco"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "busco -f -i {input.fa} -l $(dirname {input.lineage}) -m geno -o {wildcards.version};\n"
+           #"mv run_{wildcards.version}/* {wildcards.version}/"
+
+
+# rule busco_rule2:
+#     input: **inputfiles
+#     output: **config[APPLICATION]["busco_rule2"]["output"]
+#     conda: APPLICATION + "-{version}.yaml"
+#     shell: "busco"
+
+# Include rules for making the output
+include: "../fileutils.sm"

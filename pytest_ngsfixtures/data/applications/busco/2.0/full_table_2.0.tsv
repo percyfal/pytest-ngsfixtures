@@ -1,0 +1,15 @@
+# BUSCO version is: 2.0 
+# The lineage dataset is: sample dataset BUSCO 2.0 (Creation date: 07.10.2016, number of species: 23, number of BUSCOs: 10)
+# To reproduce this run: python /home/peru/dev/pytest-ngsfixtures/pytest_ngsfixtures/data/applications/busco/.snakemake/conda/966619cc/bin/busco -i buscogit/sample_data/target.fa -o 2.0 -l buscogit/sample_data/example/ -m genome -c 1 -sp fly
+#
+# Busco id	Status	Contig	Start	End	Score	Length
+BUSCO_1	Complete	sample	30184	31421	320.9	193
+BUSCO_10	Missing
+BUSCO_2	Complete	sample	31646	47625	872.0	443
+BUSCO_3	Complete	sample	62761	68675	241.8	146
+BUSCO_4	Complete	sample	69310	70561	420.3	418
+BUSCO_5	Complete	sample	70677	71872	497.8	304
+BUSCO_6	Complete	sample	81792	89171	1676.7	920
+BUSCO_7	Complete	sample	168309	169293	423.6	243
+BUSCO_8	Complete	sample	232880	234117	274.6	194
+BUSCO_9	Missing

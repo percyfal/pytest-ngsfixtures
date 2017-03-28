@@ -1,0 +1,23 @@
+samtools:
+  _default: 1.3.1
+  _conda_versions: ["1.2", "1.3.1"]
+  _versions: ["1.2", "1.3.1"]
+  samtools_flagstat:
+    output:
+      txt: "{version}/{end}/medium.flagstat.txt"
+  samtools_depth:
+    output:
+      txt: "{version}/{end}/medium.depth.txt"
+  samtools_faidx:
+    output:
+      fai: "{version}/scaffoldsN.fa.fai"
+  samtools_idxstats:
+    output:
+      txt: "{version}/{end}/medium.idxstats.txt"
+  samtools_rmdup:
+    output:
+      txt: "{version}/{end}/medium.rmdup.txt"
+    _versions: [1.3.1]
+  samtools_stats:
+    output:
+      txt: "{version}/{end}/medium.stats.txt"

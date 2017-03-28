@@ -1,14 +1,12 @@
 # -*- snakemake -*-
 import os
-from pytest_ngsfixtures.helpers import make_targets
 
 configfile: "../config.yaml"
-include: "../fileutils.sm"
+configfile: "config.yaml"
 
 APPLICATION = "cutadapt"
 param = {
     'end': config['end'],
-    'version': config[APPLICATION]['_conda_versions'],
     'regions': config['params']['regions'],
     'threeprime': "AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC",
     'fiveprime': "AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT",
@@ -31,5 +29,4 @@ rule cutadapt:
         "    {params.cmd} {input.read1} {input.read2} -a {params.threeprime} -A {params.fiveprime} -o /dev/null -p /dev/null > {output}\n"
         "fi\n"
 
-rule all:
-    input: make_targets(workflow.rules, config, APPLICATION, end=param['end'], version=param['version'])
+include: "../fileutils.sm"

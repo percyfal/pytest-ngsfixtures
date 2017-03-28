@@ -392,7 +392,8 @@ def application_output(application, command, version, end="se", **kwargs):
     Returns:
       func: a filetype fixture function
     """
-    from pytest_ngsfixtures.config import application_config as conf
+    from pytest_ngsfixtures.config import application_config
+    conf = application_config()
     assert application in conf.keys(), "no such application '{}'".format(application)
     assert command in conf[application].keys(), "no such command '{}'".format(command)
     assert type(version) is str, "version must be string"
@@ -403,9 +404,13 @@ def application_output(application, command, version, end="se", **kwargs):
     assert version in _versions, "no such application output for version '{}', application '{}'".format(version, application)
     assert end in ["se", "pe"], "end must be either se or pe"
     params = {'version': version, 'end': end}
-    output = conf[application][command]['output'].format(**params)
-    src = os.path.join("applications", application, output)
-    return filetype(src, **kwargs)
+    output = [x.format(**params) for x in conf[application][command]['output'].values()]
+    if len(output) == 1:
+        src = os.path.join("applications", application, output[0])
+        return filetype(src, **kwargs)
+    else:
+        src = [os.path.join("applications", application, x) for x in output]
+        return fileset(src, **kwargs)
 
 
 __all__ = ('sample_layout', 'reference_layout', 'filetype', 'fileset')

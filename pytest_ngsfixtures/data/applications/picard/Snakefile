@@ -1,0 +1,85 @@
+# -*- snakemake -*-
+import os
+
+configfile: "../config.yaml"
+configfile: "config.yaml"
+
+APPLICATION = "picard"
+
+param = {
+    'end': config['end'],
+}
+
+# Add required inputfiles here, or specify separately for each rule.
+# The conda parameter is required.
+inputfiles = {
+    'conda': "picard-{version}.yaml",
+    'bam': os.path.join("../{end}", config['input']['bam']),
+    'ref': os.path.join("../../ref", config['input']['ref']),
+    'fai': os.path.join("../../ref", config['input']['refidx']),
+}
+TARGETS = os.path.join("../../ref", config['input']['targets'])
+REFFLAT = os.path.join("../../ref", config['input']['refflat'])
+
+rule picard_CollectAlignmentSummaryMetrics:
+    input: **inputfiles
+    output: **config[APPLICATION]["picard_CollectAlignmentSummaryMetrics"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "picard CollectAlignmentSummaryMetrics I={input.bam} R={input.ref} O={output.metrics}"
+
+rule picard_CollectBaseDistributionByCycle:
+    input: **inputfiles
+    output: **config[APPLICATION]["picard_CollectBaseDistributionByCycle"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "picard CollectBaseDistributionByCycle I={input.bam} R={input.ref} O={output.metrics} CHART=/dev/null"
+
+rule picard_CollectGcBiasMetrics:
+    input: **inputfiles
+    output: **config[APPLICATION]["picard_CollectGcBiasMetrics"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "picard CollectGcBiasMetrics I={input.bam} R={input.ref} O={output.metrics} S={output.summary} CHART=/dev/null"
+
+rule picard_CalculateHsMetrics:
+    input: targets=TARGETS, **inputfiles
+    output: **config[APPLICATION]["picard_CalculateHsMetrics"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "picard CalculateHsMetrics I={input.bam} TI={input.targets} BI={input.targets} R={input.ref} O={output}"
+
+rule picard_CollectInsertSizeMetrics:
+    input: **inputfiles
+    output: **config[APPLICATION]["picard_CollectInsertSizeMetrics"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "picard CollectInsertSizeMetrics I={input.bam} R={input.ref} O={output.metrics} H=/dev/null"
+
+rule picard_MarkDuplicates:
+    input: **inputfiles
+    output: **config[APPLICATION]["picard_MarkDuplicates"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "picard MarkDuplicates I={input.bam} R={input.ref} O=/dev/null M={output.metrics}"
+
+rule picard_CollectOxoGMetrics:
+    input: **inputfiles
+    output: **config[APPLICATION]["picard_CollectOxoGMetrics"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "picard CollectOxoGMetrics I={input.bam} R={input.ref} O={output.metrics}"
+
+rule picard_CollectRnaSeqMetrics:
+    input: refflat=REFFLAT, **inputfiles
+    output: **config[APPLICATION]["picard_CollectRnaSeqMetrics"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "picard CollectRnaSeqMetrics I={input.bam} REF_FLAT={input.refflat} O={output.metrics} STRAND=NONE"
+
+rule picard_CollectRrbsMetrics:
+    input: refflat=REFFLAT, **inputfiles
+    output: **config[APPLICATION]["picard_CollectRrbsMetrics"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "fn={output.detail}; picard CollectRrbsMetrics I={input.bam} R={input.ref} M=${{fn%.rrbs_detail_metrics}}"
+
+rule picard_CollectWgsMetrics:
+    input: refflat=REFFLAT, **inputfiles
+    output: **config[APPLICATION]["picard_CollectWgsMetrics"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "picard CollectWgsMetrics I={input.bam} R={input.ref} O={output.metrics}"
+
+# Include rules for making the output
+include: "../fileutils.sm"

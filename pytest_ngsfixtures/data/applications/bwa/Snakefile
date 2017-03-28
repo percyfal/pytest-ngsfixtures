@@ -1,10 +1,9 @@
 # -*- snakemake -*-
 import os
 import copy
-from pytest_ngsfixtures.helpers import make_targets
 
 configfile: "../config.yaml"
-include: "../fileutils.sm"
+configfile: "config.yaml"
 
 APPLICATION = "bwa"
 READ1 = os.path.join("../../yuge/CHS.HG00512_1.fastq.gz")
@@ -15,7 +14,6 @@ param = {
     'index': os.path.join("{version}", config['input']['ref']),
     'index_ext' : ['.amb', '.ann', '.bwt', '.pac', '.sa'],
     'end': config['end'],
-    'version': config[APPLICATION]['_conda_versions'],
 }
 
 rule _bwa_index:
@@ -25,7 +23,8 @@ rule _bwa_index:
     shell: "bwa index {input.ref}"
 
 rule bwa_mem:
-    input: read1=READ1, read2=READ2, ref=param['ref'], conda=APPLICATION + "-{version}.yaml", index=rules._bwa_index.output
+    input: read1=READ1, read2=READ2, ref=param['ref'],
+           conda=APPLICATION + "-{version}.yaml", index=rules._bwa_index.output
     output: config[APPLICATION]["bwa_mem"]["output"]
     conda: APPLICATION + "-{version}.yaml"
     shell:
@@ -35,5 +34,4 @@ rule bwa_mem:
         "    bwa mem {input.ref} {input.read1} {input.read2} > /dev/null 2> {output}\n"
         "fi\n"
 
-rule all:
-    input: make_targets(workflow.rules, config, APPLICATION, end=param['end'], version=param['version'])
+include: "../fileutils.sm"        
