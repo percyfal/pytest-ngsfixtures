@@ -58,7 +58,7 @@ tiny-scaffolds-gtf.bed:
 	paste <(cut -f 12 $@.tmp) <(cut -f 1-10 $@.tmp) > $@
 
 %-targets.bed: %-transcripts.gtf
-	cat $< | awk '{if ($$3 == "gene") print $$1, $$4, $$5, $$6, 0, $$7; }' | head > $@
+	cat $< | awk '{if ($$3 == "gene") printf("%s\t%s\t%s\t%s\t%s\t%s\n",  $$1, $$4, $$5, $$6, 0, $$7); }' | head > $@
 
 %-targets.interval_list: %-transcripts.gtf %.dict
 	$(PICARD)  BedToIntervalList $(PICARD_OPTIONS) I=$(<:%-transcripts.gtf=%-targets.bed) O=$@ SD=$(word 2,$^)

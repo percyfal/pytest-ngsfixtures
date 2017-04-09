@@ -48,6 +48,11 @@ rule picard_add_rg:
     input: "{prefix}.{size}.mem.bam"
     output: "{prefix}.{size}.bam"
     shell: "picard AddOrReplaceReadGroups INPUT={input} OUTPUT={output} RGID={wildcards.prefix} RGSM={wildcards.prefix} RGPL=Illumina RGPU=pu RGLB=lib"
+
+rule picard_index:
+    input: "{prefix}.bam"
+    output: "{prefix}.bai"
+    shell: "picard BuildBamIndex I={input} O={output}"
            
 rule samtools_index:
     input: "{prefix}.bam"
