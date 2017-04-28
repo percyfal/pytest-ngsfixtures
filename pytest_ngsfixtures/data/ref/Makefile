@@ -12,6 +12,7 @@ GTFTOGENEPRED=gtfToGenePred
 PICARD=picard
 PICARD_OPTIONS="VALIDATION_STRINGENCY=SILENT"
 SAMTOOLS=samtools
+TABIX=tabix
 
 
 # Region with HLA-DQA2
@@ -89,16 +90,19 @@ known.scaffolds.bam: PUR.HG00731.scaffolds.sort.bam PUR.HG00733.scaffolds.sort.b
 %.bam.bai: %.bam
 	$(SAMTOOLS) index $<
 
-%.scaffolds.vcf: %.scaffolds.bam %.scaffolds.bam.bai scaffolds.fa
+%.scaffolds.vcf.gz: %.scaffolds.bam %.scaffolds.bam.bai scaffolds.fa
 	$(SAMTOOLS) mpileup -ug -f $(word 3,$^) $(word 1, $^) | $(BCFTOOLS) call -vmO v | $(BCFTOOLS) filter -i'%QUAL>400' - > $@
 
-%.ref.vcf: %.ref.bam %.ref.bam.bai ref.fa
+%.ref.vcf.gz: %.ref.bam %.ref.bam.bai ref.fa
 	$(SAMTOOLS) mpileup -ug -f $(word 3,$^) $(word 1, $^) | $(BCFTOOLS) call -vmO v  | $(BCFTOOLS) filter -i'%QUAL>400' - > $@
 
 %-transcripts-tiny.gtf: %-transcripts.gtf tiny-%-gtf.bed
 	$(BEDTOOLS) intersect -a $< -b $(word 2,$^) > $@
 
-knownsites: known.scaffolds.vcf known.ref.vcf
+%.vcf.gz.tbi: %.vcf.gz
+	$(TABIX) $<
+
+knownsites: known.scaffolds.vcf.gz known.ref.vcf.gz
 
 ##############################
 # Reference database
