@@ -35,13 +35,14 @@
 gatk:
   _default: '3.7'
   _versions: ['3.5', '3.6', '3.7']
-  _conda_versions: ['3.5', '3.6', '3.7']
+  _conda_versions: ['3.7']
   _conda_dependencies: ['htslib', 'samtools'] # Add extra conda dependencies required for this package here
   _clean: [] # Add clean file pattern here
 
   gatk_haplotype_caller:
     output:
       vcfgz: "{version}/{end}/medium.haplotype_caller.vcf.gz"
+      vcfgztbi: "{version}/{end}/medium.haplotype_caller.vcf.gz.tbi"
     _versions: ['3.7']
 
   gatk_varianteval:
