@@ -61,7 +61,7 @@ depends on the sample fixture:
    INFO:pytest_ngsfixtures.factories:/tmp/pytest-of-user/pytest-1/sample0/s2/s2_010101_AAABBB11XX_2.fastq.gz
    INFO:pytest_ngsfixtures.factories:/tmp/pytest-of-user/pytest-1/sample0/sampleinfo.csv
 
-   
+
 File fixture factories
 ----------------------
 
@@ -78,24 +78,45 @@ reside.
 .. code-block:: python
 
    from pytest_ngsfixtures import factories
-   
+
    bam = factories.filetype("applications/pe/PUR.HG00731.tiny.bam", scope="function")
 
    def test_bam(bam):
        # Do something with bam file
 
-   
+
    bamset = factories.fileset(src=["applications/pe/PUR.HG00731.tiny.bam",
-		                   "applications/pe/PUR.HG00733.tiny.bam"],
-                                   fdir="bamset", scope="function")
+				   "applications/pe/PUR.HG00733.tiny.bam"],
+				   fdir="bamset", scope="function")
 
    def test_bamset(bamset):
        # Do something with bamset
 
 
-Note that currently you need to provide the path to the file *relative
-to* ``pytest_ngsfixtures/data``.
-       
+If you provide the path as a relative path it will be interpreted as
+relative to ``pytest_ngsfixtures/data`` in the ``pytest-ngsfixtures``
+installation directory. However, a full path is treated as such,
+meaning you can use the file fixture factories to setup fixtures for
+any file or fileset on the filesystem:
+
+.. code-block:: python
+
+   from pytest_ngsfixtures import factories
+
+   bam = factories.filetype("/path/to/mybam.bam", scope="function")
+
+   def test_bam(bam):
+       # Do something with bam file
+
+
+   bamset = factories.fileset(src=["/path/to/bam1.bam",
+				   "/path/to/bam2.bam"],
+				   fdir="bamset", scope="function")
+
+   def test_bamset(bamset):
+       # Do something with bamset
+
+
 
 Files
 =====
@@ -111,7 +132,7 @@ ref/
 
 medium/
   medium sequence files
-  
+
 small/
   small sequence files
 
@@ -121,23 +142,23 @@ tiny/
 yuge/
   yuge sequence files
 
-Each sequence directory contain the same samples in different sizes:
+Each sequence directory contains the same samples in different sizes:
 
 ::
-   
-   File name                   Sample ID         Type                Population      
-   --------------------------  ------------      -----------------   ------------    
-   CHS.HG00512_1.fastq.gz      CHS.HG00512       Individual	     Han-Chinese     
-   CHS.HG00513_1.fastq.gz      CHS.HG00513       Individual	     Han-Chinese     
-   CHS_1.fastq.gz              CHS               Pool		     Han-Chinese     
-   PUR.HG00731.A_1.fastq.gz    PUR.HG00731.A     Individual, run A   Puerto Rico     
-   PUR.HG00731.B_1.fastq.gz    PUR.HG00731.B     Individual, run B   Puerto Rico     
-   PUR.HG00733.A_1.fastq.gz    PUR.HG00733.A     Individual, run A   Puerto Rico     
-   PUR.HG00733.B_1.fastq.gz    PUR.HG00733.B     Individual, run B   Puerto Rico     
-   PUR_1.fastq.gz              PUR               Pool, run A	     Puerto Rico     
-   YRI.NA19238_1.fastq.gz      YRI.NA19238       Individual	     Yoruban         
-   YRI.NA19239_1.fastq.gz      YRI.NA19238       Individual	     Yoruban         
-   YRI_1.fastq.gz              YRI               Pool		     Yoruban         
+
+   File name                   Sample ID         Type                Population
+   --------------------------  ------------      -----------------   ------------
+   CHS.HG00512_1.fastq.gz      CHS.HG00512       Individual	     Han-Chinese
+   CHS.HG00513_1.fastq.gz      CHS.HG00513       Individual	     Han-Chinese
+   CHS_1.fastq.gz              CHS               Pool		     Han-Chinese
+   PUR.HG00731.A_1.fastq.gz    PUR.HG00731.A     Individual, run A   Puerto Rico
+   PUR.HG00731.B_1.fastq.gz    PUR.HG00731.B     Individual, run B   Puerto Rico
+   PUR.HG00733.A_1.fastq.gz    PUR.HG00733.A     Individual, run A   Puerto Rico
+   PUR.HG00733.B_1.fastq.gz    PUR.HG00733.B     Individual, run B   Puerto Rico
+   PUR_1.fastq.gz              PUR               Pool, run A	     Puerto Rico
+   YRI.NA19238_1.fastq.gz      YRI.NA19238       Individual	     Yoruban
+   YRI.NA19239_1.fastq.gz      YRI.NA19238       Individual	     Yoruban
+   YRI_1.fastq.gz              YRI               Pool		     Yoruban
 
 
 and similarly for read 2. The sequence files have been generated from
@@ -150,7 +171,7 @@ the sample_layout factory function, bear in mind that the parameter
 ``samples`` **must** be one or several of the labels in the *Sample
 ID* column in the table above. The pools are simply concatenated
 versions of the individual files, with a ploidy of 4.
-		
+
 Advanced usage
 ==============
 
@@ -168,7 +189,7 @@ format arguments relate to the function parameters as follows:
 SM
   samples - list of sample names (one or several of CHS.HG00512, CHS.HG00513, PUR.HG00731, PUR.HG00733,
   YRI.NA19238, and YRI.NA19239.)
-  
+
 PU
   platform_units - platform unit names, e.g. flowcell name.
 
@@ -187,7 +208,7 @@ this case, ``samples`` and ``platform_units`` must be of equal length.
 
 See the predefined fixtures in ``pytest_ngsfixtures.plugin`` and the
 tests for examples.
-  
+
 Parametrizing existing sample layouts
 -------------------------------------
 
@@ -210,7 +231,7 @@ addition, the parametrization is done over the plugin option
 ``ngs_layout``, which enables selecting from the command line what
 layouts to use (see next section).
 
-       
+
 Plugin options
 ==============
 
@@ -234,7 +255,7 @@ Example:
 
 .. code-block:: shell
 
-   pytest -X small		
+   pytest -X small
 
 
 -L, --ngs-layout
@@ -247,10 +268,9 @@ of the predefined sample layouts. Example:
 
 .. code-block:: shell
 
-   pytest -L sample sample_data		
+   pytest -L sample sample_data
 
 -F, --ngs-show-fixture
 ----------------------
 
 Print information on the files that are setup in the fixture.
-
