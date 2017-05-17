@@ -1,0 +1,4 @@
+# table produced by mapDamage version 2.0.6
+# using mapped file ../pe/medium.bam and ../../ref/scaffoldsN.fa as reference file
+# Std: strand of reads
+Std	Length	Occurences 
