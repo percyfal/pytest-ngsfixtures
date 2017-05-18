@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+#
+# Predefine commonly used file types
+#
+import yaml
 from os.path import join, dirname, realpath
 from pytest_ngsfixtures import factories
 
@@ -14,6 +18,8 @@ ref_transcripts_gtf = factories.filetype(join(DATADIR, "ref-transcripts.gtf"))
 gtf = ref_transcripts_gtf
 
 
-filetypes = ['bam', 'bed12', 'ref_transcripts_bed12', 'genePred', 'ref_transcripts_genePred', 'gtf', 'ref_transcripts_gtf']
+filetypes = ['bam', 'bed12', 'ref_transcripts_bed12',
+             'genePred', 'ref_transcripts_genePred',
+             'gtf', 'ref_transcripts_gtf']
 
 __all__ = filetypes + ['filetypes']
