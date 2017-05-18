@@ -22,22 +22,40 @@ inputfiles = {
     'known': os.path.join("../../ref", config['input']['known']),
 }
 
+_gatk_versions = {
+    'dd785ee6' : '3.7',
+}
+
+def _gatk_register_version():
+    try:
+        version = _gatk_versions[wildcards.condatag]
+        return "GenomeAnalysisTK-{}.tar.bz2".format(version)
+    except:
+        print("no such condatag; redefine _gatk_versions!")
+        return []
+
+
+rule gatk_register_version:
+    input: _gatk_register_version
+    output: ".snakemake/conda/{condatag}/bin/GenomeAnalysisTK"
+    shell:
+        "if [ -e {input.gatk} ]; then gatk-register {input.gatk}; fi;"
+
+
+rule gatk_register:
+    input: gatk37=".snakemake/conda/dd785ee6/bin/GenomeAnalysisTK"
+
+
 rule gatk_haplotype_caller:
-    input: gatk = "GenomeAnalysisTK-{version}.tar.bz2", **inputfiles
+    input: rules.gatk_register.output, **inputfiles
     output: **config[APPLICATION]["gatk_haplotype_caller"]["output"]
     conda: APPLICATION + "-{version}.yaml"
     shell:
-        "if [ -e {input.gatk} ]; then gatk-register {input.gatk}; fi; mv {input.gatk} {input.gatk}.old; \n"
-        "gatk -T HaplotypeCaller -I {input.bam} -R {input.ref} | bgzip > {output};"
+        "gatk -T HaplotypeCaller -I {input.bam} -R {input.ref} -o {output.vcfgz}"
 
 
-rule tabix:
-    input: "{prefix}.vcf.gz"
-    output: "{prefix}.vcf.gz.tbi"
-    shell: "tabix {input}"
-        
 rule gatk_varianteval:
-    input: vcf=rules.gatk_haplotype_caller.output, **inputfiles
+    input: rules.gatk_register.output, vcf=rules.gatk_haplotype_caller.output.vcfgz, **inputfiles
     output: **config[APPLICATION]["gatk_varianteval"]["output"]
     conda: APPLICATION + "-{version}.yaml"
     shell:
