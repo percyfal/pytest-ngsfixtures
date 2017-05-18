@@ -12,6 +12,7 @@ GTFTOGENEPRED=gtfToGenePred
 PICARD=picard
 PICARD_OPTIONS="VALIDATION_STRINGENCY=SILENT"
 SAMTOOLS=samtools
+TABIX=tabix
 
 
 # Region with HLA-DQA2
@@ -58,7 +59,7 @@ tiny-scaffolds-gtf.bed:
 	paste <(cut -f 12 $@.tmp) <(cut -f 1-10 $@.tmp) > $@
 
 %-targets.bed: %-transcripts.gtf
-	cat $< | awk '{if ($$3 == "gene") print $$1, $$4, $$5, $$6, 0, $$7; }' | head > $@
+	cat $< | awk '{if ($$3 == "gene") printf("%s\t%s\t%s\t%s\t%s\t%s\n",  $$1, $$4, $$5, $$6, 0, $$7); }' | head > $@
 
 %-targets.interval_list: %-transcripts.gtf %.dict
 	$(PICARD)  BedToIntervalList $(PICARD_OPTIONS) I=$(<:%-transcripts.gtf=%-targets.bed) O=$@ SD=$(word 2,$^)
@@ -89,16 +90,19 @@ known.scaffolds.bam: PUR.HG00731.scaffolds.sort.bam PUR.HG00733.scaffolds.sort.b
 %.bam.bai: %.bam
 	$(SAMTOOLS) index $<
 
-%.scaffolds.vcf: %.scaffolds.bam %.scaffolds.bam.bai scaffolds.fa
+%.scaffolds.vcf.gz: %.scaffolds.bam %.scaffolds.bam.bai scaffolds.fa
 	$(SAMTOOLS) mpileup -ug -f $(word 3,$^) $(word 1, $^) | $(BCFTOOLS) call -vmO v | $(BCFTOOLS) filter -i'%QUAL>400' - > $@
 
-%.ref.vcf: %.ref.bam %.ref.bam.bai ref.fa
+%.ref.vcf.gz: %.ref.bam %.ref.bam.bai ref.fa
 	$(SAMTOOLS) mpileup -ug -f $(word 3,$^) $(word 1, $^) | $(BCFTOOLS) call -vmO v  | $(BCFTOOLS) filter -i'%QUAL>400' - > $@
 
 %-transcripts-tiny.gtf: %-transcripts.gtf tiny-%-gtf.bed
 	$(BEDTOOLS) intersect -a $< -b $(word 2,$^) > $@
 
-knownsites: known.scaffolds.vcf known.ref.vcf
+%.vcf.gz.tbi: %.vcf.gz
+	$(TABIX) $<
+
+knownsites: known.scaffolds.vcf.gz known.ref.vcf.gz
 
 ##############################
 # Reference database
