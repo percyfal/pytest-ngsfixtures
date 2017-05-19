@@ -21,4 +21,4 @@ Reads failed primer screen:	0 (0)
 Bases parsed:	759918
 Bases kept:	720252 (0.947802)
 Number of incorrectly paired reads that were discarded: 0
-[timer - sga preprocess] wall clock: 0.07s CPU: 0.04s
+[timer - sga preprocess] wall clock: 0.03s CPU: 0.03s

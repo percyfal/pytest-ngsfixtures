@@ -41,7 +41,7 @@ sga:
 
   sga_preprocess:
     output:
-      log: "{version}/{end}/medium.preprocess.log"
+      log: "{version}/{end}/medium.sga.preprocess.log"
   sga_filter:
     output:
       log: "{version}/{end}/sga.filter.log"
