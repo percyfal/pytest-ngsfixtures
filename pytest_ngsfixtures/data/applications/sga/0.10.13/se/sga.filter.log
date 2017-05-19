@@ -1,0 +1,18 @@
+
+RLBWT info:
+Large Sample rate: 8192
+Small Sample rate: 128
+Contains 729729 symbols in 440316 runs (1.6573 symbols per run)
+Marker Memory -- Small Markers: 68436 (0.1 MB) Large Markers: 4368 (0.0 MB)
+Total Memory -- Markers: 72804 (0.1 MB) Str: 440316 (0.4 MB) Misc: 152 Total: 513272 (0.489494 MB)
+N: 729729 Bytes per symbol: 0.703373
+
+[sga::process] processed 9477 sequences in 0.339005s (27955.339892 sequences/s)
+Reads kept: 2
+Reads discarded: 9475
+Reads failed kmer check: 9400
+Reads failed duplicate check: 75
+Reads failed homopolymer check: 0
+Reads failed degenerate check: 0
+[sga::process] processed 9475 sequences in 0.185178s (51166.985279 sequences/s)
+[sga::process] processed 9475 sequences in 0.180335s (52541.104056 sequences/s)

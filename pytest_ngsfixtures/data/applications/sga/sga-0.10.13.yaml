@@ -1,0 +1,5 @@
+channels:
+  - bioconda
+dependencies:
+  - sga==0.10.13
+
