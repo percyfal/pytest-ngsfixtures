@@ -10,12 +10,29 @@ param = {
     'end': config['end'],
 }
 
-BAM = os.path.join("../{end}", config['input']['bam'])
+BAM_PE = os.path.join("../pe", config['input']['bam'])
+BAM_SE = os.path.join("../se", config['input']['bam'])
 
-rule qualimap_bamqc:
-    input: bam=BAM, conda="qualimap-{version}.yaml"
-    output: **config["qualimap"]["qualimap_bamqc"]["output"]
+
+bamqc_pe = dict(config["qualimap"]["qualimap_bamqc_pe"]["output"].items())
+for k, v in bamqc_pe.items():
+    bamqc_pe[k] = bamqc_pe[k].replace("{end}", "pe")
+
+rule qualimap_bamqc_pe:
+    input: bam=BAM_PE, conda="qualimap-{version}.yaml"
+    output: **bamqc_pe
     conda: "qualimap-{version}.yaml"
-    shell: "qualimap bamqc -bam {input.bam} -outdir {wildcards.version}/{wildcards.end} > $(basename {output}.log)"
+    shell: "qualimap bamqc -bam {input.bam} -outdir {wildcards.version}/pe > $(basename {output.genome_results}.log)"
+
+
+bamqc_se = dict(config["qualimap"]["qualimap_bamqc_se"]["output"].items())
+for k, v in bamqc_se.items():
+    bamqc_se[k] = bamqc_se[k].replace("{end}", "se")
+
+rule qualimap_bamqc_se:
+    input: bam=BAM_SE, conda="qualimap-{version}.yaml"
+    output: **bamqc_se
+    conda: "qualimap-{version}.yaml"
+    shell: "qualimap bamqc -bam {input.bam} -outdir {wildcards.version}/se > $(basename {output.genome_results}.log)"
            
 include: "../fileutils.sm"

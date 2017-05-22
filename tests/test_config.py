@@ -85,3 +85,13 @@ def test_all_application_fixtures_oneend():
     # Make sure CollectInsertSizeMetrics lacks se case
     flist = [fixt for fixt in fixtures if fixt[1] == "picard_CollectInsertSizeMetrics" and fixt[2] == "2.9.0"]
     assert len(flist) == 1
+
+
+def test_application_fixtures_qualimap():
+    """Make sure bamqc_se does not return insert size files"""
+    fixtures = config.application_fixtures(application="qualimap")
+    for x in fixtures:
+        if x[3] == "pe":
+            assert any("insert" in y for y in x[4].values())
+        else:
+            assert not any("insert" in y for y in x[4].values())
