@@ -5,6 +5,7 @@ end: ["se", "pe"]
 input:
   bam: medium.bam
   bai: medium.bam.bai
+  bed12: scaffolds-transcripts-tiny.bed12
   dict: scaffoldsN.dict
   genepred: scaffolds-transcripts-tiny.genePred
   gtf: scaffolds-transcripts-tiny.gtf

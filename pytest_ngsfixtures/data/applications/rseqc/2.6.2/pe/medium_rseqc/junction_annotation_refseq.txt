@@ -1,0 +1,3 @@
+Reading reference bed file:  ../../ref/scaffolds-transcripts-tiny.bed12  ...  Done
+Load BAM file ...  Done
+No splice junction found.
