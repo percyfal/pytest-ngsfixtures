@@ -1,0 +1,6 @@
+vsearch v2.4.3_linux_x86_64, 11.0GB RAM, 2 cores
+vsearch --fastq_filter 2.4.3/medium.fastq --log 2.4.3/medium.fastq_filter.txt --fastqout /dev/null
+Started  Tue May 23 01:23:07 2017
+Finished Tue May 23 01:23:07 2017
+Elapsed time 00:00
+Max memory 1.9MB
