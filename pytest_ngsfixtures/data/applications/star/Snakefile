@@ -1,0 +1,49 @@
+# -*- snakemake -*-
+import os
+
+configfile: "../config.yaml"
+configfile: "config.yaml"
+
+APPLICATION = "star"
+
+param = {
+    'end': config['end'],
+}
+
+# Add required inputfiles here, or specify separately for each rule.
+# The conda parameter is required.
+inputfiles = {
+    'conda': "star-{version}.yaml",
+    'ref': os.path.join("{version}", config['input']['ref']),
+    'read1': os.path.join("../../yuge/CHS.HG00512_1.fastq.gz"),
+    'read2': os.path.join("../../yuge/CHS.HG00512_2.fastq.gz"),
+    'gtf': os.path.join("../../ref", config['input']['gtf']),
+}
+
+
+rule _symlink_ref:
+    input: os.path.abspath(os.path.join("../../ref", config['input']['ref']))
+    output: temporary(os.path.join("{version}", config['input']['ref']))
+    shell: "ln -s {input} {output}"
+
+indexfiles = ["Genome",	"SA", "SAindex", "chrLength.txt", "chrName.txt", "chrNameLength.txt",
+              "chrStart.txt",  "genomeParameters.txt"]
+rule _star_index:
+    input: **inputfiles
+    output: temporary(expand("{{version}}/{index}", index=indexfiles))
+    shell: "STAR --runThreadN 1 --runMode genomeGenerate --genomeDir {wildcards.version} --genomeFastaFiles {input.ref} --genomeSAindexNbases 9"
+
+rule star_align:
+    input: **inputfiles, index=rules._star_index.output
+    output: **config[APPLICATION]["star_align"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell:
+        "if [[ '{wildcards.end}' == 'se' ]]; then\n"
+        "    STAR --readFilesCommand zcat --runThreadN 1 --genomeDir {wildcards.version} --readFilesIn {input.read1} --outFileNamePrefix {wildcards.version}/{wildcards.end}/medium. \n"
+        "else\n"
+        "    STAR --readFilesCommand zcat --runThreadN 1 --genomeDir {wildcards.version} --readFilesIn {input.read1} {input.read2} --outFileNamePrefix {wildcards.version}/{wildcards.end}/medium. \n"
+        "fi\n"
+
+
+# Include rules for making the output
+include: "../fileutils.sm"

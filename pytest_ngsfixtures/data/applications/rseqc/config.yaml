@@ -47,7 +47,8 @@ rseqc:
       txt: "{version}/{end}/medium_rseqc/geneBody_coverage.geneBodyCoverage.txt"
   rseqc_junction_annotation:
     output:
-      txt: "{version}/{end}/medium_rseqc/junction_annotation_refseq.txt"
+      # Only logs output
+      # txt: "{version}/{end}/medium_rseqc/junction_annotation_refseq.txt"
       xls: "{version}/{end}/medium_rseqc/junction_annotation_refseq.junction.xls"
   rseqc_read_GC:
     output:
