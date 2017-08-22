@@ -74,3 +74,12 @@ target/
 *.log
 .snakemake
 /pytest_ngsfixtures/data/applications/gatk/GenomeAnalysisTK-3.7.tar.bz2
+/pytest_ngsfixtures/data/applications/mapdamage2/2.0.6/pe/Fragmisincorporation_plot.pdf
+/pytest_ngsfixtures/data/applications/mapdamage2/2.0.6/pe/Stats_out_MCMC_hist.pdf
+/pytest_ngsfixtures/data/applications/mapdamage2/2.0.6/pe/Stats_out_MCMC_post_pred.pdf
+/pytest_ngsfixtures/data/applications/mapdamage2/2.0.6/pe/Stats_out_MCMC_trace.pdf
+/pytest_ngsfixtures/data/applications/mapdamage2/2.0.6/se/Fragmisincorporation_plot.pdf
+/pytest_ngsfixtures/data/applications/mapdamage2/2.0.6/se/Length_plot.pdf
+/pytest_ngsfixtures/data/applications/mapdamage2/2.0.6/se/Stats_out_MCMC_hist.pdf
+/pytest_ngsfixtures/data/applications/mapdamage2/2.0.6/se/Stats_out_MCMC_post_pred.pdf
+/pytest_ngsfixtures/data/applications/mapdamage2/2.0.6/se/Stats_out_MCMC_trace.pdf
