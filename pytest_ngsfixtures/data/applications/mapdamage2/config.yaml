@@ -32,20 +32,24 @@
 # with the format of the output file name.
 #
 
+
+#
+# NB: the r-gam dependency is build with conda < 2.0 which causes its
+# installation to fail if the path is >80 characters long
+#
+
 mapdamage2:
   _default: '2.0.6'
   _versions: ['2.0.6']
   _conda_versions: ['2.0.6']
-  _conda_dependencies: [] # Add extra conda dependencies required for this package here
+  _conda_dependencies: ['r-inline', 'r-gam', 'r-rcppgsl'] # NB: r-gam built with conda-build < 2.0
   _clean: ['*.pdf'] # Add clean file pattern here
 
   mapdamage2_mapDamage:
     output:
       log: "{version}/{end}/Runtime_log.txt"
-      rescale: "{version}/{end}/medium.rescaled.bam"
       3pgtoa: "{version}/{end}/3pGtoA_freq.txt"
       5pctot: "{version}/{end}/5pCtoT_freq.txt"
-      fragmisincorp: "{version}/{end}/Fragmisincorporation_plot.pdf"
       dnacomp: "{version}/{end}/dnacomp.txt"
       lgdist: "{version}/{end}/lgdistribution.txt"
       misincorp: "{version}/{end}/misincorporation.txt"
