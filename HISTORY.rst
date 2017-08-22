@@ -9,14 +9,11 @@ History
 * Add vsearch application
 * Add rseqc application
 
-
-Issues
-+++++++
-
 * Separate qualimap pe and se output (#12)
 * Add mapdamage2 (#11)
 * Fix mapdamage2 missing output (#18)
-
+* Use realpath to determine download url (#17)
+* Rename download_ngsfixtures_data.py to pytest_ngsfixtures_download_data.py
 
 0.4.0 (2017-03-28)
 ------------------
