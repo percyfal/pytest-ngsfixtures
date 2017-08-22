@@ -2,6 +2,22 @@
 History
 =======
 
+0.5.0 (2017-08-24)
+------------------
+
+* Add star application
+* Add vsearch application
+* Add rseqc application
+
+
+Issues
++++++++
+
+* Separate qualimap pe and se output (#12)
+* Add mapdamage2 (#11)
+* Fix mapdamage2 missing output (#18)
+
+
 0.4.0 (2017-03-28)
 ------------------
 
