@@ -1,11 +1,7 @@
-2017-05-16 15:40:35,162	INFO	main: Started with the command: /home/peru/dev/pytest-ngsfixtures/pytest_ngsfixtures/data/applications/mapdamage2/.snakemake/conda/323521aa/bin/mapDamage -i ../pe/medium.bam -r ../../ref/scaffoldsN.fa -d 2.0.6/pe --rescale --rescale-out=2.0.6/pe/medium.rescaled.bam --burn 100 --adjust 2 --iter 100
-2017-05-16 15:40:48,902	DEBUG	main: BAM read in 15.076610 seconds
-2017-05-16 15:40:49,447	INFO	mapdamage.rscript: Performing Bayesian estimates
-2017-05-16 15:40:49,448	DEBUG	mapdamage.rscript: Call: Rscript /home/peru/dev/pytest-ngsfixtures/pytest_ngsfixtures/data/applications/mapdamage2/.snakemake/conda/323521aa/lib/python2.7/site-packages/mapdamage/Rscripts/stats/runGeneral.R --args 30 100 2 100 0 0 1 1 0 0 1 12 2.0.6/pe/ /home/peru/dev/pytest-ngsfixtures/pytest_ngsfixtures/data/applications/mapdamage2/.snakemake/conda/323521aa/lib/python2.7/site-packages/mapdamage/Rscripts/stats/ 2.0.6/pe/Stats_out 0 0 0 2.0.6/pe/acgt_ratio.csv 0 0
-2017-05-16 15:41:43,210	DEBUG	mapdamage.rscript: Bayesian estimates completed in 53.761715 seconds
-2017-05-16 15:41:43,210	INFO	mapdamage.rescale: Rescaling BAM: '../pe/medium.bam' -> '2.0.6/pe/medium.rescaled.bam'
-2017-05-16 15:41:43,211	WARNING	mapdamage.rescale: Warning! Assuming the pairs are non-overlapping, facing inwards and correctly paired.
-2017-05-16 15:42:08,926	WARNING	mapdamage.rescale: Number of non-rescaled reads due to improper pairing:  3680
-2017-05-16 15:42:08,950	DEBUG	mapdamage.rescale: Rescaling completed in 25.740213 seconds
-2017-05-16 15:42:08,950	INFO	main: Successful run
-2017-05-16 15:42:08,951	DEBUG	main: Run completed in 95.125184 seconds
+2017-08-22 15:40:40,660	INFO	main: Started with the command: /home/peru/miniconda3/envs/py2.7/bin/mapDamage -i ../pe/medium.bam -r ../../ref/scaffoldsN.fa -d 2.0.6/pe --burn 100 --adjust 2 --iter 100
+2017-08-22 15:40:53,778	DEBUG	main: BAM read in 14.721114 seconds
+2017-08-22 15:40:54,524	INFO	mapdamage.rscript: Performing Bayesian estimates
+2017-08-22 15:40:54,533	DEBUG	mapdamage.rscript: Call: Rscript /home/peru/miniconda3/envs/py2.7/lib/python2.7/site-packages/mapdamage/Rscripts/stats/runGeneral.R --args 30 100 2 100 0 0 1 1 0 0 1 12 2.0.6/pe/ /home/peru/miniconda3/envs/py2.7/lib/python2.7/site-packages/mapdamage/Rscripts/stats/ 2.0.6/pe/Stats_out 0 0 0 2.0.6/pe/acgt_ratio.csv 0 0
+2017-08-22 15:42:44,651	DEBUG	mapdamage.rscript: Bayesian estimates completed in 110.117780 seconds
+2017-08-22 15:42:44,652	INFO	main: Successful run
+2017-08-22 15:42:44,652	DEBUG	main: Run completed in 125.594901 seconds

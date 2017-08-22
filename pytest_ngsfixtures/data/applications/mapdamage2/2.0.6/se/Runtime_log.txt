@@ -1,9 +1,7 @@
-2017-05-16 15:40:35,123	INFO	main: Started with the command: /home/peru/dev/pytest-ngsfixtures/pytest_ngsfixtures/data/applications/mapdamage2/.snakemake/conda/323521aa/bin/mapDamage -i ../se/medium.bam -r ../../ref/scaffoldsN.fa -d 2.0.6/se --rescale --rescale-out=2.0.6/se/medium.rescaled.bam --burn 100 --adjust 2 --iter 100
-2017-05-16 15:40:41,704	DEBUG	main: BAM read in 7.927144 seconds
-2017-05-16 15:40:42,330	INFO	mapdamage.rscript: Performing Bayesian estimates
-2017-05-16 15:40:42,340	DEBUG	mapdamage.rscript: Call: Rscript /home/peru/dev/pytest-ngsfixtures/pytest_ngsfixtures/data/applications/mapdamage2/.snakemake/conda/323521aa/lib/python2.7/site-packages/mapdamage/Rscripts/stats/runGeneral.R --args 30 100 2 100 0 0 1 1 0 0 1 12 2.0.6/se/ /home/peru/dev/pytest-ngsfixtures/pytest_ngsfixtures/data/applications/mapdamage2/.snakemake/conda/323521aa/lib/python2.7/site-packages/mapdamage/Rscripts/stats/ 2.0.6/se/Stats_out 0 0 0 2.0.6/se/acgt_ratio.csv 0 0
-2017-05-16 15:41:41,146	DEBUG	mapdamage.rscript: Bayesian estimates completed in 58.805953 seconds
-2017-05-16 15:41:41,146	INFO	mapdamage.rescale: Rescaling BAM: '../se/medium.bam' -> '2.0.6/se/medium.rescaled.bam'
-2017-05-16 15:41:54,302	DEBUG	mapdamage.rescale: Rescaling completed in 13.154972 seconds
-2017-05-16 15:41:54,302	INFO	main: Successful run
-2017-05-16 15:41:54,302	DEBUG	main: Run completed in 80.525111 seconds
+2017-08-22 15:40:40,628	INFO	main: Started with the command: /home/peru/miniconda3/envs/py2.7/bin/mapDamage -i ../se/medium.bam -r ../../ref/scaffoldsN.fa -d 2.0.6/se --burn 100 --adjust 2 --iter 100
+2017-08-22 15:40:46,737	DEBUG	main: BAM read in 7.685866 seconds
+2017-08-22 15:40:47,689	INFO	mapdamage.rscript: Performing Bayesian estimates
+2017-08-22 15:40:47,690	DEBUG	mapdamage.rscript: Call: Rscript /home/peru/miniconda3/envs/py2.7/lib/python2.7/site-packages/mapdamage/Rscripts/stats/runGeneral.R --args 30 100 2 100 0 0 1 1 0 0 1 12 2.0.6/se/ /home/peru/miniconda3/envs/py2.7/lib/python2.7/site-packages/mapdamage/Rscripts/stats/ 2.0.6/se/Stats_out 0 0 0 2.0.6/se/acgt_ratio.csv 0 0
+2017-08-22 15:42:37,608	DEBUG	mapdamage.rscript: Bayesian estimates completed in 109.918151 seconds
+2017-08-22 15:42:37,608	INFO	main: Successful run
+2017-08-22 15:42:37,608	DEBUG	main: Run completed in 118.556986 seconds

@@ -23,7 +23,7 @@ rule mapdamage2_mapDamage:
     output: **config[APPLICATION]["mapdamage2_mapDamage"]["output"]
     conda: APPLICATION + "-{version}.yaml"
     shell:
-        "inbam=$(basename {input.bam}); outdir=$(dirname {output.log}); mapDamage -i {input.bam} -r {input.ref} -d $outdir --burn 100 --adjust 2 --iter 100"
+        "outdir=$(dirname {output.log}); mapDamage -i {input.bam} -r {input.ref} -d $outdir --burn 100 --adjust 2 --iter 100"
 
 # Include rules for making the output
 include: "../fileutils.sm"
