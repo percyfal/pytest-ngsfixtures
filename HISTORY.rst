@@ -14,6 +14,7 @@ History
 * Fix mapdamage2 missing output (#18)
 * Use realpath to determine download url (#17)
 * Rename download_ngsfixtures_data.py to pytest_ngsfixtures_download_data.py
+* Update versions for samtools
 
 0.4.0 (2017-03-28)
 ------------------

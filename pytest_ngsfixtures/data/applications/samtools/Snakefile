@@ -14,6 +14,11 @@ param = {
 
 BAM = os.path.join("../{end}", config['input']['bam'])
 
+rule _symlink_ref:
+    input: os.path.abspath(os.path.join("../../ref", config['input']['ref']))
+    output: temporary(os.path.join("{version}", config['input']['ref']))
+    shell: "ln -s {input} {output}"
+
 rule samtools_depth:
     params: regions = param['regions']
     input: bam=BAM, conda="samtools-{version}.yaml"
