@@ -2,12 +2,14 @@
 History
 =======
 
-0.5.0 (2017-08-24)
+0.5.0 (2017-09-25)
 ------------------
 
 * Add star application
 * Add vsearch application
 * Add rseqc application
+* Add snakemake dependency
+* Update docs
 
 * Separate qualimap pe and se output (#12)
 * Add mapdamage2 (#11)
