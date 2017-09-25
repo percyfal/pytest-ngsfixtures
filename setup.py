@@ -16,6 +16,7 @@ with open('HISTORY.rst') as history_file:
 requirements = [
     'pytest>=3.0.0',
     'pyyaml',
+    'snakemake',
 ]
 
 test_requirements = [
@@ -25,7 +26,7 @@ test_requirements = [
 package_data = []
 
 scripts = [
-    'scripts/download_ngsfixtures_data.py',
+    'scripts/pytest_ngsfixtures_download_data.py',
     'scripts/pytest_ngsfixtures_add_application.py',
 ]
 

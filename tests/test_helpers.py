@@ -7,8 +7,6 @@ test_helpers
 
 Tests for `pytest_ngsfixtures.helpers` module.
 """
-import os
-import pytest
 from pytest_ngsfixtures import helpers, config
 
 
@@ -26,11 +24,9 @@ class MockRule(object):
         return self._output
 
 
-
 def test_make_targets():
     rules = [MockRule(name="samtools_depth", output={"txt": "{version}/{end}/medium.depth.txt"}),
              MockRule(name="samtools_rmdup", output={"txt": "{version}/{end}/medium.rmdup.txt"})]
     conf = config.application_config()
     tgt = helpers.make_targets(rules, conf, 'samtools', end='se')
-    # samtools_rmdup only available for version 1.3.1
-    assert len(tgt) == 3
+    assert len(tgt) == 8
