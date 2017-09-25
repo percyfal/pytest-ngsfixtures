@@ -1,0 +1,23 @@
+Parameters:
+QualTrim: 0
+QualFilter: no filtering
+HardClip: 0
+Min length: 40
+Sample freq: 1
+PE Mode: 1
+Quality scaling: 2
+MinGC: 0
+MaxGC: 1
+Outfile: 0.10.13/pe/sga.fastq
+Orphan file: none
+Discarding sequences with ambiguous bases
+Processing pe files ../../medium/CHS.HG00512_1.fastq.gz, ../../medium/CHS.HG00512_2.fastq.gz
+
+Preprocess stats:
+Reads parsed:	20000
+Reads kept:	16862 (0.8431)
+Reads failed primer screen:	0 (0)
+Bases parsed:	1519744
+Bases kept:	1281453 (0.843203)
+Number of incorrectly paired reads that were discarded: 0
+[timer - sga preprocess] wall clock: 0.07s CPU: 0.05s

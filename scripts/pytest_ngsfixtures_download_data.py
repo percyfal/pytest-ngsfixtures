@@ -15,6 +15,8 @@ if int(sys.version[0]) != 3:
 parser = argparse.ArgumentParser(description="Download large ngsfixtures data")
 parser.add_argument('-n', '--dry-run', action='store_true',
                     help="dry run", dest="dry_run")
+parser.add_argument('-f', '--force', action='store_true',
+                    help="force download", dest="force")
 parser.add_argument('-s', '--size', action='store', default="yuge",
                     help="size of dataset", choices=DOWNLOAD_SIZES,
                     dest="size")
@@ -26,4 +28,4 @@ for path, dirs, files in os.walk(DATADIR.format(size="tiny")):
     filelist = [os.path.join(DATADIR.format(size=args.size), x) for x in files]
 
 for fn in filelist:
-    factories.download_sample_file(fn, args.size, args.dry_run)
+    factories.download_sample_file(fn, args.size, args.dry_run, args.force)

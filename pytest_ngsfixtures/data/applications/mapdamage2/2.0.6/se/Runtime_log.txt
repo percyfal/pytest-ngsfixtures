@@ -1,0 +1,7 @@
+2017-08-22 15:40:40,628	INFO	main: Started with the command: /home/peru/miniconda3/envs/py2.7/bin/mapDamage -i ../se/medium.bam -r ../../ref/scaffoldsN.fa -d 2.0.6/se --burn 100 --adjust 2 --iter 100
+2017-08-22 15:40:46,737	DEBUG	main: BAM read in 7.685866 seconds
+2017-08-22 15:40:47,689	INFO	mapdamage.rscript: Performing Bayesian estimates
+2017-08-22 15:40:47,690	DEBUG	mapdamage.rscript: Call: Rscript /home/peru/miniconda3/envs/py2.7/lib/python2.7/site-packages/mapdamage/Rscripts/stats/runGeneral.R --args 30 100 2 100 0 0 1 1 0 0 1 12 2.0.6/se/ /home/peru/miniconda3/envs/py2.7/lib/python2.7/site-packages/mapdamage/Rscripts/stats/ 2.0.6/se/Stats_out 0 0 0 2.0.6/se/acgt_ratio.csv 0 0
+2017-08-22 15:42:37,608	DEBUG	mapdamage.rscript: Bayesian estimates completed in 109.918151 seconds
+2017-08-22 15:42:37,608	INFO	main: Successful run
+2017-08-22 15:42:37,608	DEBUG	main: Run completed in 118.556986 seconds

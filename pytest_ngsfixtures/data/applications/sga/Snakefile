@@ -1,0 +1,60 @@
+# -*- snakemake -*-
+import os
+
+configfile: "../config.yaml"
+configfile: "config.yaml"
+
+APPLICATION = "sga"
+
+param = {
+    'end': config['end'],
+}
+
+READ1 = os.path.join("../../medium/CHS.HG00512_1.fastq.gz")
+READ2 = os.path.join("../../medium/CHS.HG00512_2.fastq.gz")
+
+# Add required inputfiles here, or specify separately for each rule.
+# The conda parameter is required.
+inputfiles = {
+    'conda': "sga-{version}.yaml",
+}
+
+rule sga_preprocess:
+    """Filter se reads"""
+    input: read1=READ1, read2=READ2
+    output: fastq=temporary("{version}/{end}/sga.fastq"), **config[APPLICATION]["sga_preprocess"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell:
+        "if [[ '{wildcards.end}' == 'se' ]]; then\n"
+        "   sga preprocess {input.read1} -o {output.fastq} 2> {output.log}\n"
+        "else \n"
+        "   sga preprocess {input.read1} {input.read2} --pe-mode 1 -o {output.fastq} 2> {output.log}\n"
+        "fi\n"
+        
+rule _sga_index:
+    params: prefix = "{version}/{end}/sga.index"
+    input: read1 = "{version}/{end}/sga.fastq"
+    output: bwt = temporary("{version}/{end}/sga.index.bwt"),
+            rbwt = temporary("{version}/{end}/sga.index.rbwt"),
+            sai = temporary("{version}/{end}/sga.index.sai"),
+            rsai = temporary("{version}/{end}/sga.index.rsai"),
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "sga index {input.read1} -p {params.prefix}"
+
+
+rule sga_filter:
+    params: prefix = "{version}/{end}/sga.index"
+    input: read1="{version}/{end}/sga.fastq",
+           bwt = "{version}/{end}/sga.index.bwt",
+           rbwt = "{version}/{end}/sga.index.rbwt",
+           sai = "{version}/{end}/sga.index.sai",
+           rsai = "{version}/{end}/sga.index.rsai",
+    output: discard = temporary("{version}/{end}/sga.index.discard.fa"),
+            filterpass = temporary("{version}/{end}/sga.index.filter.pass.fa"),
+            **config[APPLICATION]["sga_filter"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "sga filter {input.read1} -p {params.prefix} > {output.log}"
+            
+
+# Include rules for making the output
+include: "../fileutils.sm"

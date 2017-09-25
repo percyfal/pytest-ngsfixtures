@@ -1,0 +1,42 @@
+# -*- snakemake -*-
+import os
+
+configfile: "../config.yaml"
+configfile: "config.yaml"
+
+APPLICATION = "vsearch"
+
+param = {
+    'end': config['end'],
+}
+
+# Add required inputfiles here, or specify separately for each rule.
+# The conda parameter is required.
+inputfiles = {
+    'conda': "vsearch-{version}.yaml",
+    'fastq': os.path.join("{version}", "medium.fastq")
+}
+
+
+rule _create_fastq:
+    input: os.path.abspath(os.path.join("../../medium", "CHS_1.fastq.gz"))
+    output: temporary(os.path.join("{version}", 'medium.fastq'))
+    shell: "zcat {input} > {output}"
+
+
+
+rule vsearch_fastqc_stats:
+    input: **inputfiles, fastq_link=rules._create_fastq.output
+    output: **config[APPLICATION]["vsearch_fastqc_stats"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "vsearch --fastq_stats {input.fastq} --log {output.txt}"
+
+
+rule vsearch_fastqc_filter:
+    input: **inputfiles, fastq_link=rules._create_fastq.output
+    output: **config[APPLICATION]["vsearch_fastqc_filter"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "vsearch --fastq_filter {input.fastq} --log {output.txt} --fastqout /dev/null"
+           
+# Include rules for making the output
+include: "../fileutils.sm"

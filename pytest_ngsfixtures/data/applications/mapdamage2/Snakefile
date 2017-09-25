@@ -1,0 +1,29 @@
+# -*- snakemake -*-
+import os
+
+configfile: "../config.yaml"
+configfile: "config.yaml"
+
+APPLICATION = "mapdamage2"
+
+param = {
+    'end': config['end'],
+}
+
+# Add required inputfiles here, or specify separately for each rule.
+# The conda parameter is required.
+inputfiles = {
+    'conda': "mapdamage2-{version}.yaml",
+    'bam': os.path.join("../{end}", config['input']['bam']),
+    'ref': os.path.join("../../ref", config['input']['ref']),
+}
+
+rule mapdamage2_mapDamage:
+    input: **inputfiles
+    output: **config[APPLICATION]["mapdamage2_mapDamage"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell:
+        "outdir=$(dirname {output.log}); mapDamage -i {input.bam} -r {input.ref} -d $outdir --burn 100 --adjust 2 --iter 100"
+
+# Include rules for making the output
+include: "../fileutils.sm"

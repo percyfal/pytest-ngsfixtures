@@ -1,0 +1,73 @@
+# -*- snakemake -*-
+import os
+
+configfile: "../config.yaml"
+configfile: "config.yaml"
+
+APPLICATION = "rseqc"
+
+param = {
+    'end': config['end'],
+}
+
+# Add required inputfiles here, or specify separately for each rule.
+# The conda parameter is required.
+inputfiles = {
+    'conda': "rseqc-{version}.yaml",
+    'bam': os.path.join("../{end}", config['input']['bam']),
+    'bai': os.path.join("../{end}", config['input']['bai']),
+    'bed12': os.path.join("../../ref", config['input']['bed12']),
+}
+
+
+rule rseqc_clipping_profile:
+    input: **inputfiles
+    output: **config[APPLICATION]["rseqc_clipping_profile"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "clipping_profile.py -i {input.bam} -o $(dirname {output.xls})/clippingprofile_{wildcards.end} -s $(echo {wildcards.end} | awk '{{print(toupper($0))}}')"
+
+rule rseqc_geneBody_coverage:
+    input: **inputfiles
+    output: **config[APPLICATION]["rseqc_geneBody_coverage"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "geneBody_coverage.py -i {input.bam} -o $(dirname {output.txt})/geneBody_coverage -r {input.bed12}"
+
+rule rseqc_junction_annotation:
+    input: **inputfiles
+    output: **config[APPLICATION]["rseqc_junction_annotation"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "junction_annotation.py -i {input.bam} -o $(dirname {output.txt})/junction_annotation_refseq -r {input.bed12} 2> {output.txt}"
+
+rule rseqc_read_GC:
+    input: **inputfiles
+    output: **config[APPLICATION]["rseqc_read_GC"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "read_GC.py -i {input.bam} -o $(dirname {output.xls})/read_GC"
+
+rule rseqc_read_NVC:
+    input: **inputfiles
+    output: **config[APPLICATION]["rseqc_read_NVC"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "read_NVC.py -i {input.bam} -o $(dirname {output.xls})/read_NVC"
+
+rule rseqc_read_distribution:
+    input: **inputfiles
+    output: **config[APPLICATION]["rseqc_read_distribution"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "read_distribution.py -i {input.bam} -r {input.bed12} > $(dirname {output.xls})/read_distribution.txt"
+
+rule rseqc_read_duplication:
+    input: **inputfiles
+    output: **config[APPLICATION]["rseqc_read_duplication"]["output"]
+    conda: APPLICATION + "-{version}.yaml"
+    shell: "read_duplication.py -i {input.bam} -o $(dirname {output.seq})/read_dup"
+
+# NB: this application only outputs an r file and pdf plots
+# rule rseqc_read_quality:
+#     input: **inputfiles
+#     output: **config[APPLICATION]["rseqc_read_quality"]["output"]
+#     conda: APPLICATION + "-{version}.yaml"
+#     shell: "read_quality.py -i {input.bam} -o $(dirname {output.r})/read_quality"
+           
+# Include rules for making the output
+include: "../fileutils.sm"

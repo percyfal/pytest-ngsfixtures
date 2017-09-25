@@ -1,7 +1,7 @@
 samtools:
-  _default: 1.3.1
-  _conda_versions: ["1.2", "1.3.1"]
-  _versions: ["1.2", "1.3.1"]
+  _default: 1.5
+  _conda_versions: ["0.1.16", "0.1.17", "0.1.18", "0.1.19", "1.0", "1.1", "1.2", "1.3", "1.3.1", "1.4", "1.4.1", "1.5"]
+  _versions: ["1.2", "1.3", "1.3.1", "1.4", "1.4.1", "1.5"]
   samtools_flagstat:
     output:
       txt: "{version}/{end}/medium.flagstat.txt"
@@ -17,7 +17,7 @@ samtools:
   samtools_rmdup:
     output:
       txt: "{version}/{end}/medium.rmdup.txt"
-    _versions: [1.3.1]
+    _versions: [1.3.1, 1.4, 1.4.1, 1.5]
   samtools_stats:
     output:
       txt: "{version}/{end}/medium.stats.txt"

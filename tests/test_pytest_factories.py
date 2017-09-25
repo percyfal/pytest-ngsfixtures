@@ -10,9 +10,14 @@ Tests for `pytest_ngsfixtures.factories` module.
 import os
 import re
 import pytest
-from pytest_ngsfixtures import factories
+from pytest_ngsfixtures import factories, ROOT_DIR
 from pytest_ngsfixtures.factories import safe_mktemp, safe_symlink
 from pytest_ngsfixtures.config import application_fixtures
+
+DATADIR = os.path.realpath(os.path.join(ROOT_DIR, "data", "tiny"))
+for path, dirs, files in os.walk(DATADIR):
+    filelist = sorted([os.path.join(DATADIR, x) for x in files])
+
 
 # Filetypes
 bamfile_realpath = os.path.realpath(os.path.join(os.path.dirname(__file__), os.pardir, "pytest_ngsfixtures", "data", "applications", "pe", "PUR.HG00731.tiny.bam"))
@@ -141,6 +146,11 @@ def test_download_url_exists(tmpdir_factory):
     bn.write("foo.bar")
     factories.download_sample_file(str(bn), "yuge")
     assert "foo.bar" == "".join(bn.readlines())
+
+
+def test_download_sample_file():
+    url = factories.download_sample_file(filelist[0], "yuge", dry_run=True, force=True)
+    assert url.startswith("https://raw.githubusercontent.com/percyfal/pytest-ngsfixtures/master/pytest_ngsfixtures")
 
 
 sample_aliases = factories.sample_layout(
