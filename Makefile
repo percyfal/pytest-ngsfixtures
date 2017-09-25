@@ -124,8 +124,7 @@ conda: ## package and upload a conda release
 	git checkout conda
 	git merge $(current)
 	$(MAKE) clean clean-snakemake
-	conda build conda
-	anaconda upload $(shell conda build conda --output) --interactive
+	conda build-all conda
 	git checkout $(current)
 
 dist: clean ## builds source and wheel package
