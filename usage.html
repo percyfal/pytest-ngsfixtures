@@ -8,9 +8,11 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Usage &mdash; pytest-ngsfixtures 0.4.0+1.g7f3ccdb documentation</title>
+  <title>Usage &mdash; pytest-ngsfixtures 0.5.0 documentation</title>
   
 
+  
+  
   
   
 
@@ -33,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="pytest-ngsfixtures 0.4.0+1.g7f3ccdb documentation" href="index.html"/>
+    <link rel="top" title="pytest-ngsfixtures 0.5.0 documentation" href="index.html"/>
         <link rel="next" title="&lt;no title&gt;" href="authors.html"/>
         <link rel="prev" title="Developer guide" href="contributing.html"/> 
 
@@ -44,6 +46,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -63,7 +66,7 @@
             
             
               <div class="version">
-                0.4.0+1.g7f3ccdb
+                0.5.0
               </div>
             
           
@@ -84,7 +87,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Developer guide</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
@@ -99,9 +105,9 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="#plugin-options">Plugin options</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#x-ngs-size">-X, &#8211;ngs-size</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#l-ngs-layout">-L, &#8211;ngs-layout</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#f-ngs-show-fixture">-F, &#8211;ngs-show-fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#x-ngs-size">-X, –ngs-size</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#l-ngs-layout">-L, –ngs-layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#f-ngs-show-fixture">-F, –ngs-show-fixture</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">pytest_ngsfixtures</a></li>
@@ -117,8 +123,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">pytest-ngsfixtures</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pytest-ngsfixtures</a>
+        
       </nav>
 
 
@@ -127,23 +135,40 @@
         <div class="rst-content">
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
-    <li>Usage</li>
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Usage</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
+            
             <a href="_sources/usage.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -230,8 +255,27 @@ reside.</p>
     <span class="c1"># Do something with bamset</span>
 </pre></div>
 </div>
-<p>Note that currently you need to provide the path to the file <em>relative
-to</em> <code class="docutils literal"><span class="pre">pytest_ngsfixtures/data</span></code>.</p>
+<p>If you provide the path as a relative path it will be interpreted as
+relative to <code class="docutils literal"><span class="pre">pytest_ngsfixtures/data</span></code> in the <code class="docutils literal"><span class="pre">pytest-ngsfixtures</span></code>
+installation directory. However, a full path is treated as such,
+meaning you can use the file fixture factories to setup fixtures for
+any file or fileset on the filesystem:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pytest_ngsfixtures</span> <span class="kn">import</span> <span class="n">factories</span>
+
+<span class="n">bam</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">filetype</span><span class="p">(</span><span class="s2">&quot;/path/to/mybam.bam&quot;</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;function&quot;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">test_bam</span><span class="p">(</span><span class="n">bam</span><span class="p">):</span>
+    <span class="c1"># Do something with bam file</span>
+
+
+<span class="n">bamset</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">fileset</span><span class="p">(</span><span class="n">src</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;/path/to/bam1.bam&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;/path/to/bam2.bam&quot;</span><span class="p">],</span>
+                                <span class="n">fdir</span><span class="o">=</span><span class="s2">&quot;bamset&quot;</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;function&quot;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">test_bamset</span><span class="p">(</span><span class="n">bamset</span><span class="p">):</span>
+    <span class="c1"># Do something with bamset</span>
+</pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="files">
@@ -252,7 +296,7 @@ to</em> <code class="docutils literal"><span class="pre">pytest_ngsfixtures/data
 <dt>yuge/</dt>
 <dd>yuge sequence files</dd>
 </dl>
-<p>Each sequence directory contain the same samples in different sizes:</p>
+<p>Each sequence directory contains the same samples in different sizes:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">File</span> <span class="n">name</span>                   <span class="n">Sample</span> <span class="n">ID</span>         <span class="n">Type</span>                <span class="n">Population</span>
 <span class="o">--------------------------</span>  <span class="o">------------</span>      <span class="o">-----------------</span>   <span class="o">------------</span>
 <span class="n">CHS</span><span class="o">.</span><span class="n">HG00512_1</span><span class="o">.</span><span class="n">fastq</span><span class="o">.</span><span class="n">gz</span>      <span class="n">CHS</span><span class="o">.</span><span class="n">HG00512</span>       <span class="n">Individual</span>          <span class="n">Han</span><span class="o">-</span><span class="n">Chinese</span>
@@ -334,7 +378,7 @@ layouts to use (see next section).</p>
 <p>The plugin defines three options that can be used to select and show
 predefined fixtures.</p>
 <div class="section" id="x-ngs-size">
-<h2>-X, &#8211;ngs-size<a class="headerlink" href="#x-ngs-size" title="Permalink to this headline">¶</a></h2>
+<h2>-X, –ngs-size<a class="headerlink" href="#x-ngs-size" title="Permalink to this headline">¶</a></h2>
 <p>Select the size of the sequence fixtures (fastq files). There are
 currently four sizes to choose from:</p>
 <ol class="arabic simple">
@@ -351,7 +395,7 @@ sequences</li>
 </div>
 </div>
 <div class="section" id="l-ngs-layout">
-<h2>-L, &#8211;ngs-layout<a class="headerlink" href="#l-ngs-layout" title="Permalink to this headline">¶</a></h2>
+<h2>-L, –ngs-layout<a class="headerlink" href="#l-ngs-layout" title="Permalink to this headline">¶</a></h2>
 <p>Select one of the predefined sample layouts. Note that this option
 only affects tests that actually depend on the layouts in some
 parametrized way. See <code class="docutils literal"><span class="pre">pytest_ngsfixtures.plugin</span></code> for the setup
@@ -361,22 +405,25 @@ of the predefined sample layouts. Example:</p>
 </div>
 </div>
 <div class="section" id="f-ngs-show-fixture">
-<h2>-F, &#8211;ngs-show-fixture<a class="headerlink" href="#f-ngs-show-fixture" title="Permalink to this headline">¶</a></h2>
+<h2>-F, –ngs-show-fixture<a class="headerlink" href="#f-ngs-show-fixture" title="Permalink to this headline">¶</a></h2>
 <p>Print information on the files that are setup in the fixture.</p>
 </div>
 </div>
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="authors.html" class="btn btn-neutral float-right" title="&lt;no title&gt;" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="authors.html" class="btn btn-neutral float-right" title="&lt;no title&gt;" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="contributing.html" class="btn btn-neutral" title="Developer guide" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="contributing.html" class="btn btn-neutral" title="Developer guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -407,10 +454,11 @@ of the predefined sample layouts. Example:</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.4.0+1.g7f3ccdb',
+            VERSION:'0.5.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>

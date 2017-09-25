@@ -8,9 +8,11 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pytest_ngsfixtures package &mdash; pytest-ngsfixtures 0.4.0+1.g7f3ccdb documentation</title>
+  <title>pytest_ngsfixtures package &mdash; pytest-ngsfixtures 0.5.0 documentation</title>
   
 
+  
+  
   
   
 
@@ -33,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="pytest-ngsfixtures 0.4.0+1.g7f3ccdb documentation" href="index.html"/>
+    <link rel="top" title="pytest-ngsfixtures 0.5.0 documentation" href="index.html"/>
         <link rel="up" title="pytest_ngsfixtures" href="modules.html"/>
         <link rel="prev" title="pytest_ngsfixtures" href="modules.html"/> 
 
@@ -44,6 +46,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -63,7 +66,7 @@
             
             
               <div class="version">
-                0.4.0+1.g7f3ccdb
+                0.5.0
               </div>
             
           
@@ -84,7 +87,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Developer guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
@@ -118,8 +124,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">pytest-ngsfixtures</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pytest-ngsfixtures</a>
+        
       </nav>
 
 
@@ -128,25 +136,42 @@
         <div class="rst-content">
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
           <li><a href="modules.html">pytest_ngsfixtures</a> &raquo;</li>
-      
-    <li>pytest_ngsfixtures package</li>
+        
+      <li>pytest_ngsfixtures package</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
+            
             <a href="_sources/pytest_ngsfixtures.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -317,10 +342,10 @@ will. Short sample names can also be used.</p>
 the lists <strong>samples</strong> (SM), <strong>platform_units</strong> (PU), <strong>batches</strong>
 (BATCH), and <strong>populations</strong> (POP), and formatting the directory
 structure following the <em>runfmt</em> format specification. For
-instance, with samples = [&#8220;CHR.HG00512&#8221;], populations=None,
-batches=None, platform_units=[&#8220;010101_AAABBB11XX&#8221;], and
-runfmt=&#8221;{SM}/{PU}/{SM}_{PU}&#8221;, input files will be organized as
-&#8220;CHR.HG00512/010101_AAABBB11XX/CHR.HG00512_010101_AAABBB11XX_1.fastq.gz&#8221;
+instance, with samples = [“CHR.HG00512”], populations=None,
+batches=None, platform_units=[“010101_AAABBB11XX”], and
+runfmt=”{SM}/{PU}/{SM}_{PU}”, input files will be organized as
+“CHR.HG00512/010101_AAABBB11XX/CHR.HG00512_010101_AAABBB11XX_1.fastq.gz”
 and similarly for the second read.</p>
 <p>Usage:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pytest_ngsfixtures</span> <span class="kn">import</span> <span class="n">factories</span>
@@ -501,13 +526,16 @@ fdir (<code class="xref py py-obj docutils literal"><span class="pre">str</span>
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="modules.html" class="btn btn-neutral" title="pytest_ngsfixtures" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="modules.html" class="btn btn-neutral" title="pytest_ngsfixtures" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -538,10 +566,11 @@ fdir (<code class="xref py py-obj docutils literal"><span class="pre">str</span>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.4.0+1.g7f3ccdb',
+            VERSION:'0.5.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>
