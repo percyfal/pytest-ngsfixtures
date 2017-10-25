@@ -67,7 +67,6 @@ target/
 *.fastq.gz
 *.gtf
 *.fasta
-*.fai
 *.bai
 *.bed
 *.genome
