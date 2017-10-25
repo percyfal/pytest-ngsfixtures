@@ -2,9 +2,10 @@
 History
 =======
 
-0.5.1 ()
+0.5.1 (2017-10-25)
 ------------------
 
+* Change name to pytest-ngsfixtures
 * Add bcftools versions 1.4, 1.4.1, 1.5, 1.6
 * Add bowtie 1.2.1.1
 
