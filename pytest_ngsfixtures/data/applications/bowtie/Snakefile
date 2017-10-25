@@ -40,9 +40,9 @@ rule bowtie:
     conda: APPLICATION + "-{version}.yaml"
     shell:
         "if [[ '{wildcards.end}' == 'se' ]]; then\n"
-        "    bowtie {input.ref} --12 <(gunzip -c {input.read1}) > /dev/null 2> {output.log}\n"
+        "    bowtie {input.ref} <(gunzip -c {input.read1}) > /dev/null 2> {output.log}\n"
         "else\n"
-        "bowtie {input.ref} -1 <(gunzip -c {input.read1}) -2 <(gunzip -c {input.read2}) > /dev/null 2> {output.log}"
+        "bowtie {input.ref} -1 <(gunzip -c {input.read1}) -2 <(gunzip -c {input.read2}) > /dev/null 2> {output.log}\n"
         "fi\n"
 
 # Include rules for making the output

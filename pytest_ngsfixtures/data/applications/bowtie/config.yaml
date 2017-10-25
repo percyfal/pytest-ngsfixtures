@@ -33,9 +33,9 @@
 #
 
 bowtie:
-  _default: '1.2.0'
-  _versions: ['1.2.0']
-  _conda_versions: ['1.0.0', '1.1.2', '1.2.0']
+  _default: '1.2.1.1'
+  _versions: ['1.2.0', '1.2.1.1']
+  _conda_versions: ['1.0.0', '1.1.2', '1.2.0', '1.2.1.1']
   _conda_dependencies: [] # Add extra conda dependencies required for this package here
   _clean: [] # Add clean file pattern here
 
