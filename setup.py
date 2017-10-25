@@ -46,7 +46,7 @@ def package_path(path, filters=()):
 package_path(join(ROOT, "pytest_ngsfixtures", "data"))
 
 setup(
-    name='pytest_ngsfixtures',
+    name='pytest-ngsfixtures',
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     description="pytest ngs fixtures",
@@ -61,8 +61,9 @@ setup(
     include_package_data=True,
     license="GNU General Public License v3",
     zip_safe=False,
-    keywords='pytest_ngsfixtures',
+    keywords=['pytest', 'ngs'],
     classifiers=[
+        'Framework :: Pytest',
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
@@ -74,6 +75,7 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Topic :: Utilities',
     ],
     test_suite='tests',
     install_requires=requirements,
