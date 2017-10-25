@@ -1,59 +1,59 @@
-pytest_ngsfixtures package
-==========================
+pytest\_ngsfixtures package
+===========================
 
 Submodules
 ----------
 
-pytest_ngsfixtures.applications module
---------------------------------------
+pytest\_ngsfixtures\.applications module
+----------------------------------------
 
 .. automodule:: pytest_ngsfixtures.applications
     :members:
     :undoc-members:
     :show-inheritance:
 
-pytest_ngsfixtures.config module
---------------------------------
+pytest\_ngsfixtures\.config module
+----------------------------------
 
 .. automodule:: pytest_ngsfixtures.config
     :members:
     :undoc-members:
     :show-inheritance:
 
-pytest_ngsfixtures.factories module
------------------------------------
+pytest\_ngsfixtures\.factories module
+-------------------------------------
 
 .. automodule:: pytest_ngsfixtures.factories
     :members:
     :undoc-members:
     :show-inheritance:
 
-pytest_ngsfixtures.filetypes module
------------------------------------
+pytest\_ngsfixtures\.filetypes module
+-------------------------------------
 
 .. automodule:: pytest_ngsfixtures.filetypes
     :members:
     :undoc-members:
     :show-inheritance:
 
-pytest_ngsfixtures.helpers module
----------------------------------
+pytest\_ngsfixtures\.helpers module
+-----------------------------------
 
 .. automodule:: pytest_ngsfixtures.helpers
     :members:
     :undoc-members:
     :show-inheritance:
 
-pytest_ngsfixtures.plugin module
---------------------------------
+pytest\_ngsfixtures\.plugin module
+----------------------------------
 
 .. automodule:: pytest_ngsfixtures.plugin
     :members:
     :undoc-members:
     :show-inheritance:
 
-pytest_ngsfixtures.utils module
--------------------------------
+pytest\_ngsfixtures\.utils module
+---------------------------------
 
 .. automodule:: pytest_ngsfixtures.utils
     :members:
