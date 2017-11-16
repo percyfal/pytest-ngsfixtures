@@ -107,6 +107,38 @@ def _check_file_exists(fn, size):
         raise FileNotFoundError
 
 
+def safe_copy(p, src, dst):
+    """Safely copy fixture file.
+
+    Copy file from src to dst in LocalPath p. If src, dst are strings,
+    they will be joined to p, assuming they are relative to p. If src,
+    dst are LocalPath instances, they are left alone since LocalPath
+    objects are always absolute paths.
+
+    Params:
+      p (LocalPath): path in which link is setup
+      src (str, LocalPath): source file that link points to. If string, assume relative to pytest_ngsfixtures data directory
+      dst (str, LocalPath): link destination name. If string, assume relative to path and concatenate; else leave alone
+
+    Returns:
+      dst (LocalPath): link name
+    """
+    if isinstance(src, str):
+        if not os.path.isabs(src):
+            src = os.path.join(DATADIR, src)
+        src = py.path.local(src)
+    if dst is None:
+        dst = src.basename
+    if isinstance(dst, str):
+        dst = p.join(dst)
+    if not dst.check(link=1):
+        dst.dirpath().ensure(dir=True)
+        src.copy(dst)
+    else:
+        logger.warn("link {dst} -> {src} already exists! skipping...".format(src=src, dst=dst))
+    return dst
+
+
 def safe_symlink(p, src, dst):
     """Safely make symlink.
 
@@ -169,6 +201,7 @@ def sample_layout(
         batches=[None],
         populations=[None],
         paired_end=[True],
+        copy=False,
         **kwargs
 ):
     """Fixture factory for pytest-ngsfixtures sample layouts.
@@ -218,6 +251,7 @@ def sample_layout(
       batches (list): list of batch (project) names
       populations (list): list of population names
       paired_end (list): list of booleans indicating if a sample run is paired end (True) or single end (False)
+      copy (bool): copy fixtures instead of symlinking
 
     Returns:
       p (py.path.local): tmp directory with sample layout setup
@@ -244,6 +278,7 @@ def sample_layout(
         _layout = [dict(zip(_keys, p)) for p in combinator(_pop, _pu, _samples, _batches, _pe)]
         _sample_counter = 1
         _sample_map = {}
+        _setup_fn = safe_copy if copy else safe_symlink
         p = safe_mktemp(tmpdir_factory, dirname, **kwargs)
         i = 0
         for l in _layout:
@@ -258,11 +293,11 @@ def sample_layout(
                 i += 1
             src = os.path.join(DATADIR, config['size'], srckeys['SM'] + "_1.fastq.gz")
             _check_file_exists(src, config['size'])
-            safe_symlink(p, os.path.join(DATADIR, config['size'], srckeys['SM'] + "_1.fastq.gz"),
-                         runfmt.format(**l) + read1_suffix)
+            _setup_fn(p, os.path.join(DATADIR, config['size'], srckeys['SM'] + "_1.fastq.gz"),
+                      runfmt.format(**l) + read1_suffix)
             if l['PE']:
-                safe_symlink(p, os.path.join(DATADIR, config['size'], srckeys['SM'] + "_2.fastq.gz"),
-                             runfmt.format(**l) + read2_suffix)
+                _setup_fn(p, os.path.join(DATADIR, config['size'], srckeys['SM'] + "_2.fastq.gz"),
+                          runfmt.format(**l) + read2_suffix)
 
         if sampleinfo:
             outkeys = set([x for x in re.split("[{}/_]", runfmt) if x != ""] + ["fastq"])
@@ -288,13 +323,15 @@ def sample_layout(
     return sample_layout_fixture
 
 
-def reference_layout(label="ref", dirname="ref", **kwargs):
+def reference_layout(label="ref", dirname="ref", copy=False, **kwargs):
     """
     Fixture factory for reference layouts.
 
     Params:
       label (str): ref or scaffolds layout
       dirname (str): reference directory name
+      copy (bool): copy file fixture instead of symlinking
+      kwargs (dict): keyword arguments
 
 
     """
@@ -302,15 +339,16 @@ def reference_layout(label="ref", dirname="ref", **kwargs):
     def reference_layout_fixture(request, tmpdir_factory):
         """Reference layout fixture. Setup the one-chromosome reference files
         or scaffold reference files in a separate directory"""
+        _setup_fn = safe_copy if copy else safe_symlink
         p = safe_mktemp(tmpdir_factory, dirname, **kwargs)
         for dst, src in ref_dict.items():
             if dst in ref_always:
-                safe_symlink(p, src, dst)
+                _setup_fn(p, src, dst)
             if label not in dst:
                 continue
             if dst.endswith("chrom.sizes"):
                 dst = "chrom.sizes"
-            safe_symlink(p, src, dst)
+            _setup_fn(p, src, dst)
         if request.config.option.ngs_show_fixture:
             logger.info("'{}' reference layout".format(label))
             logger.info("------------------------------------")
@@ -320,7 +358,9 @@ def reference_layout(label="ref", dirname="ref", **kwargs):
     return reference_layout_fixture
 
 
-def filetype(src, dst=None, fdir=None, rename=False, outprefix="test", inprefix=['PUR.HG00731', 'PUR.HG00733'], **kwargs):
+def filetype(src, dst=None, fdir=None, rename=False, outprefix="test",
+             inprefix=['PUR.HG00731', 'PUR.HG00733'], copy=False,
+             **kwargs):
     """Fixture factory for file types. This factory is atomic in that it
     generates one fixture for one file.
 
@@ -331,6 +371,7 @@ def filetype(src, dst=None, fdir=None, rename=False, outprefix="test", inprefix=
       rename (bool): rename fixture links
       outprefix (str): output prefix
       inprefix (list): list of input prefixes to substitute
+      copy (bool): copy fixture file instead of symlinking
       kwargs (dict): keyword arguments
 
     """
@@ -342,8 +383,9 @@ def filetype(src, dst=None, fdir=None, rename=False, outprefix="test", inprefix=
     @pytest.fixture(scope=kwargs.get("scope", "function"), autouse=kwargs.get("autouse", False))
     def filetype_fixture(request, tmpdir_factory):
         """Filetype fixture"""
+        _setup_fn = safe_copy if copy else safe_symlink
         p = safe_mktemp(tmpdir_factory, fdir, **kwargs)
-        p = safe_symlink(p, src, dst)
+        p = _setup_fn(p, src, dst)
         if request.config.option.ngs_show_fixture:
             logger.info("filetype fixture content")
             logger.info("------------------------")
@@ -352,7 +394,7 @@ def filetype(src, dst=None, fdir=None, rename=False, outprefix="test", inprefix=
     return filetype_fixture
 
 
-def fileset(src, dst=None, fdir=None, **kwargs):
+def fileset(src, dst=None, fdir=None, copy=False, **kwargs):
     """
     Fixture factory to generate filesets.
 
@@ -360,6 +402,8 @@ def fileset(src, dst=None, fdir=None, **kwargs):
       src (list): list of sources
       dst (list): list of destination; if None, use src basename
       fdir (:obj:`str` or :obj:`py._path.local.LocalPath`): output directory
+      copy (bool): copy fixture file instead of symlinking
+      kwargs (dict): keyword arguments
 
     Returns:
       func: a fixture function
@@ -382,9 +426,10 @@ def fileset(src, dst=None, fdir=None, **kwargs):
         Returns:
           :obj:`py._path.local.LocalPath`: output directory in which the files reside
         """
+        _setup_fn = safe_copy if copy else safe_symlink
         p = safe_mktemp(tmpdir_factory, fdir, **kwargs)
         for s, d in itertools.zip_longest(src, dst):
-            safe_symlink(p, s, d)
+            _setup_fn(p, s, d)
         if request.config.option.ngs_show_fixture:
             logger.info("fileset fixture content")
             logger.info("-----------------------")
