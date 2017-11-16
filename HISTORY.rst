@@ -6,7 +6,7 @@ History
 ------------------
 
 * Add pool fixtures (#22)
-  
+* Add safe_copy function (#21)
 
 0.5.1 (2017-10-25)
 ------------------
