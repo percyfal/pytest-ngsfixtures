@@ -9,9 +9,10 @@ Tests for `pytest_ngsfixtures.factories` module.
 """
 import os
 import re
+import py
 import pytest
 from pytest_ngsfixtures import factories, ROOT_DIR
-from pytest_ngsfixtures.factories import safe_mktemp, safe_symlink
+from pytest_ngsfixtures.factories import safe_mktemp, safe_symlink, safe_copy
 from pytest_ngsfixtures.config import application_fixtures
 
 DATADIR = os.path.realpath(os.path.join(ROOT_DIR, "data", "tiny"))
@@ -26,7 +27,9 @@ PURHG00733 = os.path.join("applications", "pe", "PUR.HG00733.tiny.bam")
 PURFILES = [PURHG00731, PURHG00733]
 bamfile = PURHG00731
 bam = factories.filetype(bamfile, fdir="bamfoo", scope="function", numbered=True)
+bam_copy = factories.filetype(bamfile, fdir="bamfoo", scope="function", numbered=True, copy=True)
 renamebam = factories.filetype(bamfile, fdir="renamebamfoo", rename=True, outprefix="s", scope="function", numbered=True)
+renamebam_copy = factories.filetype(bamfile, fdir="renamebamfoo", rename=True, outprefix="s", scope="function", numbered=True)
 
 
 def test_wrong_sample():
@@ -65,16 +68,46 @@ def test_safe_symlink(tmpdir_factory, bam):
     assert str(l).endswith("foo.bar")
 
 
+def test_safe_copy(tmpdir_factory, bam):
+    p = tmpdir_factory.mktemp("safe_copy")
+    safe_copy(p, bamfile, "bar/foo.bar")
+    assert str(p).endswith("safe_copy0")
+    # Test using string as input
+    c = safe_copy(p, bamfile, "foo/foo.bar")
+    assert str(c).endswith("foo/foo.bar")
+    assert c.realpath() != bamfile_realpath
+    # Test using localpath as input
+    c = safe_copy(p, bam, "foo.bar")
+    assert c.realpath() != bam.realpath()
+    assert str(c).endswith("foo.bar")
+    # Test that file is *not* a symlink and that it is equal to target
+    # fixture
+    assert c.size() == bam.size()
+    assert c.computehash() == bam.computehash()
+
+
 def test_bam(bam):
     assert not re.search("bamfoo\d+/PUR.HG00731.tiny.bam", str(bam)) is None
     assert bam.realpath() == bamfile_realpath
     assert bam.realpath().exists()
 
 
+def test_copy_bam(bam_copy):
+    assert not re.search("bamfoo\d+/PUR.HG00731.tiny.bam", str(bam_copy)) is None
+    assert bam_copy.computehash() == py.path.local(bamfile_realpath).computehash()
+    assert bam_copy.realpath().exists()
+
+
 def test_bam_rename(renamebam):
     assert not re.search("renamebamfoo\d+/s.tiny.bam", str(renamebam)) is None
     assert renamebam.realpath() == bamfile_realpath
     assert renamebam.realpath().exists()
+
+
+def test_copy_bam_rename(renamebam_copy):
+    assert not re.search("renamebamfoo\d+/s.tiny.bam", str(renamebam_copy)) is None
+    assert renamebam_copy.computehash() == py.path.local(bamfile_realpath).computehash()
+    assert renamebam_copy.realpath().exists()
 
 
 @pytest.fixture(scope="function")
