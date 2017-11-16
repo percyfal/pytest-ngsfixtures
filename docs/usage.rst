@@ -11,9 +11,10 @@ the link organization and naming reflect typical file naming schemes
 of sequencing files delivered by sequence providers or as used in
 projects.
 
-There are seven predefined sample layouts: **flat**, **sample**,
+There are nine predefined sample layouts: **flat**, **sample**,
 **sample_run**, **sample_project_run**, **pop_sample**,
-**pop_sample_run**, and **pop_sample_project_run**, and two reference
+**pop_sample_run**, **pop_sample_project_run**, **pool_pop_sample**,
+and **pool_pop_sample_run**, and two reference
 layouts: **ref** and **scaffolds**.
 
 To use a fixture, simply depend on it in a test, e.g.:
