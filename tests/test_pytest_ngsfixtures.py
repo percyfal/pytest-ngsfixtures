@@ -57,6 +57,20 @@ def test_pop_sample_project_run(pop_sample_project_run):
     assert len([x for x in pop_sample_project_run.join("PUR").listdir() if x.isdir()]) == 2
 
 
+def test_pool_pop_sample(pool_pop_sample):
+    l = [x for x in sorted(pool_pop_sample.visit()) if str(x).endswith(".gz")]
+    assert len(l) == 6
+    assert str(l[0]).endswith("pool_pop_sample0/CHS/CHS.pool/CHS.pool_010101_AAABBB11XX_1.fastq.gz")
+    assert len([x for x in pool_pop_sample.join("PUR").listdir() if x.isdir()]) == 1
+
+
+def test_pool_pop_sample_run(pool_pop_sample_run):
+    l = [x for x in sorted(pool_pop_sample_run.visit()) if str(x).endswith(".gz")]
+    assert len(l) == 6
+    assert str(l[0]).endswith("pool_pop_sample_run0/CHS/CHS.pool/010101_AAABBB11XX/CHS.pool_010101_AAABBB11XX_1.fastq.gz")
+    assert len([x for x in pool_pop_sample_run.join("PUR").listdir() if x.isdir()]) == 1
+
+
 def test_ref(ref):
     with ref.join("chrom.sizes").open() as fh:
         lines = fh.readlines()

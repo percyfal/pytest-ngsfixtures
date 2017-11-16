@@ -248,39 +248,3 @@ appout_dir = factories.application_output("samtools", "samtools_flagstat", "1.2"
 def test_factory_application_output_fdir(appout_dir):
     assert appout_dir.exists()
     assert "samtools/samtools_flagstat" in str(appout_dir)
-
-# Test pool fixtures; these are not defined by default
-kwargs = {
-    'samples': ['CHS', 'PUR', 'YRI'],
-    'platform_units': ['010101_AAABBB11XX', '020202_AAABBB22XX', '010101_AAABBB11XX'],
-    'populations': ['CHS', 'PUR', 'YRI'],
-    'paired_end': [True] * 3,
-    'use_short_sample_names': False,
-    'numbered': True,
-}
-
-pool_pop_sample = factories.sample_layout(
-    dirname="pool_pop_sample",
-    runfmt="{POP}/{SM}/{SM}_{PU}",
-    **kwargs,
-)
-
-
-def test_pool_pop_sample(pool_pop_sample):
-    p = pool_pop_sample
-    for x in sorted(p.visit()):
-        if str(x).endswith(".gz"):
-            assert not re.search("tiny/(CHS|PUR|YRI)_\d+.fastq.gz$", str(x.realpath())) is None
-
-pool_pop_sample_aliases = factories.sample_layout(
-    dirname="pool_pop_sample_aliases",
-    runfmt="{POP}/{SM}/{SM}_{PU}",
-    sample_aliases=["CHS.pool", "PUR.pool", "YRI.pool"],
-    **kwargs,
-)
-
-
-def test_pool_pop_sample_aliases(pool_pop_sample_aliases):
-    p = pool_pop_sample_aliases
-    sampleinfo = p.join("sampleinfo.csv")
-    assert not re.search(",CHS.pool,", sampleinfo.readlines()[1]) is None

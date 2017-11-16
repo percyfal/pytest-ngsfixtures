@@ -109,5 +109,27 @@ pop_sample_project_run = factories.sample_layout(
     **kwargs,
 )
 
+kwargs.update({
+    'samples': ["CHS", "PUR", "YRI"],
+    'sample_aliases': ["CHS.pool", "PUR.pool", "YRI.pool"],
+    'populations': ["CHS", "PUR", "YRI"],
+    'platform_units': ['010101_AAABBB11XX',
+                       '020202_AAABBB22XX',
+                       '010101_AAABBB11XX'],
+    'paired_end': [True] * 3,
+})
+
+pool_pop_sample = factories.sample_layout(
+    dirname="pool_pop_sample",
+    runfmt="{POP}/{SM}/{SM}_{PU}",
+    **kwargs,
+)
+
+pool_pop_sample_run = factories.sample_layout(
+    dirname="pool_pop_sample_run",
+    runfmt="{POP}/{SM}/{PU}/{SM}_{PU}",
+    **kwargs,
+)
+
 ref = factories.reference_layout(dirname="ref")
 scaffolds = factories.reference_layout(label="scaffolds", dirname="scaffolds")
