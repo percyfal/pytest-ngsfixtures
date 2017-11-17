@@ -4,8 +4,9 @@ import re
 import logging
 import itertools
 import pytest
-from pytest_ngsfixtures import DATA_DIR
+from pytest_ngsfixtures import DATA_DIR, repo
 from pytest_ngsfixtures.config import sample_conf
+from pytest_ngsfixtures.os import safe_symlink, safe_copy, safe_mktemp
 from pytest_ngsfixtures.exceptions import SampleException, ParameterException
 
 logging.basicConfig(level=logging.INFO)
@@ -76,7 +77,7 @@ def sample_layout(
     "CHR.HG00512/010101_AAABBB11XX/CHR.HG00512_010101_AAABBB11XX_1.fastq.gz"
     and similarly for the second read.
 
-    Usage:
+    Example:
 
     .. code-block:: python
 
@@ -147,7 +148,7 @@ def sample_layout(
                 l['SM'] = sample_aliases[i]
                 i += 1
             src = os.path.join(DATA_DIR, config['size'], srckeys['SM'] + "_1.fastq.gz")
-            _check_file_exists(src, config['size'])
+            repo._check_file_exists(src, config['size'])
             _setup_fn(p, os.path.join(DATA_DIR, config['size'], srckeys['SM'] + "_1.fastq.gz"),
                       runfmt.format(**l) + read1_suffix)
             if l['PE']:
@@ -219,6 +220,28 @@ def filetype(src, dst=None, fdir=None, rename=False, outprefix="test",
     """Fixture factory for file types. This factory is atomic in that it
     generates one fixture for one file.
 
+    This factory function can be used to generate a named fixtures based
+    on a file that then can be used in a test. The test file can be
+    renamed for the test by supplying a destination name.
+
+    If the source file is given as a relative path, the function will
+    look for existing files in the data directory of the
+    pytest_ngsfixtures installation. In order to use a local source
+    file use absolute path names.
+
+    Example:
+
+      .. code-block:: python
+
+         from pytest_ngsfixtures import factories
+         bamfile = '/path/to/foo.bam'
+         bam = factories.filetype(src=bamfile, fdir="bam",
+                                  scope="function")
+
+         def test_bam(bam):
+             # Do something with bam files
+
+
     Args:
       src (str): fixture file name source
       dst (str): fixture file name destination; link name
@@ -250,8 +273,27 @@ def filetype(src, dst=None, fdir=None, rename=False, outprefix="test",
 
 
 def fileset(src, dst=None, fdir=None, copy=False, **kwargs):
-    """
-    Fixture factory to generate filesets.
+    """Fixture factory to generate a *named* fileset fixture.
+
+    This factory function can be used to generate a named fileset
+    fixture based on a set of files that then can be used in a test.
+    The test files can be renamed for the test by supplying a list of
+    destination names.
+
+    Note that the fileset fixture factory does not look for files in
+    the pytest_ngsfixtures installation directory.
+
+    Example:
+
+      .. code-block:: python
+
+         from pytest_ngsfixtures import factories
+         bamfiles = ['foo.bam', 'bar.bam']
+         bamset = factories.fileset(src=bamfiles, fdir="bamset",
+                                    scope="function")
+
+         def test_bamset(bamset):
+             # Do something with bam files
 
     Args:
       src (list): list of sources
@@ -262,6 +304,7 @@ def fileset(src, dst=None, fdir=None, copy=False, **kwargs):
 
     Returns:
       func: a fixture function
+
     """
     assert isinstance(src, list), "not a list"
     assert dst is None or isinstance(dst, list), "not a list"
@@ -295,8 +338,7 @@ def fileset(src, dst=None, fdir=None, copy=False, **kwargs):
 
 
 def application_output(application, command, version, end="se", **kwargs):
-    """
-    Fixture factory to generate application output.
+    """Fixture factory to generate a named application output.
 
     Args:
       application (str): application name
@@ -306,6 +348,20 @@ def application_output(application, command, version, end="se", **kwargs):
 
     Returns:
       func: a filetype fixture function
+
+    Example:
+
+      This factory function can be used to generate named application
+      outputs that then can be used in a test.
+
+      .. code-block:: python
+
+        from pytest_ngsfixtures import factories
+        flagstat = factories.application_output("samtools", "samtools_flagstat", "1.2")
+
+        def test_flagstat(flagstat):
+            assert flagstat.exists()
+
     """
     from pytest_ngsfixtures.config import application_config
     conf = application_config()
