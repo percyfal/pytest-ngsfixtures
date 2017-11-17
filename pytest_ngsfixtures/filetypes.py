@@ -2,7 +2,6 @@
 #
 # Predefine commonly used file types
 #
-import yaml
 from os.path import join, dirname, realpath
 from pytest_ngsfixtures import factories
 
