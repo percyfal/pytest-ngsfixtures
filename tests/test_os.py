@@ -42,8 +42,6 @@ def test_safe_symlink(tmpdir_factory, bam):
 
 
 def test_safe_copy(tmpdir_factory, bam):
-    print(str(bam))
-    print(bam)
     p = tmpdir_factory.mktemp("safe_copy")
     safe_copy(p, bam, "bar/foo.bar")
     assert str(p).endswith("safe_copy0")
@@ -59,5 +57,3 @@ def test_safe_copy(tmpdir_factory, bam):
     # fixture
     assert c.size() == bam.size()
     assert c.computehash() == bam.computehash()
-
-
