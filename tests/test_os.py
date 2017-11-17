@@ -26,14 +26,15 @@ def test_safe_mktemp(tmpdir_factory):
 
 
 def test_safe_symlink(tmpdir_factory, bam):
+    print(str(bam))
     p = tmpdir_factory.mktemp("safe_symlink")
     # Test using string as input without capturing return
-    safe_symlink(p, bamfile, "bar/foo.bar")
+    safe_symlink(p, str(bam), "bar/foo.bar")
     assert str(p).endswith("safe_symlink0")
     # Test using string as input
-    l = safe_symlink(p, bamfile, "foo/foo.bar")
+    l = safe_symlink(p, str(bam), "foo/foo.bar")
     assert str(l).endswith("foo/foo.bar")
-    assert l.realpath() == bamfile_realpath
+    assert l.realpath() == bam.realpath()
     # Test using localpath as input
     l = safe_symlink(p, bam, "foo.bar")
     assert l.realpath() == bam.realpath()
@@ -41,13 +42,15 @@ def test_safe_symlink(tmpdir_factory, bam):
 
 
 def test_safe_copy(tmpdir_factory, bam):
+    print(str(bam))
+    print(bam)
     p = tmpdir_factory.mktemp("safe_copy")
-    safe_copy(p, bamfile, "bar/foo.bar")
+    safe_copy(p, bam, "bar/foo.bar")
     assert str(p).endswith("safe_copy0")
     # Test using string as input
-    c = safe_copy(p, bamfile, "foo/foo.bar")
+    c = safe_copy(p, str(bam), "foo/foo.bar")
     assert str(c).endswith("foo/foo.bar")
-    assert c.realpath() != bamfile_realpath
+    assert c.realpath() != bam.realpath()
     # Test using localpath as input
     c = safe_copy(p, bam, "foo.bar")
     assert c.realpath() != bam.realpath()
