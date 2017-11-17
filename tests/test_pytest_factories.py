@@ -11,24 +11,30 @@ import os
 import re
 import py
 import pytest
-from pytest_ngsfixtures import factories, ROOT_DIR
-from pytest_ngsfixtures.config import application_fixtures
+from pytest_ngsfixtures import factories
+from pytest_ngsfixtures.os import safe_symlink, safe_mktemp
+from pytest_ngsfixtures.config import flattened_application_fixture_metadata
 
-DATADIR = os.path.realpath(os.path.join(ROOT_DIR, "data", "tiny"))
-for path, dirs, files in os.walk(DATADIR):
-    filelist = sorted([os.path.join(DATADIR, x) for x in files])
+# Filetype fixtures
+#
+# Note that the arguments to the filetype factory fixture *must* be
+# strings. Setting them up as py.path objects creates a relative path
+# to the current directory.
+#
 
+# bamfile_realpath = os.path.realpath(os.path.join(DATA_DIR, "applications", "pe", "PUR.HG00731.tiny.bam"))
+# PURHG00731 = os.path.join("applications", "pe", "PUR.HG00731.tiny.bam")
+# PURHG00733 = os.path.join("applications", "pe", "PUR.HG00733.tiny.bam")
+# PURFILES = [PURHG00731, PURHG00733]
+# bamfile = PURHG00731
+# bam = factories.filetype(bamfile, fdir="bamfoo", scope="function", numbered=True)
+# bam_copy = factories.filetype(bamfile, fdir="bamfoo", scope="function", numbered=True, copy=True)
+# renamebam = factories.filetype(bamfile, fdir="renamebamfoo", rename=True, outprefix="s", scope="function", numbered=True)
+# renamebam_copy = factories.filetype(bamfile, fdir="renamebamfoo", rename=True, outprefix="s", scope="function", numbered=True)
 
-# Filetypes
-bamfile_realpath = os.path.realpath(os.path.join(os.path.dirname(__file__), os.pardir, "pytest_ngsfixtures", "data", "applications", "pe", "PUR.HG00731.tiny.bam"))
-PURHG00731 = os.path.join("applications", "pe", "PUR.HG00731.tiny.bam")
-PURHG00733 = os.path.join("applications", "pe", "PUR.HG00733.tiny.bam")
-PURFILES = [PURHG00731, PURHG00733]
-bamfile = PURHG00731
-bam = factories.filetype(bamfile, fdir="bamfoo", scope="function", numbered=True)
-bam_copy = factories.filetype(bamfile, fdir="bamfoo", scope="function", numbered=True, copy=True)
-renamebam = factories.filetype(bamfile, fdir="renamebamfoo", rename=True, outprefix="s", scope="function", numbered=True)
-renamebam_copy = factories.filetype(bamfile, fdir="renamebamfoo", rename=True, outprefix="s", scope="function", numbered=True)
+# PURHG00731_path = localpath(os.path.join("applications", "pe", "PUR.HG00731.tiny.bam"))
+# print(PURHG00731_path)
+# print(PURHG00731_path.relto(DATA_DIR))
 
 
 def test_wrong_sample():
@@ -36,27 +42,27 @@ def test_wrong_sample():
         factories.sample_layout(samples=["foo", "bar"])(None, None)
 
 
-def test_bam(bam):
+def test_bam(bam, bamfile):
     assert not re.search("bamfoo\d+/PUR.HG00731.tiny.bam", str(bam)) is None
-    assert bam.realpath() == bamfile_realpath
+    assert bam.realpath() == bamfile.realpath()
     assert bam.realpath().exists()
 
 
-def test_copy_bam(bam_copy):
+def test_copy_bam(bam_copy, bamfile):
     assert not re.search("bamfoo\d+/PUR.HG00731.tiny.bam", str(bam_copy)) is None
-    assert bam_copy.computehash() == py.path.local(bamfile_realpath).computehash()
+    assert bam_copy.computehash() == bamfile.computehash()
     assert bam_copy.realpath().exists()
 
 
-def test_bam_rename(renamebam):
+def test_bam_rename(renamebam, bamfile):
     assert not re.search("renamebamfoo\d+/s.tiny.bam", str(renamebam)) is None
-    assert renamebam.realpath() == bamfile_realpath
+    assert renamebam.realpath() == bamfile.realpath()
     assert renamebam.realpath().exists()
 
 
-def test_copy_bam_rename(renamebam_copy):
+def test_copy_bam_rename(renamebam_copy, bamfile):
     assert not re.search("renamebamfoo\d+/s.tiny.bam", str(renamebam_copy)) is None
-    assert renamebam_copy.computehash() == py.path.local(bamfile_realpath).computehash()
+    assert renamebam_copy.computehash() == bamfile.computehash()
     assert renamebam_copy.realpath().exists()
 
 
@@ -68,14 +74,14 @@ def combinedbam(tmpdir_factory, bam, renamebam):
     return p
 
 
-def test_combine_fixtures(combinedbam):
+def test_combine_fixtures(combinedbam, bamfile):
     flist = sorted([x for x in combinedbam.visit()])
     assert len(flist) == 2
     assert flist[0].dirname == flist[1].dirname
     flist = sorted([x.basename for x in combinedbam.visit()])
     assert flist == ['PUR.HG00731.tiny.bam', 's.tiny.bam']
     fset = set([str(x.realpath()) for x in combinedbam.visit()])
-    assert fset == set([bamfile_realpath])
+    assert fset == set([bamfile.realpath()])
 
 
 custom_samples = factories.sample_layout(
@@ -125,30 +131,23 @@ def test_fileset_fixture_raises():
     with pytest.raises(AssertionError):
         factories.fileset(src=["foo"], dst="bar")
 
-
-bamset = factories.fileset(src=PURFILES, fdir="bamset", scope="function")
-
-
-def test_fileset_fixture(bamset):
+def test_fileset_fixture(bamset, PURFILES):
     flist = sorted([x.basename for x in bamset.visit() if x.basename != ".lock"])
     assert flist == sorted([os.path.basename(x) for x in PURFILES])
 
-dstfiles = ["foo.fastq.gz", "bar.fastq.gz"]
-bamset2 = factories.fileset(src=PURFILES, dst=dstfiles, fdir="bamset2", scope="function")
 
-
-def test_fileset_fixture_dst(bamset2):
+def test_fileset_fixture_dst(bamset2, dstfiles, bamfile):
     flist = sorted([x.basename for x in bamset2.visit() if x.basename != ".lock"])
     assert flist == sorted(dstfiles)
     flist = sorted([x.realpath() for x in bamset2.visit() if x.basename != ".lock"])
-    assert flist[0] == bamfile_realpath
+    assert flist[0] == bamfile.realpath()
 
 
 ##############################
 # Applications
 ##############################
 # Application test config
-fixtures = application_fixtures()
+fixtures = flattened_application_fixture_metadata()
 
 
 @pytest.fixture(scope="function", autouse=False, params=fixtures,
@@ -171,11 +170,6 @@ def test_application_output(ao):
         assert p.exists()
 
 
-def test_application_fixture_params():
-    c = application_fixtures(application="samtools")
-    assert isinstance(c, list)
-
-
 def test_call_application_output():
     with pytest.raises(AssertionError):
         factories.application_output("foo", "bar", "0.0")
@@ -194,9 +188,3 @@ appout_dir = factories.application_output("samtools", "samtools_flagstat", "1.2"
 def test_factory_application_output_fdir(appout_dir):
     assert appout_dir.exists()
     assert "samtools/samtools_flagstat" in str(appout_dir)
-
-
-def test_init():
-    from pytest_ngsfixtures import ROOT_DIR, ROOTDIR
-    print(ROOT_DIR)
-    print(ROOTDIR)
