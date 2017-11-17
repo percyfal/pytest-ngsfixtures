@@ -68,6 +68,11 @@ def test_get_every_application_fixture_output():
                 assert os.path.dirname(x).startswith(os.path.join(app, str(version)))
 
 
+def test_flattened_application_fixture_metadata_params():
+    c = config.flattened_application_fixture_metadata(application="samtools")
+    assert isinstance(c, list)
+
+
 def test_flattened_application_fixture_metadata():
     fixtures = config.flattened_application_fixture_metadata(application="picard", version="2.9.0", end="pe")
     f = [fixt for fixt in fixtures if fixt[1] == "picard_CollectRrbsMetrics"][0]
