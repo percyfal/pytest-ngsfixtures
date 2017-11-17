@@ -1,34 +1,23 @@
 # -*- coding: utf-8 -*-
 import os
 import re
-import py
 import logging
 import itertools
 import pytest
+from pytest_ngsfixtures import DATA_DIR
 from pytest_ngsfixtures.config import sample_conf
+from pytest_ngsfixtures.exceptions import SampleException, ParameterException
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-ROOTDIR = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
-DATADIR = os.path.realpath(os.path.join(ROOTDIR, "pytest_ngsfixtures", "data"))
-REPO = "https://raw.githubusercontent.com/percyfal/pytest-ngsfixtures/master"
-DOWNLOAD_SIZES = ["yuge"]
-
-
-class ParameterException(Exception):
-    pass
-
-
-class SampleException(Exception):
-    pass
 
 ref_dict = {}
 
-for f in os.listdir(os.path.join(DATADIR, "ref")):
+for f in os.listdir(os.path.join(DATA_DIR, "ref")):
     if f in ("Makefile", "Snakefile.test"):
         continue
-    ref_dict[f] = os.path.join(DATADIR, "ref", f)
+    ref_dict[f] = os.path.join(DATA_DIR, "ref", f)
 
 ref_always = ['ERCC_spikes.gb', 'pAcGFP1-N1.fasta']
 
@@ -51,140 +40,6 @@ def get_config(request):
             request.config.getini(option_name)
         config[option] = conf
     return config
-
-
-def download_sample_file(fn, size, dry_run=False, force=False):
-    """Download sample file if it doesn't yet exist
-
-    Setup urllib connection and download data file.
-
-    Params:
-      fn (str): file name as it appears in installed pytest_ngsfixtures data repository
-      size (str): fixture file size
-      dry_run (bool): don't do anything if set
-      force (bool): force download
-
-    Returns:
-      url (str): url of target file if dry_run option passed, None otherwise
-
-    """
-    if size not in DOWNLOAD_SIZES:
-        return
-    if os.path.exists(fn) and not force:
-        return
-    else:
-        import urllib.request
-        import shutil
-        url = os.path.join(REPO,
-                           os.path.relpath(os.path.realpath(fn),
-                                           os.path.realpath(ROOTDIR)))
-        if os.path.exists(fn):
-            logger.info("File '{}' exists but force option passed; downloading file from git repo to local pytest_ngsfixtures installation location '{}'".format(fn, url))
-        else:
-            logger.info("File '{}' doesn't exist; downloading it from git repo to local pytest_ngsfixtures installation location '{}'".format(fn, url))
-        if dry_run:
-            return url
-        try:
-            if not os.path.exists(os.path.dirname(fn)):
-                os.makedirs(os.path.dirname(fn))
-            with urllib.request.urlopen(url) as response, open(fn, 'wb') as fh:
-                shutil.copyfileobj(response, fh)
-        except Exception as e:
-            logger.error("Downloading '{}' failed: {}".format(url, e))
-            raise
-
-
-def _check_file_exists(fn, size):
-    if size not in DOWNLOAD_SIZES:
-        return
-    if os.path.exists(fn):
-        return
-    else:
-        logger.info("Sequence data in {} is not bundled with conda/PyPI packages to save space".format(size))
-        logger.info("")
-        logger.info("   Launch script 'pytest_ngsfixtures_download_data.py' to download missing files")
-        logger.info("")
-        raise FileNotFoundError
-
-
-def safe_copy(p, src, dst):
-    """Safely copy fixture file.
-
-    Copy file from src to dst in LocalPath p. If src, dst are strings,
-    they will be joined to p, assuming they are relative to p. If src,
-    dst are LocalPath instances, they are left alone since LocalPath
-    objects are always absolute paths.
-
-    Params:
-      p (LocalPath): path in which link is setup
-      src (str, LocalPath): source file that link points to. If string, assume relative to pytest_ngsfixtures data directory
-      dst (str, LocalPath): link destination name. If string, assume relative to path and concatenate; else leave alone
-
-    Returns:
-      dst (LocalPath): link name
-    """
-    if isinstance(src, str):
-        if not os.path.isabs(src):
-            src = os.path.join(DATADIR, src)
-        src = py.path.local(src)
-    if dst is None:
-        dst = src.basename
-    if isinstance(dst, str):
-        dst = p.join(dst)
-    if not dst.check(link=1):
-        dst.dirpath().ensure(dir=True)
-        src.copy(dst)
-    else:
-        logger.warn("link {dst} -> {src} already exists! skipping...".format(src=src, dst=dst))
-    return dst
-
-
-def safe_symlink(p, src, dst):
-    """Safely make symlink.
-
-    Make symlink from src to dst in LocalPath p. If src, dst are
-    strings, they will be joined to p, assuming they are relative to
-    p. If src, dst are LocalPath instances, they are left alone since
-    LocalPath objects are always absolute paths.
-
-    Params:
-      p (LocalPath): path in which link is setup
-      src (str, LocalPath): source file that link points to. If string, assume relative to pytest_ngsfixtures data directory
-      dst (str, LocalPath): link destination name. If string, assume relative to path and concatenate; else leave alone
-
-    Returns:
-      dst (LocalPath): link name
-    """
-    if isinstance(src, str):
-        if not os.path.isabs(src):
-            src = os.path.join(DATADIR, src)
-        src = py.path.local(src)
-    if dst is None:
-        dst = src.basename
-    if isinstance(dst, str):
-        dst = p.join(dst)
-    if not dst.check(link=1):
-        dst.dirpath().ensure(dir=True)
-        dst.mksymlinkto(src)
-    else:
-        logger.warn("link {dst} -> {src} already exists! skipping...".format(src=src, dst=dst))
-    return dst
-
-
-def safe_mktemp(tmpdir_factory, dirname=None, **kwargs):
-    """Safely make directory"""
-    if dirname is None:
-        return tmpdir_factory.getbasetemp()
-    else:
-        p = tmpdir_factory.getbasetemp().join(os.path.dirname(dirname)).ensure(dir=True)
-        if kwargs.get("numbered", False):
-            p = tmpdir_factory.mktemp(dirname)
-        else:
-            p = tmpdir_factory.getbasetemp().join(dirname)
-            if not p.check(dir=1):
-                p = tmpdir_factory.mktemp(dirname, numbered=False)
-        return p
-
 
 def sample_layout(
         runfmt="{SM}",
@@ -236,7 +91,7 @@ def sample_layout(
        )
 
 
-    Params:
+    Args:
       runfmt (str): run format string
       sample_prefix (str): sample prefix for short names
       use_short_sample_names (bool): use short sample names
@@ -291,12 +146,12 @@ def sample_layout(
             if len(sample_aliases) > 0:
                 l['SM'] = sample_aliases[i]
                 i += 1
-            src = os.path.join(DATADIR, config['size'], srckeys['SM'] + "_1.fastq.gz")
+            src = os.path.join(DATA_DIR, config['size'], srckeys['SM'] + "_1.fastq.gz")
             _check_file_exists(src, config['size'])
-            _setup_fn(p, os.path.join(DATADIR, config['size'], srckeys['SM'] + "_1.fastq.gz"),
+            _setup_fn(p, os.path.join(DATA_DIR, config['size'], srckeys['SM'] + "_1.fastq.gz"),
                       runfmt.format(**l) + read1_suffix)
             if l['PE']:
-                _setup_fn(p, os.path.join(DATADIR, config['size'], srckeys['SM'] + "_2.fastq.gz"),
+                _setup_fn(p, os.path.join(DATA_DIR, config['size'], srckeys['SM'] + "_2.fastq.gz"),
                           runfmt.format(**l) + read2_suffix)
 
         if sampleinfo:
@@ -327,7 +182,7 @@ def reference_layout(label="ref", dirname="ref", copy=False, **kwargs):
     """
     Fixture factory for reference layouts.
 
-    Params:
+    Args:
       label (str): ref or scaffolds layout
       dirname (str): reference directory name
       copy (bool): copy file fixture instead of symlinking
@@ -364,7 +219,7 @@ def filetype(src, dst=None, fdir=None, rename=False, outprefix="test",
     """Fixture factory for file types. This factory is atomic in that it
     generates one fixture for one file.
 
-    Params:
+    Args:
       src (str): fixture file name source
       dst (str): fixture file name destination; link name
       fdir (str): fixture output directory
@@ -398,7 +253,7 @@ def fileset(src, dst=None, fdir=None, copy=False, **kwargs):
     """
     Fixture factory to generate filesets.
 
-    Params:
+    Args:
       src (list): list of sources
       dst (list): list of destination; if None, use src basename
       fdir (:obj:`str` or :obj:`py._path.local.LocalPath`): output directory
@@ -419,7 +274,7 @@ def fileset(src, dst=None, fdir=None, copy=False, **kwargs):
 
         Setup a set of files
 
-        Params:
+        Args:
           request (FixtureRequest): fixture request object
           tmpdir_factory (py.path.local): fixture request object
 
@@ -443,7 +298,7 @@ def application_output(application, command, version, end="se", **kwargs):
     """
     Fixture factory to generate application output.
 
-    Params:
+    Args:
       application (str): application name
       command (str): application command name
       version (str): application version
@@ -471,6 +326,3 @@ def application_output(application, command, version, end="se", **kwargs):
     else:
         src = [os.path.join("applications", application, x) for x in output]
         return fileset(src, **kwargs)
-
-
-__all__ = ('sample_layout', 'reference_layout', 'filetype', 'fileset')
