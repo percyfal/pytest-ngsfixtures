@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
 import py
+import logging
+from pytest_ngsfixtures import DATA_DIR
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def safe_copy(p, src, dst):
@@ -21,7 +26,7 @@ def safe_copy(p, src, dst):
     """
     if isinstance(src, str):
         if not os.path.isabs(src):
-            src = os.path.join(DATADIR, src)
+            src = os.path.join(DATA_DIR, src)
         src = py.path.local(src)
     if dst is None:
         dst = src.basename
@@ -53,7 +58,7 @@ def safe_symlink(p, src, dst):
     """
     if isinstance(src, str):
         if not os.path.isabs(src):
-            src = os.path.join(DATADIR, src)
+            src = os.path.join(DATA_DIR, src)
         src = py.path.local(src)
     if dst is None:
         dst = src.basename
@@ -81,3 +86,8 @@ def safe_mktemp(tmpdir_factory, dirname=None, **kwargs):
                 p = tmpdir_factory.mktemp(dirname, numbered=False)
         return p
 
+
+def localpath(src, path=DATA_DIR):
+    """Generate a py.path.local path given a source and a path"""
+    assert os.path.isabs(path), "path argument must be an absolute path"
+    return py.path.local(os.path.join(path, src))
