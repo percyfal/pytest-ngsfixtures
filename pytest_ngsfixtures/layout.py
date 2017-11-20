@@ -5,8 +5,9 @@
 Utility functions for sample and reference layouts.
 
 """
+import py
 import itertools
-from pytest_ngsfixtures.file import ReadFixtureFile
+from pytest_ngsfixtures.file import ReadFixtureFile, ReferenceFixtureFile
 
 layouts = {
     'short': {
@@ -68,18 +69,19 @@ def generate_sample_layouts(layout="short",
     return [dict(zip(keys, p)) for p in combinator(*[config[k] for k in keys])]
 
 
-def sample_fixture_layout(p, layout=None, copy=False, sample_prefix="s",
+def sample_fixture_layout(path, layout=None, copy=False, sample_prefix="s",
                           runfmt="{SM}/{SM}_{PU}", use_short_sample_names=True,
                           **kwargs):
     """Setup sample fixture layout.
 
 
     Args:
-      p (py._path.local.LocalPath): :py:`~py._path.local.LocalPath` path where test files will be setup
+      path (py._path.local.LocalPath): :py:`~py._path.local.LocalPath` path where test files will be setup
       layout (str): predefined layout name
       copy (bool): copy test files instead of symlinking (required for dockerized tests)
       sample_prefix (str): sample prefix for short names
     """
+    output = []
     if layout is not None:
         layout_list = generate_sample_layouts(layout=layout)
     else:
@@ -87,10 +89,41 @@ def sample_fixture_layout(p, layout=None, copy=False, sample_prefix="s",
     for l in layout_list:
         l.update({'use_short_sample_names': use_short_sample_names,
                   'prefix': sample_prefix})
-        r1 = ReadFixtureFile(runfmt=runfmt, path=p, copy=copy, **l)
+        r1 = ReadFixtureFile(runfmt=runfmt, path=path, copy=copy, **l)
         r1.setup()
+        output.append(r1)
         if kwargs.get("paired_end", True):
-            r2 = ReadFixtureFile(runfmt=runfmt, path=p, copy=copy,
+            r2 = ReadFixtureFile(runfmt=runfmt, path=path, copy=copy,
                                  read=2, **l)
             r2.setup()
-    return p
+            output.append(r2)
+    if kwargs.get("sampleinfo", False):
+        info = [",".join(output[0].sampleinfo_keys)]
+        for o in output:
+            info.append(o.sampleinfo)
+        path.join("sampleinfo.csv").write("\n".join(info) + "\n")
+    return path
+
+
+def reference_fixture_layout(path, label="ref", copy=False, **kwargs):
+    """Setup reference fixture layout
+
+    Wrapper to setup multiple reference files. Either choose between
+    'ref' or 'scaffolds' label.
+
+    Args:
+      path (py._path.local.LocalPath): :py:`~py._path.local.LocalPath` path where reference test files will be setup
+      label (str): reference fixture label ('ref' or 'scaffolds')
+      copy (bool): copy fixture files instead of symlinking
+
+    Returns:
+      py._path.local.LocalPath: modified :py:`~py._path.local.LocalPath` object with test files setup
+
+    """
+    ref_dict = ReferenceFixtureFile().ref
+    assert label in list(ref_dict.keys()), "label '{}' must be one of {}".format(label, ", ".join(list(ref_dict.keys())))
+    flist = ref_dict[label] + ref_dict['_always']
+    for dst in flist:
+        r = ReferenceFixtureFile(path.join(py.path.local(dst).basename))
+        r.setup()
+    return path
