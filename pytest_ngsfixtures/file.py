@@ -34,42 +34,61 @@ class FixtureFile(LocalPath):
     def setup(self):
         self._setup_fn(self.path, self.src, self.basename)
 
+    @property
+    def data_dir(self):
+        return self._data_dir
+
     def __repr__(self):
         return "{} (src: {})".format(self, self.src)
 
 
 class ReadFixtureFile(FixtureFile):
-    _samples = ('CHS', 'CHS.HG00512', 'CHS.HG00513', 'PUR',
-                'PUR.HG00731', 'PUR.HG00731.A', 'PUR.HG00731.B',
-                'PUR.HG00733', 'PUR.HG00733.A', 'PUR.HG00731.B',
-                'YRI', 'YRI.NA19238', 'YRI.NA19239')
-    _populations = tuple(['CHS'] * 3 + ['PUR'] * 7 + ['YRI'] * 3)
+    census = 0
+    _samples = sample_conf.SAMPLES
+    _populations = sample_conf.POPULATIONS
     _reads = tuple([1, 2])
-    _platform_units = tuple([None, '010101_AAABBB11XX', '020202_AAABBB22XX'] + [None] + ['010101_AAABBB11XX', '020202_AAABBB22XX', '010101_AAABBB11XX'] + [None, '010101_AAABBB11XX', '020202_AAABBB22XX'])
+    _platform_units = tuple(['010101_AAABBB11XX', '020202_AAABBB22XX', None] +
+                            ['010101_AAABBB11XX', '020202_AAABBB22XX', None] +
+                            ['010101_AAABBB11XX', '020202_AAABBB22XX'] * 2 +
+                            ['010101_AAABBB11XX', '020202_AAABBB22XX', None])
 
-    def __init__(self, sample, path=None, expanduser=False,
-                 size="tiny", read=1, batch=None,
-                 runfmt="{SM}", *args, **kwargs):
+    def __new__(cls, *args, **kwargs):
+        obj = super(ReadFixtureFile, cls).__new__(cls)
+        cls.census += 1
+        return obj
+
+    def __init__(self, sample="CHS.HG00512", path=None,
+                 expanduser=False, size="tiny", read=1, batch=None,
+                 runfmt="{SM}", alias=None, prefix="s",
+                 use_short_sample_name=False, *args, **kwargs):
         self._size = size
-        self.sample = kwargs.get("sample", "CHS.HG00512")
+        self.sample = sample
         self._index = self._samples.index(sample)
         self._population = kwargs.get("population", self._populations[self._index])
         self._platform_unit = kwargs.get("platform_unit", self._platform_units[self._index])
         self._batch = batch
         self._runfmt = runfmt
+        self._short = use_short_sample_name
+        self._prefix = "s"
+        self.alias = alias
         self.read = read
-        src = py.path.local(os.path.join(DATA_DIR, self.size, "{}{}".format(sample, self.fastq_suffix)))
+        src = py.path.local(os.path.join(self.data_dir, self.size, "{}{}".format(self.sample, self.fastq_suffix)))
         if path is None:
-            path = str(self)
+            path = self.runfmt.format(**dict(self)) + self.fastq_suffix
         else:
             if isinstance(path, str):
+                # Makes custom paths possible
                 path = py.path.local(path)
             elif isinstance(path, LocalPath):
                 if path.isdir():
-                    path = path.join(src.basename)
+                    path = path.join(self.fastq)
             else:
                 pass
         super(ReadFixtureFile, self).__init__(src=src, path=path, expanduser=expanduser, **kwargs)
+
+    @property
+    def id(self):
+        return self.alias if self.alias else self.sample
 
     @property
     def sample(self):
@@ -81,6 +100,29 @@ class ReadFixtureFile(FixtureFile):
         self._sample = sample
 
     @property
+    def SM(self):
+        return self._sample
+
+    @property
+    def prefix(self):
+        return self._prefix
+
+    @property
+    def alias(self):
+        return self._alias
+
+    @alias.setter
+    def alias(self, alias):
+        if self.short:
+            self._alias = "{}{}".format(self.prefix, self.census)
+        else:
+            self._alias = alias
+
+    @property
+    def short(self):
+        return self._short
+
+    @property
     def read(self):
         return self._read
 
@@ -88,6 +130,10 @@ class ReadFixtureFile(FixtureFile):
     def read(self, read):
         assert read in self._reads, "read has to be one of {}".format(", ".join(self._reads))
         self._read = read
+
+    @property
+    def fastq(self):
+        return self.runfmt.format(**dict(self)) + self.fastq_suffix
 
     @property
     def size(self):
@@ -98,11 +144,23 @@ class ReadFixtureFile(FixtureFile):
         return self._population
 
     @property
+    def POP(self):
+        return self._population
+
+    @property
     def platform_unit(self):
         return self._platform_unit
 
     @property
+    def PU(self):
+        return self._platform_unit
+
+    @property
     def batch(self):
+        return self._batch
+
+    @property
+    def BATCH(self):
         return self._batch
 
     @property
