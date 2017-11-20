@@ -1,12 +1,19 @@
 # -*- coding: utf-8 -*-
 import os
+import re
 import py
 from py._path.local import LocalPath
 from pytest_ngsfixtures.os import safe_symlink, safe_copy
-from pytest_ngsfixtures import ROOT_DIR, DATA_DIR
+from pytest_ngsfixtures.config import sample_conf
+from pytest_ngsfixtures import DATA_DIR
 
 
 class FixtureFile(LocalPath):
+    def __new__(cls, *args, **kwargs):
+        obj = super(FixtureFile, cls).__new__(cls)
+        cls._data_dir = DATA_DIR
+        return obj
+
     def __init__(self, path=None, expanduser=False, **kwargs):
         super(FixtureFile, self).__init__(path, expanduser)
         self._copy = kwargs.get('copy', False)
