@@ -171,26 +171,59 @@ class ReadFixtureFile(FixtureFile):
     def fastq_suffix(self):
         return "_{}.fastq.gz".format(self.read)
 
+    @classmethod
+    def reset(cls):
+        cls.census = 0
+
+    @property
+    def sampleinfo_keys(self):
+        return sorted(set([x for x in re.split("[{}/_]", self.runfmt) if x != ""] + ["fastq"]))
+
+    @property
+    def sampleinfo(self):
+        info = []
+        for c in self.sampleinfo_keys:
+            info.append(getattr(self, c))
+        return ",".join(info)
+
     def __iter__(self):
         yield 'POP', self.population
         yield 'PU', self.platform_unit
-        yield 'SM', self.sample
+        yield 'SM', self.id
         yield 'BATCH', self.batch
-
-    def __str__(self):
-        return self.runfmt.format(**dict(self)) + self.fastq_suffix
 
 
 class ReferenceFixtureFile(FixtureFile):
-    def __init__(self, src, *args, **kwargs):
-        if isinstance(src, str):
-            src = py.path.local(os.path.join(DATA_DIR, "ref", src))
-        super(ReferenceFixtureFile, self).__init__(src, *args, **kwargs)
+    def __new__(cls, *args, **kwargs):
+        obj = super(ReferenceFixtureFile, cls).__new__(cls)
+        cls._data_dir = os.path.join(DATA_DIR, "ref")
+        cls._ref = {'ref': [], 'scaffolds': [],
+                    '_always': ['ERCC_spikes.gb', 'pAcGFP1-N1.fasta']}
+        for f in os.listdir(cls._data_dir):
+            if "scaffolds" in f:
+                cls._ref['scaffolds'].append(f)
+            elif "ref" in f:
+                cls._ref['ref'].append(f)
+            else:
+                pass
+        return obj
+
+    def __init__(self, path="ref.fa", expanduser=None, *args, **kwargs):
+        if isinstance(path, str):
+            # Makes custom paths possible
+            path = py.path.local(path)
+        src = py.path.local(os.path.join(self.data_dir, path.basename))
+        super(ReferenceFixtureFile, self).__init__(path=path,
+                                                   expanduser=expanduser, src=src, *args, **kwargs)
+
+    @property
+    def ref(self):
+        return self._ref
 
 
 class ApplicationFixtureFile(FixtureFile):
     _end = set(["se", "pe"])
 
-    def __init__(self, application, command, version, end="se", *args, **kwargs):
+    def __init__(self, application, command, version, path=None, expanduser=None, end="se", *args, **kwargs):
         src = py.path.local(os.path.join(DATA_DIR, "applications", application, version, end))
-        super(ApplicationFixtureFile, self).__init__(src, *args, **kwargs)
+        super(ApplicationFixtureFile, self).__init__(src=src, path=path, expanduser=expanduser, *args, **kwargs)
