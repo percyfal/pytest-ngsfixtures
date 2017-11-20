@@ -32,11 +32,14 @@ def safe_copy(p, src, dst):
         dst = src.basename
     if isinstance(dst, str):
         dst = p.join(dst)
-    if not dst.check(link=1):
+    try:
         dst.dirpath().ensure(dir=True)
+        if dst.exists():
+            raise py.error.EEXIST("copy('{src}', '{dst}')".format(src=src, dst=dst))
         src.copy(dst)
-    else:
-        logger.warn("link {dst} -> {src} already exists! skipping...".format(src=src, dst=dst))
+    except OSError as e:
+        logger.error(e)
+        raise
     return dst
 
 
@@ -64,11 +67,12 @@ def safe_symlink(p, src, dst):
         dst = src.basename
     if isinstance(dst, str):
         dst = p.join(dst)
-    if not dst.check(link=1):
+    try:
         dst.dirpath().ensure(dir=True)
         dst.mksymlinkto(src)
-    else:
-        logger.warn("link {dst} -> {src} already exists! skipping...".format(src=src, dst=dst))
+    except OSError as e:
+        logger.error(e)
+        raise
     return dst
 
 
