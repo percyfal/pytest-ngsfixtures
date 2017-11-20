@@ -15,27 +15,6 @@ from pytest_ngsfixtures import factories
 from pytest_ngsfixtures.os import safe_symlink, safe_mktemp
 from pytest_ngsfixtures.config import flattened_application_fixture_metadata
 
-# Filetype fixtures
-#
-# Note that the arguments to the filetype factory fixture *must* be
-# strings. Setting them up as py.path objects creates a relative path
-# to the current directory.
-#
-
-# bamfile_realpath = os.path.realpath(os.path.join(DATA_DIR, "applications", "pe", "PUR.HG00731.tiny.bam"))
-# PURHG00731 = os.path.join("applications", "pe", "PUR.HG00731.tiny.bam")
-# PURHG00733 = os.path.join("applications", "pe", "PUR.HG00733.tiny.bam")
-# PURFILES = [PURHG00731, PURHG00733]
-# bamfile = PURHG00731
-# bam = factories.filetype(bamfile, fdir="bamfoo", scope="function", numbered=True)
-# bam_copy = factories.filetype(bamfile, fdir="bamfoo", scope="function", numbered=True, copy=True)
-# renamebam = factories.filetype(bamfile, fdir="renamebamfoo", rename=True, outprefix="s", scope="function", numbered=True)
-# renamebam_copy = factories.filetype(bamfile, fdir="renamebamfoo", rename=True, outprefix="s", scope="function", numbered=True)
-
-# PURHG00731_path = localpath(os.path.join("applications", "pe", "PUR.HG00731.tiny.bam"))
-# print(PURHG00731_path)
-# print(PURHG00731_path.relto(DATA_DIR))
-
 
 def test_wrong_sample():
     with pytest.raises(factories.SampleException):
