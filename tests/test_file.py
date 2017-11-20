@@ -2,7 +2,7 @@
 import os
 import py
 import pytest
-from pytest_ngsfixtures.file import FixtureFile, ReadFixtureFile
+from pytest_ngsfixtures.file import FixtureFile, ReadFixtureFile, ReferenceFixtureFile, ApplicationFixtureFile
 
 
 @pytest.fixture
@@ -33,16 +33,14 @@ def test_read():
 
 
 def test_setup_read_link(tmpdir):
-    p = tmpdir.mkdir("setup")
-    r = ReadFixtureFile("CHS.HG00512", path=p)
+    r = ReadFixtureFile("CHS.HG00512", path=tmpdir)
     r.setup()
     assert r.samefile(r.src)
     assert r.islink()
 
 
 def test_setup_read_copy(tmpdir):
-    p = tmpdir.mkdir("setup")
-    r = ReadFixtureFile("CHS.HG00512", path=p, copy=True)
+    r = ReadFixtureFile("CHS.HG00512", path=tmpdir, copy=True)
     r.setup()
     assert r.computehash() == r.src.computehash()
     assert not r.islink()
@@ -53,7 +51,65 @@ def test_read_dict(foo):
     assert sorted(list(dict(h).keys())) == ['BATCH', 'POP', 'PU', 'SM']
 
 
-def test_read_fmt():
-    r = ReadFixtureFile("CHS.HG00512")
-    print(str(r))
-    
+def test_read_fmt(tmpdir):
+    r = ReadFixtureFile("CHS.HG00512", path=tmpdir)
+    assert r.basename == "CHS.HG00512_1.fastq.gz"
+    r = ReadFixtureFile("CHS.HG00512", runfmt="{POP}/{PU}/{SM}_{PU}", path=tmpdir)
+    assert r.dirname.endswith("CHS/010101_AAABBB11XX")
+
+
+def test_read_sampleinfo(tmpdir):
+    r = ReadFixtureFile("CHS.HG00512", path=tmpdir,
+                        runfmt="{POP}/{PU}/{SM}_{PU}",
+                        sampleinfo=True)
+    assert r.sampleinfo == "CHS,010101_AAABBB11XX,CHS.HG00512,CHS/010101_AAABBB11XX/CHS.HG00512_010101_AAABBB11XX_1.fastq.gz"
+
+
+def test_read_alias(tmpdir):
+    r = ReadFixtureFile("CHS.HG00512", path=tmpdir, alias="s",
+                        platform_unit="foo_bar", runfmt="{SM}_{PU}",
+                        read=2)
+    assert r.basename == "s_foo_bar_2.fastq.gz"
+
+
+def test_populations():
+    chs = ReadFixtureFile("CHS")
+    pur = ReadFixtureFile("PUR")
+    yri = ReadFixtureFile("YRI")
+    assert chs.basename == "CHS_1.fastq.gz"
+    assert pur.basename == "PUR_1.fastq.gz"
+    assert yri.basename == "YRI_1.fastq.gz"
+    hg00731 = ReadFixtureFile("PUR.HG00731", runfmt="{SM}_{PU}")
+    hg00731a = ReadFixtureFile("PUR.HG00731.A", runfmt="{SM}_{PU}")
+    assert hg00731.src != hg00731.src.realpath()
+    assert hg00731.src.realpath().basename == "PUR.HG00731.A_1.fastq.gz"
+    assert hg00731.src.realpath() == hg00731a.src
+
+
+def test_ref(tmpdir):
+    r = ReferenceFixtureFile("ref.fa")
+    assert r.dirname == os.path.abspath(os.curdir)
+    r = ReferenceFixtureFile(tmpdir.join("ref.fa"))
+    assert r.dirname == tmpdir
+
+
+def test_wrong_ref():
+    with pytest.raises(AssertionError):
+        ReferenceFixtureFile("foo.fa")
+
+
+def test_census():
+    ReadFixtureFile.reset()
+    ReadFixtureFile()
+    r2 = ReadFixtureFile()
+    assert r2.census == 2
+
+
+def test_short_name():
+    ReadFixtureFile.reset()
+    r1 = ReadFixtureFile(use_short_sample_name=True)
+    assert r1.basename == "s1_1.fastq.gz"
+    r2 = ReadFixtureFile(use_short_sample_name=False)
+    assert r2.basename == "CHS.HG00512_1.fastq.gz"
+    r3 = ReadFixtureFile(use_short_sample_name=True)
+    assert r3.basename == "s3_1.fastq.gz"
