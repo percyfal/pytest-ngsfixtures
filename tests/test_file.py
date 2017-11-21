@@ -106,11 +106,11 @@ def test_census():
 
 def test_short_name():
     ReadFixtureFile.reset()
-    r1 = ReadFixtureFile(use_short_sample_name=True)
+    r1 = ReadFixtureFile(short_name=True)
     assert r1.basename == "s1_1.fastq.gz"
-    r2 = ReadFixtureFile(use_short_sample_name=False)
+    r2 = ReadFixtureFile(short_name=False)
     assert r2.basename == "CHS.HG00512_1.fastq.gz"
-    r3 = ReadFixtureFile(use_short_sample_name=True)
+    r3 = ReadFixtureFile(short_name=True)
     assert r3.basename == "s3_1.fastq.gz"
 
 
