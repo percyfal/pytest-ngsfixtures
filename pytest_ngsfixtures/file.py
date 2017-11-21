@@ -11,14 +11,16 @@ from pytest_ngsfixtures import DATA_DIR
 class FixtureFile(LocalPath):
     def __new__(cls, *args, **kwargs):
         obj = super(FixtureFile, cls).__new__(cls)
-        cls._data_dir = DATA_DIR
+        cls._data_dir = LocalPath(DATA_DIR)
         return obj
 
-    def __init__(self, path=None, expanduser=False, **kwargs):
+    def __init__(self, path=None, expanduser=False, setup=False, **kwargs):
         super(FixtureFile, self).__init__(path, expanduser)
         self._copy = kwargs.get('copy', False)
         self.src = kwargs.get('src', None)
         self._setup_fn = safe_copy if self._copy else safe_symlink
+        if setup:
+            self.setup()
 
     @property
     def src(self):
@@ -67,7 +69,8 @@ class ReadFixtureFile(FixtureFile):
     def __init__(self, sample="CHS.HG00512", path=None,
                  expanduser=False, size="tiny", read=1, batch=None,
                  runfmt="{SM}", alias=None, prefix="s",
-                 use_short_sample_name=False, *args, **kwargs):
+                 use_short_sample_name=False, *args,
+                 **kwargs):
         self._size = size
         self.sample = sample
         self._index = self._samples.index(sample)
@@ -79,7 +82,7 @@ class ReadFixtureFile(FixtureFile):
         self._prefix = "s"
         self.alias = alias
         self.read = read
-        src = py.path.local(os.path.join(self.data_dir, self.size, "{}{}".format(self.sample, self.fastq_suffix)))
+        src = self.data_dir.join(self.size, "{}{}".format(self.sample, self.fastq_suffix))
         if path is None:
             path = self.runfmt.format(**dict(self)) + self.fastq_suffix
         else:
@@ -120,7 +123,7 @@ class ReadFixtureFile(FixtureFile):
 
     @alias.setter
     def alias(self, alias):
-        if self.short:
+        if self.short and alias is None:
             self._alias = "{}{}".format(self.prefix, self.census)
         else:
             self._alias = alias
@@ -203,23 +206,28 @@ class ReadFixtureFile(FixtureFile):
 class ReferenceFixtureFile(FixtureFile):
     def __new__(cls, *args, **kwargs):
         obj = super(ReferenceFixtureFile, cls).__new__(cls)
-        cls._data_dir = os.path.join(DATA_DIR, "ref")
-        cls._ref = {'ref': [], 'scaffolds': [],
-                    '_always': ['ERCC_spikes.gb', 'pAcGFP1-N1.fasta']}
-        for f in os.listdir(cls._data_dir):
-            if "scaffolds" in f:
+        cls._data_dir = LocalPath(os.path.join(DATA_DIR, "ref"))
+        cls._ref = {
+            'ref': [],
+            'scaffolds': [],
+            '_always': [cls._data_dir.join('ERCC_spikes.gb'),
+                        cls._data_dir.join('pAcGFP1-N1.fasta')]
+        }
+        for f in cls._data_dir.visit():
+            if "scaffolds" in f.basename:
                 cls._ref['scaffolds'].append(f)
-            elif "ref" in f:
+            elif "ref" in f.basename:
                 cls._ref['ref'].append(f)
             else:
                 pass
         return obj
 
-    def __init__(self, path="ref.fa", expanduser=None, *args, **kwargs):
+    def __init__(self, path="ref.fa", expanduser=None, src=None, *args, **kwargs):
         if isinstance(path, str):
             # Makes custom paths possible
             path = py.path.local(path)
-        src = py.path.local(os.path.join(self.data_dir, path.basename))
+        if src is None:
+            src = py.path.local(os.path.join(self.data_dir, path.basename))
         super(ReferenceFixtureFile, self).__init__(path=path,
                                                    expanduser=expanduser, src=src, *args, **kwargs)
 
