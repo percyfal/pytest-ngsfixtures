@@ -312,23 +312,38 @@ class ReferenceFixtureFile(FixtureFile):
         return self._ref
 
 
-class ApplicationFixture(FixtureFileSet):
+class ApplicationFixtureFile(FixtureFile):
     _end = set(["se", "pe"])
 
     def __new__(cls, *args, **kwargs):
-        obj = super(ApplicationFixture, cls).__new__(cls)
+        obj = super(ApplicationFixtureFile, cls).__new__(cls)
+        cls._data_dir = LocalPath(os.path.join(DATA_DIR, "applications"))
+        return obj
+
+    def __init__(self, path, expanduser=None, end="pe", *args, **kwargs):
+        if isinstance(path, str):
+            path = py.path.local(path)
+        kwargs['src'] = self._data_dir.join(end, path.basename)
+        super(ApplicationFixtureFile, self).__init__(path=path, expanduser=expanduser, *args, **kwargs)
+
+
+class ApplicationOutputFixture(FixtureFileSet):
+    _end = set(["se", "pe"])
+
+    def __new__(cls, *args, **kwargs):
+        obj = super(ApplicationOutputFixture, cls).__new__(cls)
         cls._data_dir = LocalPath(os.path.join(DATA_DIR, "applications"))
         cls._metadata = flattened_application_fixture_metadata()
         return obj
 
     def __init__(self, application, command, version, path=None,
-                 expanduser=None, end="se", full=True, *args, **kwargs):
+                 expanduser=None, end="pe", full=True, *args, **kwargs):
         # Src is here a directory
         src = self._data_dir.join(application, version, end)
         # Output holds a list of application outputs
         output = list(get_application_fixture_output(application, command, version, end).values())
-        super(ApplicationFixture, self).__init__(src=src, path=path, output=output,
-                                                 expanduser=expanduser, full=full, *args, **kwargs)
+        super(ApplicationOutputFixture, self).__init__(src=src, path=path, output=output,
+                                                       expanduser=expanduser, full=full, *args, **kwargs)
 
     @property
     def metadata(self):
@@ -342,9 +357,18 @@ def fixturefile_factory(path=None, setup=False, **kwargs):
         application = kwargs.pop("application", None)
         command = kwargs.pop("command", None)
         version = kwargs.pop("version", None)
-        ff = ApplicationFixture(application, command, version, path=path, **kwargs)
+        ff = ApplicationOutputFixture(application, command, version, path=path, **kwargs)
         return ff
     except TypeError:
+        pass
+    except AssertionError:
+        pass
+    except:
+        raise
+    try:
+        ff = ApplicationFixtureFile(path=path, **kwargs)
+        return ff
+    except AttributeError:
         pass
     except AssertionError:
         pass
@@ -367,7 +391,6 @@ def fixturefile_factory(path=None, setup=False, **kwargs):
         pass
     except:
         raise
-    # Fallback on FixtureFile
     try:
         ff = FixtureFile(path=path, **kwargs)
         return ff
@@ -387,11 +410,7 @@ def setup_filetype(path, src=None, copy=False, setup=True, **kwargs):
     Returns:
       py._path.local.LocalPath: modified :py:`~py._path.local.LocalPath` with test file setup
     """
-    if isinstance(path, str):
-        path = path.join(path)
-    elif isinstance(path, LocalPath):
-        pass
-    path = FixtureFile(path=path, src=src, setup=setup, **kwargs)
+    path = fixturefile_factory(path=path, src=src, copy=copy, setup=setup, **kwargs)
     return path
 
 
