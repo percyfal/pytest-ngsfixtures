@@ -51,6 +51,35 @@ class FixtureFile(LocalPath):
         return "{} (src: {})".format(self, self.src)
 
 
+class FixtureFileSet(FixtureFile):
+    def __init__(self, path=None, expanduser=False, setup=False,
+                 full=True, output=[], **kwargs):
+        self._full = full
+        self.output = output
+        super(FixtureFileSet, self).__init__(path, expanduser, setup, **kwargs)
+        assert self.isdir(), "FixtureFileSet output must be a directory"
+        assert self.src.isdir(), "FixtureFileSet source must be a directory"
+
+    @property
+    def full(self):
+        return self._full
+
+    def setup(self):
+        for v in self.output:
+            if not self.full:
+                v = os.path.basename(v)
+            self._setup_fn(self.path, self.src.join(v), v)
+
+    @property
+    def output(self):
+        return self._output
+
+    @output.setter
+    def output(self, output):
+        assert isinstance(output, list), "output must be a list"
+        self._output = output
+
+
 class ReadFixtureFile(FixtureFile):
     census = 0
     _samples = sample_conf.SAMPLES
@@ -236,9 +265,114 @@ class ReferenceFixtureFile(FixtureFile):
         return self._ref
 
 
-class ApplicationFixtureFile(FixtureFile):
+class ApplicationFixture(FixtureFileSet):
     _end = set(["se", "pe"])
 
-    def __init__(self, application, command, version, path=None, expanduser=None, end="se", *args, **kwargs):
-        src = py.path.local(os.path.join(DATA_DIR, "applications", application, version, end))
-        super(ApplicationFixtureFile, self).__init__(src=src, path=path, expanduser=expanduser, *args, **kwargs)
+    def __new__(cls, *args, **kwargs):
+        obj = super(ApplicationFixture, cls).__new__(cls)
+        cls._data_dir = LocalPath(os.path.join(DATA_DIR, "applications"))
+        cls._metadata = flattened_application_fixture_metadata()
+        return obj
+
+    def __init__(self, application, command, version, path=None,
+                 expanduser=None, end="se", full=True, *args, **kwargs):
+        # Src is here a directory
+        src = self._data_dir.join(application, version, end)
+        # Output holds a list of application outputs
+        output = list(get_application_fixture_output(application, command, version, end).values())
+        super(ApplicationFixture, self).__init__(src=src, path=path, output=output,
+                                                 expanduser=expanduser, full=full, *args, **kwargs)
+
+    @property
+    def metadata(self):
+        return self._metadata
+
+
+def fixturefile_factory(path=None, setup=False, **kwargs):
+    """Factory function to auto-generate a FixtureFile"""
+    kwargs['setup'] = setup
+    try:
+        application = kwargs.pop("application", None)
+        command = kwargs.pop("command", None)
+        version = kwargs.pop("version", None)
+        ff = ApplicationFixture(application, command, version, path=path, **kwargs)
+        return ff
+    except TypeError:
+        pass
+    except AssertionError:
+        pass
+    except:
+        raise
+    try:
+        ff = ReferenceFixtureFile(path=path, **kwargs)
+        return ff
+    except AttributeError:
+        pass
+    except AssertionError:
+        pass
+    except:
+        raise
+    try:
+        sample = kwargs.pop("sample", None)
+        ff = ReadFixtureFile(path=path, sample=sample, **kwargs)
+        return ff
+    except AssertionError:
+        pass
+    except:
+        raise
+    # Fallback on FixtureFile
+    try:
+        ff = FixtureFile(path=path, **kwargs)
+        return ff
+    except:
+        raise
+
+
+def setup_filetype(path, src=None, copy=False, setup=True, **kwargs):
+    """Setup filetype fixture file.
+
+    Wrapper function to setup single filetype fixture.
+
+    Args:
+      path (str, py._path.local.LocalPath): :py:`~py._path.local.LocalPath` destination path
+      copy (bool): copy test file instead of symlinking
+
+    Returns:
+      py._path.local.LocalPath: modified :py:`~py._path.local.LocalPath` with test file setup
+    """
+    if isinstance(path, str):
+        path = path.join(path)
+    elif isinstance(path, LocalPath):
+        pass
+    path = FixtureFile(path=path, src=src, setup=setup, **kwargs)
+    return path
+
+
+def setup_fileset(path, src, dst=[], copy=False, setup=True, **kwargs):
+    """Setup fileset fixture files.
+
+    Wrapper function to setup fileset fixture.
+
+    Args:
+      path (py._local.path.LocalPath): :py:`~py._path.local.LocalPath` destination path
+      src (list): list of source file names
+      path (list): list of destination file names; if empty, use src basenames
+      copy (bool): copy test files instead of symlinking
+
+    Returns:
+      py._path.local.LocalPath: modified :py:`~py._path.local.LocalPath` with test files setup
+    """
+    assert isinstance(src, list), "src is not a list"
+    assert isinstance(dst, list), "dst is not a list"
+
+    for s, d in itertools.zip_longest(src, dst):
+        if d is None:
+            d = path.join(os.path.basename(s))
+        else:
+            if isinstance(d, str):
+                if os.path.isabs(d):
+                    d = py.path.local(d)
+                else:
+                    d = path.join(d)
+        FixtureFile(path=d, src=s, setup=setup, **kwargs)
+    return path
