@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import pytest
-from pytest_ngsfixtures.file import FixtureFile, ReadFixtureFile, ReferenceFixtureFile, ApplicationFixture, fixturefile_factory
+from pytest_ngsfixtures.file import FixtureFile, ReadFixtureFile, ReferenceFixtureFile, ApplicationFixtureFile, ApplicationOutputFixture, fixturefile_factory
 
 
 @pytest.fixture
@@ -131,9 +131,9 @@ def test_fixturefile_factory_raises():
 
 def test_fixturefile_factory(tmpdir):
     ff = fixturefile_factory(tmpdir, application="samtools", command="samtools_flagstat", version="1.5", setup=True)
-    assert type(ff) == ApplicationFixture
+    assert type(ff) == ApplicationOutputFixture
     ff = fixturefile_factory(tmpdir, application="qualimap", command="qualimap_bamqc_pe", version="2.2.2a", setup=True, full=False)
-    assert type(ff) == ApplicationFixture
+    assert type(ff) == ApplicationOutputFixture
     ff = fixturefile_factory(tmpdir.join("ref.fa"), setup=True)
     assert type(ff) == ReferenceFixtureFile
     assert tmpdir.join("samtools").exists()
