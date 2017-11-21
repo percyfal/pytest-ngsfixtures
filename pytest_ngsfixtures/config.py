@@ -37,7 +37,6 @@ sample_conf = Config(
 )
 
 
-
 def application_config(application=None):
     """Get application configuration.
 
@@ -110,7 +109,7 @@ def get_application_fixture_output(application, command, version, end="se"):
             application output strings
 
     Example:
-    
+
       >>> from pytest_ngsfixtures import config
       >>> af = config.get_application_fixture_output('qualimap', 'qualimap_bamqc_pe', '2.2.2')
       >>> print(list(af.keys())[0:2])

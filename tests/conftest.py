@@ -61,5 +61,6 @@ _dstfiles = ["foo.fastq.gz", "bar.fastq.gz"]
 def dstfiles():
     return _dstfiles
 
+
 bamset2 = factories.fileset(src=_PURFILES, dst=_dstfiles,
                             fdir="bamset2", scope="function")

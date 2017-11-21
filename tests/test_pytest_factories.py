@@ -111,6 +111,7 @@ def test_fileset_fixture_raises():
     with pytest.raises(AssertionError):
         factories.fileset(src=["foo"], dst="bar")
 
+
 def test_fileset_fixture(bamset, PURFILES):
     flist = sorted([x.basename for x in bamset.visit() if x.basename != ".lock"])
     assert flist == sorted([os.path.basename(x) for x in PURFILES])
@@ -141,7 +142,7 @@ def ao(request, tmpdir_factory):
     fdir = os.path.join(app, str(version), command, end)
     pdir = safe_mktemp(tmpdir_factory, fdir)
     for src, dst in zip(sources, dests):
-        p = safe_symlink(pdir, src, dst)
+        safe_symlink(pdir, src, dst)
     return pdir
 
 
@@ -161,6 +162,7 @@ appout = factories.application_output("samtools", "samtools_flagstat", "1.2")
 
 def test_factory_application_output(appout):
     assert appout.exists()
+
 
 appout_dir = factories.application_output("samtools", "samtools_flagstat", "1.2", fdir="samtools/samtools_flagstat")
 
