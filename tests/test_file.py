@@ -113,3 +113,11 @@ def test_short_name():
     assert r2.basename == "CHS.HG00512_1.fastq.gz"
     r3 = ReadFixtureFile(use_short_sample_name=True)
     assert r3.basename == "s3_1.fastq.gz"
+
+
+def test_chrom_sizes(tmpdir):
+    flist = ReferenceFixtureFile().ref['ref']
+    src = flist[[x.basename for x in flist].index("ref.chrom.sizes")]
+    ref = ReferenceFixtureFile(tmpdir.join("chrom.sizes"), src=src)
+    ref.setup()
+    assert ref.samefile(src)
