@@ -9,8 +9,11 @@ from pytest_ngsfixtures import __version__ as ngsfixtures_version, ROOT_DIR
 from pytest_ngsfixtures import utils
 
 logging.addLevelName(logging.WARNING, "DRY_RUN")
+
+
 def dry_run(self, message, *args, **kws):
-    self._log(logging.WARNING, "DRY RUN: " +  message, args, **kws)
+    self._log(logging.WARNING, "DRY RUN: " + message, args, **kws)
+
 
 logging.Logger.dry_run = dry_run
 logger = logging.getLogger(__name__)

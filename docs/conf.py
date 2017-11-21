@@ -292,6 +292,7 @@ texinfo_documents = [
 intersphinx_mapping = {
     'python': ('http://docs.python.org/3.5', None),
     'pytest': ('http://docs.pytest.org/en/latest/', None),
+    'py.path': ('http://py.readthedocs.io/en/latest/', None),
     'pythonrtd': ('http://python.readthedocs.org/en/latest/', None),
     'snakemake': ('http://snakemake.readthedocs.org/', None),
 }

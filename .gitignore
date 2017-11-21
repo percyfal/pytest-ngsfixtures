@@ -82,3 +82,4 @@ target/
 /pytest_ngsfixtures/data/applications/mapdamage2/2.0.6/se/Stats_out_MCMC_hist.pdf
 /pytest_ngsfixtures/data/applications/mapdamage2/2.0.6/se/Stats_out_MCMC_post_pred.pdf
 /pytest_ngsfixtures/data/applications/mapdamage2/2.0.6/se/Stats_out_MCMC_trace.pdf
+/.envrc
