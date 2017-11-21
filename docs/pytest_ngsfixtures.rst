@@ -20,10 +20,26 @@ pytest\_ngsfixtures\.config module
     :undoc-members:
     :show-inheritance:
 
+pytest\_ngsfixtures\.exceptions module
+--------------------------------------
+
+.. automodule:: pytest_ngsfixtures.exceptions
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 pytest\_ngsfixtures\.factories module
 -------------------------------------
 
 .. automodule:: pytest_ngsfixtures.factories
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pytest\_ngsfixtures\.file module
+--------------------------------
+
+.. automodule:: pytest_ngsfixtures.file
     :members:
     :undoc-members:
     :show-inheritance:
@@ -44,10 +60,34 @@ pytest\_ngsfixtures\.helpers module
     :undoc-members:
     :show-inheritance:
 
+pytest\_ngsfixtures\.layout module
+----------------------------------
+
+.. automodule:: pytest_ngsfixtures.layout
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pytest\_ngsfixtures\.os module
+------------------------------
+
+.. automodule:: pytest_ngsfixtures.os
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 pytest\_ngsfixtures\.plugin module
 ----------------------------------
 
 .. automodule:: pytest_ngsfixtures.plugin
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pytest\_ngsfixtures\.repo module
+--------------------------------
+
+.. automodule:: pytest_ngsfixtures.repo
     :members:
     :undoc-members:
     :show-inheritance:

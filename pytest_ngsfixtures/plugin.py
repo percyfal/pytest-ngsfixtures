@@ -86,7 +86,7 @@ kwargs = {
     'platform_units': ['010101_AAABBB11XX', '020202_AAABBB22XX', '010101_AAABBB11XX'] + ['010101_AAABBB11XX', '020202_AAABBB22XX'] * 2,
     'populations': ['PUR'] * 3 + ['CHS'] * 2 + ['YRI'] * 2,
     'paired_end': [True] * 7,
-    'use_short_sample_names': False,
+    'short_names': False,
     'numbered': True,
 }
 

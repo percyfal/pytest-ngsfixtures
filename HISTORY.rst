@@ -2,6 +2,20 @@
 History
 =======
 
+0.6.0 (2017-11-21)
+------------------
+
+This is a major revision of the code. Several new abstraction classes
+have been introduced to ease interaction with local test files, along
+with new factory functions. For backwards compatibility, most factory
+functions should work as previously. Documentation has been much
+improved.
+
+* Clarify fixture function naming convention (#29)
+* Expose bulk of factory inner functions (#24)
+* Create separate module for os-related functions (#27)
+* Use separate conda build statements to build for different python versions (#23)
+
 0.5.2 (2017-11-16)
 ------------------
 
