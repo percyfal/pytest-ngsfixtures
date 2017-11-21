@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
 import pytest
-import py
 from pytest_ngsfixtures import DATA_DIR, factories
 from pytest_ngsfixtures.os import localpath
 
@@ -21,7 +20,6 @@ PURHG00731 = localpath(os.path.join("applications", "pe",
                                     "PUR.HG00731.tiny.bam"))
 PURHG00733 = localpath(os.path.join("applications", "pe",
                                     "PUR.HG00733.tiny.bam"))
-_bamfile = PURHG00731.relto(DATA_DIR)
 
 
 # File fixtures
@@ -30,17 +28,18 @@ def bamfile():
     return PURHG00731
 
 
-bam = factories.filetype(_bamfile, fdir="bamfoo", scope="function",
+bam = factories.filetype(PURHG00731.basename,
+                         fdir="bamfoo", scope="function",
                          numbered=True)
-bam_copy = factories.filetype(_bamfile, fdir="bamfoo",
+bam_copy = factories.filetype(PURHG00731.basename, fdir="bamfoo",
                               scope="function", numbered=True,
                               copy=True)
-renamebam = factories.filetype(_bamfile, fdir="renamebamfoo",
-                               rename=True, outprefix="s",
-                               scope="function", numbered=True)
-renamebam_copy = factories.filetype(_bamfile, fdir="renamebamfoo",
-                                    rename=True, outprefix="s",
-                                    scope="function", numbered=True)
+renamebam = factories.filetype(PURHG00731.basename,
+                               fdir="renamebamfoo", scope="function",
+                               numbered=True, alias="s.tiny.bam")
+renamebam_copy = factories.filetype(PURHG00731.basename, fdir="renamebamfoo",
+                                    scope="function", numbered=True,
+                                    alias="s.tiny.bam", copy=True)
 
 
 # Multifile fixtures
@@ -61,6 +60,7 @@ _dstfiles = ["foo.fastq.gz", "bar.fastq.gz"]
 @pytest.fixture(scope="function", autouse=False)
 def dstfiles():
     return _dstfiles
+
 
 bamset2 = factories.fileset(src=_PURFILES, dst=_dstfiles,
                             fdir="bamset2", scope="function")

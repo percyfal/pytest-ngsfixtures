@@ -22,16 +22,18 @@ configfile = os.path.join(APPLICATION_DATA_DIR, "config.yaml")
 Config = namedtuple('Config', 'SIZES SAMPLES POPULATIONS SAMPLE_LAYOUTS')
 
 sample_conf = Config(
-    SIZES=["tiny", "small", "medium", "yuge"],
-    SAMPLES=['CHS.HG00512', 'CHS.HG00513', 'CHS',
+    SIZES=("tiny", "small", "medium", "yuge"),
+    SAMPLES=('CHS.HG00512', 'CHS.HG00513', 'CHS',
              'PUR.HG00731', 'PUR.HG00733', 'PUR',
              'PUR.HG00731.A', 'PUR.HG00731.B',
              'PUR.HG00733.A', 'PUR.HG00733.B',
-             'YRI.NA19238', 'YRI.NA19239', 'YRI'],
-    POPULATIONS=["CHS", "PUR", "YRI"],
-    SAMPLE_LAYOUTS=["sample", "sample_run",
+             'YRI.NA19238', 'YRI.NA19239', 'YRI'),
+    POPULATIONS=tuple(["CHS"] * 3 +
+                      ["PUR"] * 7 +
+                      ["YRI"] * 3),
+    SAMPLE_LAYOUTS=("sample", "sample_run",
                     "project_sample_run", "pop_sample",
-                    "pop_sample_run", "pop_project_sample_run"]
+                    "pop_sample_run", "pop_project_sample_run")
 )
 
 
@@ -107,7 +109,7 @@ def get_application_fixture_output(application, command, version, end="se"):
             application output strings
 
     Example:
-    
+
       >>> from pytest_ngsfixtures import config
       >>> af = config.get_application_fixture_output('qualimap', 'qualimap_bamqc_pe', '2.2.2')
       >>> print(list(af.keys())[0:2])
