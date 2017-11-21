@@ -2,7 +2,7 @@
 import os
 import py
 import pytest
-from pytest_ngsfixtures.file import FixtureFile, ReadFixtureFile, ReferenceFixtureFile, ApplicationFixtureFile
+from pytest_ngsfixtures.file import FixtureFile, ReadFixtureFile, ReferenceFixtureFile, ApplicationFixture, fixturefile_factory
 
 
 @pytest.fixture
@@ -17,13 +17,13 @@ def test_init(foo):
     assert f.src.dirname == foo.dirname
 
 
-def test_init_w_str():
-    f = FixtureFile("foo.txt")
+def test_init_w_str(tmpdir, foo):
+    f = FixtureFile("foo.txt", src=foo)
     assert f.path.isdir()
 
 
-def test_init_wo_path():
-    f = FixtureFile()
+def test_init_wo_path(foo):
+    f = FixtureFile(src=foo)
     assert f.isdir()
 
 
@@ -121,3 +121,22 @@ def test_chrom_sizes(tmpdir):
     ref = ReferenceFixtureFile(tmpdir.join("chrom.sizes"), src=src)
     ref.setup()
     assert ref.samefile(src)
+
+
+def test_fixturefile_factory_raises():
+    with pytest.raises(AssertionError):
+        fixturefile_factory()
+    with pytest.raises(AssertionError):
+        fixturefile_factory(path="foo.bar")
+
+
+def test_fixturefile_factory(tmpdir):
+    ff = fixturefile_factory(tmpdir, application="samtools", command="samtools_flagstat", version="1.5", setup=True)
+    assert type(ff) == ApplicationFixture
+    ff = fixturefile_factory(tmpdir, application="qualimap", command="qualimap_bamqc_pe", version="2.2.2a", setup=True, full=False)
+    assert type(ff) == ApplicationFixture
+    ff = fixturefile_factory(tmpdir.join("ref.fa"), setup=True)
+    assert type(ff) == ReferenceFixtureFile
+    assert tmpdir.join("samtools").exists()
+    assert tmpdir.join("samtools").isdir()
+    assert not tmpdir.join("qualimap").exists()
