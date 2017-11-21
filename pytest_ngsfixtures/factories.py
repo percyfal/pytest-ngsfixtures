@@ -159,9 +159,7 @@ def reference_layout(label="ref", dirname="ref", copy=False, **kwargs):
     return reference_layout_fixture
 
 
-def filetype(src, dst=None, fdir=None, rename=False, outprefix="test",
-             inprefix=['PUR.HG00731', 'PUR.HG00733'], copy=False,
-             **kwargs):
+def filetype(path, src=None, fdir=None, copy=False, **kwargs):
     """Fixture factory for file types. This factory is atomic in that it
     generates one fixture for one file.
 
@@ -188,26 +186,19 @@ def filetype(src, dst=None, fdir=None, rename=False, outprefix="test",
 
 
     Args:
-      src (str): fixture file name source
-      dst (str): fixture file name destination; link name
-      fdir (str): fixture output directory
-      rename (bool): rename fixture links
-      outprefix (str): output prefix
-      inprefix (list): list of input prefixes to substitute
+      path (str, py._path.local.LocalPath): fixture path destination; either a full path or a link name
+      src (str, py._path.local.LocalPath): fixture file name source. If relative path try to use source file from pytest_ngsfixtures application data. If empty, use basename
+      fdir (str, py._path.local.LocalPath): fixture output directory; either a full path, or relative to current tmpdir
       copy (bool): copy fixture file instead of symlinking
       kwargs (dict): keyword arguments
 
     """
-    dst = os.path.basename(src) if dst is None else dst
-    if rename:
-        pat = "(" + "|".join(inprefix) + ")"
-        dst = re.sub(pat, outprefix, dst)
-
     @pytest.fixture(scope=kwargs.get("scope", "function"), autouse=kwargs.get("autouse", False))
     def filetype_fixture(request, tmpdir_factory):
         """Filetype fixture"""
         p = safe_mktemp(tmpdir_factory, fdir, **kwargs)
-        p = setup_filetype(path=p, src=src, dst=dst, setup=True, **kwargs)
+        p = p.join(path)
+        p = setup_filetype(path=p, src=src, setup=True, **kwargs)
         if request.config.option.ngs_show_fixture:
             logger.info("filetype fixture content")
             logger.info("------------------------")
