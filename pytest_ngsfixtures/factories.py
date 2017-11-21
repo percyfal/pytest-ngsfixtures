@@ -6,7 +6,7 @@ import itertools
 import pytest
 from pytest_ngsfixtures.os import safe_mktemp
 from pytest_ngsfixtures.layout import setup_sample_layout, setup_reference_layout
-from pytest_ngsfixtures.file import setup_fileset, setup_filetype
+from pytest_ngsfixtures.file import setup_fileset, setup_filetype, ApplicationOutputFixture
 
 
 logging.basicConfig(level=logging.INFO)
@@ -270,7 +270,8 @@ def fileset(src, dst=None, fdir=None, copy=False, **kwargs):
     return fileset_fixture
 
 
-def application_output(application, command, version, end="se", **kwargs):
+def application_output(application, command, version, end="pe",
+                       fdir=None, **kwargs):
     """Fixture factory to generate a named application output.
 
     Args:
@@ -307,11 +308,15 @@ def application_output(application, command, version, end="se", **kwargs):
         _versions = [str(x) for x in conf[application]["_versions"]]
     assert version in _versions, "no such application output for version '{}', application '{}'".format(version, application)
     assert end in ["se", "pe"], "end must be either se or pe"
-    params = {'version': version, 'end': end}
-    output = [x.format(**params) for x in conf[application][command]['output'].values()]
-    if len(output) == 1:
-        src = os.path.join("applications", application, output[0])
-        return filetype(src, **kwargs)
-    else:
-        src = [os.path.join("applications", application, x) for x in output]
-        return fileset(src, **kwargs)
+
+    @pytest.fixture
+    def application_output_fixture(request, tmpdir_factory):
+        p = safe_mktemp(tmpdir_factory, fdir, **kwargs)
+        ao = ApplicationOutputFixture(application, command, version, end=end, path=p, setup=True)
+        if request.config.option.ngs_show_fixture:
+            logger.info("application output fixture content")
+            logger.info("----------------------------------")
+            for x in sorted(ao.visit()):
+                logger.info(str(x))
+        return ao
+    return application_output_fixture
