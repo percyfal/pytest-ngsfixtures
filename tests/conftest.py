@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
 import pytest
-import py
 from pytest_ngsfixtures import DATA_DIR, factories
 from pytest_ngsfixtures.os import localpath
 
