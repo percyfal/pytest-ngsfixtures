@@ -70,7 +70,7 @@ def generate_sample_layouts(layout="short",
 
 
 def setup_sample_layout(path, layout=None, copy=False, sample_prefix="s",
-                        runfmt="{SM}/{SM}_{PU}", use_short_sample_names=True,
+                        runfmt="{SM}/{SM}_{PU}", short_names=True,
                         **kwargs):
     """Setup sample layout.
 
@@ -86,7 +86,7 @@ def setup_sample_layout(path, layout=None, copy=False, sample_prefix="s",
     output = []
     layout_list = generate_sample_layouts(layout=layout, **kwargs)
     for l in layout_list:
-        l.update({'use_short_sample_name': use_short_sample_names,
+        l.update({'short_name': short_names,
                   'prefix': sample_prefix})
         r1 = ReadFixtureFile(runfmt=runfmt, path=path, copy=copy, **l)
         r1.setup()
