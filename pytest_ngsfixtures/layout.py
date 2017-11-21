@@ -69,10 +69,10 @@ def generate_sample_layouts(layout="short",
     return [dict(zip(keys, p)) for p in combinator(*[config[k] for k in keys])]
 
 
-def sample_fixture_layout(path, layout=None, copy=False, sample_prefix="s",
-                          runfmt="{SM}/{SM}_{PU}", use_short_sample_names=True,
-                          **kwargs):
-    """Setup sample fixture layout.
+def setup_sample_layout(path, layout=None, copy=False, sample_prefix="s",
+                        runfmt="{SM}/{SM}_{PU}", use_short_sample_names=True,
+                        **kwargs):
+    """Setup sample layout.
 
 
     Args:
@@ -80,19 +80,18 @@ def sample_fixture_layout(path, layout=None, copy=False, sample_prefix="s",
       layout (str): predefined layout name
       copy (bool): copy test files instead of symlinking (required for dockerized tests)
       sample_prefix (str): sample prefix for short names
+      kwargs (dict): arguments that are passed on to :py:`~pytest_ngsfixtures.layout.generate_sample_layouts`
     """
+    ReadFixtureFile.reset()
     output = []
-    if layout is not None:
-        layout_list = generate_sample_layouts(layout=layout)
-    else:
-        layout_list = generate_sample_layouts(**kwargs)
+    layout_list = generate_sample_layouts(layout=layout, **kwargs)
     for l in layout_list:
-        l.update({'use_short_sample_names': use_short_sample_names,
+        l.update({'use_short_sample_name': use_short_sample_names,
                   'prefix': sample_prefix})
         r1 = ReadFixtureFile(runfmt=runfmt, path=path, copy=copy, **l)
         r1.setup()
         output.append(r1)
-        if kwargs.get("paired_end", True):
+        if l.get("paired_end", True):
             r2 = ReadFixtureFile(runfmt=runfmt, path=path, copy=copy,
                                  read=2, **l)
             r2.setup()
@@ -105,8 +104,8 @@ def sample_fixture_layout(path, layout=None, copy=False, sample_prefix="s",
     return path
 
 
-def reference_fixture_layout(path, label="ref", copy=False, **kwargs):
-    """Setup reference fixture layout
+def setup_reference_layout(path, label="ref", copy=False, **kwargs):
+    """Setup reference layout
 
     Wrapper to setup multiple reference files. Either choose between
     'ref' or 'scaffolds' label.
@@ -124,6 +123,9 @@ def reference_fixture_layout(path, label="ref", copy=False, **kwargs):
     assert label in list(ref_dict.keys()), "label '{}' must be one of {}".format(label, ", ".join(list(ref_dict.keys())))
     flist = ref_dict[label] + ref_dict['_always']
     for dst in flist:
-        r = ReferenceFixtureFile(path.join(py.path.local(dst).basename))
+        if dst.basename in ["ref.chrom.sizes", "scaffolds.chrom.sizes"]:
+            r = ReferenceFixtureFile(path.join("chrom.sizes"), src=dst)
+        else:
+            r = ReferenceFixtureFile(path.join(py.path.local(dst).basename))
         r.setup()
     return path
