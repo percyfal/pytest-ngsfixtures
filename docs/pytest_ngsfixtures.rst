@@ -36,6 +36,14 @@ pytest\_ngsfixtures\.factories module
     :undoc-members:
     :show-inheritance:
 
+pytest\_ngsfixtures\.file module
+--------------------------------
+
+.. automodule:: pytest_ngsfixtures.file
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 pytest\_ngsfixtures\.filetypes module
 -------------------------------------
 
@@ -48,6 +56,14 @@ pytest\_ngsfixtures\.helpers module
 -----------------------------------
 
 .. automodule:: pytest_ngsfixtures.helpers
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pytest\_ngsfixtures\.layout module
+----------------------------------
+
+.. automodule:: pytest_ngsfixtures.layout
     :members:
     :undoc-members:
     :show-inheritance:
