@@ -2,9 +2,10 @@
 import os
 import re
 import py
+import itertools
 from py._path.local import LocalPath
 from pytest_ngsfixtures.os import safe_symlink, safe_copy
-from pytest_ngsfixtures.config import sample_conf
+from pytest_ngsfixtures.config import sample_conf, get_application_fixture_output, flattened_application_fixture_metadata
 from pytest_ngsfixtures import DATA_DIR
 
 
@@ -46,7 +47,10 @@ class FixtureFile(LocalPath):
             return py.path.local(self.dirname)
 
     def setup(self):
-        self._setup_fn(self.path, self.src, self.basename)
+        if self.isdir():
+            self._setup_fn(self.path, self.src, self.src.basename)
+        else:
+            self._setup_fn(self.path, self.src, self.basename)
 
     @property
     def data_dir(self):
