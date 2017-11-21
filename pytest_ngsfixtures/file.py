@@ -28,9 +28,14 @@ class FixtureFile(LocalPath):
 
     @src.setter
     def src(self, src):
-        if src is not None:
-            assert isinstance(src, LocalPath), "src path must be py._path.local.LocalPath object"
-            assert src.realpath().exists(), "src path must exist"
+        assert src is not None, "source file must not be None"
+        if isinstance(src, str):
+            if os.path.isabs(src):
+                src = py.path.local(src)
+            else:
+                src = self.data_dir.join(src)
+        assert isinstance(src, LocalPath), "src path must be py._path.local.LocalPath object"
+        assert src.realpath().exists(), "src path must exist"
         self._src = src
 
     @property
