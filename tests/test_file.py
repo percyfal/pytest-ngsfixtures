@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-import py
 import pytest
 from pytest_ngsfixtures.file import FixtureFile, ReadFixtureFile, ReferenceFixtureFile, ApplicationFixture, fixturefile_factory
 

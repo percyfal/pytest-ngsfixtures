@@ -4,7 +4,7 @@ import re
 import logging
 import itertools
 import pytest
-from pytest_ngsfixtures.os import safe_symlink, safe_copy, safe_mktemp
+from pytest_ngsfixtures.os import safe_mktemp
 from pytest_ngsfixtures.layout import setup_sample_layout, setup_reference_layout
 from pytest_ngsfixtures.file import setup_fileset, setup_filetype
 

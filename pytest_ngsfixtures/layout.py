@@ -29,8 +29,8 @@ layouts = {
         'alias': ["CHS.pool", "PUR.pool", "YRI.pool"],
         'population': ["CHS", "PUR", "YRI"],
         'platform_unit': ['010101_AAABBB11XX',
-                           '020202_AAABBB22XX',
-                           '010101_AAABBB11XX'],
+                          '020202_AAABBB22XX',
+                          '010101_AAABBB11XX'],
         'paired_end': [True] * 3,
     }
 }
