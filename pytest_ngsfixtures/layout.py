@@ -76,11 +76,11 @@ def setup_sample_layout(path, layout=None, copy=False, sample_prefix="s",
 
 
     Args:
-      path (py._path.local.LocalPath): :py:`~py._path.local.LocalPath` path where test files will be setup
+      path (py._path.local.LocalPath): :py:class:`~py._path.local.LocalPath` path where test files will be setup
       layout (str): predefined layout name
       copy (bool): copy test files instead of symlinking (required for dockerized tests)
       sample_prefix (str): sample prefix for short names
-      kwargs (dict): arguments that are passed on to :py:`~pytest_ngsfixtures.layout.generate_sample_layouts`
+      kwargs (dict): arguments that are passed on to :py:func:`~pytest_ngsfixtures.layout.generate_sample_layouts`
     """
     ReadFixtureFile.reset()
     output = []
@@ -111,12 +111,12 @@ def setup_reference_layout(path, label="ref", copy=False, **kwargs):
     'ref' or 'scaffolds' label.
 
     Args:
-      path (py._path.local.LocalPath): :py:`~py._path.local.LocalPath` path where reference test files will be setup
+      path (py._path.local.LocalPath): :py:class:`~py._path.local.LocalPath` path where reference test files will be setup
       label (str): reference fixture label ('ref' or 'scaffolds')
       copy (bool): copy fixture files instead of symlinking
 
     Returns:
-      py._path.local.LocalPath: modified :py:`~py._path.local.LocalPath` object with test files setup
+      py._path.local.LocalPath: modified :py:class:`~py._path.local.LocalPath` object with test files setup
 
     """
     ref_dict = ReferenceFixtureFile().ref
