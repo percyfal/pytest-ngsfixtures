@@ -9,36 +9,16 @@ Tests for `pytest_ngsfixtures.factories` module.
 """
 import os
 import re
-import py
 import pytest
 from pytest_ngsfixtures import factories
 from pytest_ngsfixtures.os import safe_symlink, safe_mktemp
 from pytest_ngsfixtures.config import flattened_application_fixture_metadata
 
-# Filetype fixtures
-#
-# Note that the arguments to the filetype factory fixture *must* be
-# strings. Setting them up as py.path objects creates a relative path
-# to the current directory.
-#
 
-# bamfile_realpath = os.path.realpath(os.path.join(DATA_DIR, "applications", "pe", "PUR.HG00731.tiny.bam"))
-# PURHG00731 = os.path.join("applications", "pe", "PUR.HG00731.tiny.bam")
-# PURHG00733 = os.path.join("applications", "pe", "PUR.HG00733.tiny.bam")
-# PURFILES = [PURHG00731, PURHG00733]
-# bamfile = PURHG00731
-# bam = factories.filetype(bamfile, fdir="bamfoo", scope="function", numbered=True)
-# bam_copy = factories.filetype(bamfile, fdir="bamfoo", scope="function", numbered=True, copy=True)
-# renamebam = factories.filetype(bamfile, fdir="renamebamfoo", rename=True, outprefix="s", scope="function", numbered=True)
-# renamebam_copy = factories.filetype(bamfile, fdir="renamebamfoo", rename=True, outprefix="s", scope="function", numbered=True)
-
-# PURHG00731_path = localpath(os.path.join("applications", "pe", "PUR.HG00731.tiny.bam"))
-# print(PURHG00731_path)
-# print(PURHG00731_path.relto(DATA_DIR))
-
-
-def test_wrong_sample():
-    with pytest.raises(factories.SampleException):
+def test_wrong_sample(tmpdir, monkeypatch):
+    monkeypatch.setattr('pytest_ngsfixtures.factories.safe_mktemp',
+                        lambda *args, **kwargs: tmpdir)
+    with pytest.raises(AssertionError):
         factories.sample_layout(samples=["foo", "bar"])(None, None)
 
 
@@ -89,7 +69,7 @@ custom_samples = factories.sample_layout(
     samples=["CHS.HG00512", "YRI.NA19238"],
     platform_units=['bar', 'foobar'],
     paired_end=[True, False],
-    use_short_sample_names=False,
+    short_names=False,
     runfmt="{SM}/{SM}_{PU}",
     numbered=False,
     scope="function",
@@ -131,6 +111,7 @@ def test_fileset_fixture_raises():
     with pytest.raises(AssertionError):
         factories.fileset(src=["foo"], dst="bar")
 
+
 def test_fileset_fixture(bamset, PURFILES):
     flist = sorted([x.basename for x in bamset.visit() if x.basename != ".lock"])
     assert flist == sorted([os.path.basename(x) for x in PURFILES])
@@ -161,7 +142,7 @@ def ao(request, tmpdir_factory):
     fdir = os.path.join(app, str(version), command, end)
     pdir = safe_mktemp(tmpdir_factory, fdir)
     for src, dst in zip(sources, dests):
-        p = safe_symlink(pdir, src, dst)
+        safe_symlink(pdir, src, dst)
     return pdir
 
 
@@ -181,6 +162,7 @@ appout = factories.application_output("samtools", "samtools_flagstat", "1.2")
 
 def test_factory_application_output(appout):
     assert appout.exists()
+
 
 appout_dir = factories.application_output("samtools", "samtools_flagstat", "1.2", fdir="samtools/samtools_flagstat")
 

@@ -4,29 +4,13 @@ import re
 import logging
 import itertools
 import pytest
-from pytest_ngsfixtures import DATA_DIR, repo
-from pytest_ngsfixtures.config import sample_conf
-from pytest_ngsfixtures.os import safe_symlink, safe_copy, safe_mktemp
-from pytest_ngsfixtures.exceptions import SampleException, ParameterException
+from pytest_ngsfixtures.os import safe_mktemp
+from pytest_ngsfixtures.layout import setup_sample_layout, setup_reference_layout
+from pytest_ngsfixtures.file import setup_fileset, setup_filetype, ApplicationOutputFixture
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-
-ref_dict = {}
-
-for f in os.listdir(os.path.join(DATA_DIR, "ref")):
-    if f in ("Makefile", "Snakefile.test"):
-        continue
-    ref_dict[f] = os.path.join(DATA_DIR, "ref", f)
-
-ref_always = ['ERCC_spikes.gb', 'pAcGFP1-N1.fasta']
-
-
-def check_samples(samples):
-    """Check the sample names are ok"""
-    if not all(x in sample_conf.SAMPLES for x in samples):
-        raise SampleException("invalid sample name: choose from {}".format(sample_conf.SAMPLES))
 
 
 def get_config(request):
@@ -37,17 +21,20 @@ def get_config(request):
     ]
     for option in options:
         option_name = 'ngs_' + option
-        conf = request.config.getoption(option_name) or \
-            request.config.getini(option_name)
+        if request is not None:
+            conf = request.config.getoption(option_name) or \
+                request.config.getini(option_name)
+        else:
+            conf = None
         config[option] = conf
     return config
 
+
 def sample_layout(
         runfmt="{SM}",
+        layout=None,
         sample_prefix="s",
         use_short_sample_names=True,
-        read1_suffix="_1.fastq.gz",
-        read2_suffix="_2.fastq.gz",
         dirname=None,
         sampleinfo=True,
         combinator=itertools.zip_longest,
@@ -94,10 +81,9 @@ def sample_layout(
 
     Args:
       runfmt (str): run format string
+      layout (str): layout label
       sample_prefix (str): sample prefix for short names
       use_short_sample_names (bool): use short sample names
-      read1_suffix (str): read1 suffix
-      read2_suffix (str): read2 suffix
       dirname (str): data directory name
       sampleinfo (bool): create sampleinfo file
       combinator (fun): function to combine sample, platform unit, batch, population labels
@@ -120,62 +106,29 @@ def sample_layout(
     def sample_layout_fixture(request, tmpdir_factory):
         """Sample layout fixture. Setup sequence input files according to a
         specified sample organization"""
-        check_samples(samples)
         config = get_config(request)
-        _samples = samples
-        _pop = populations
-        _batches = batches
-        _pu = platform_units
-        _pe = paired_end
-        _keys = ['POP', 'PU', 'SM', 'BATCH', 'PE']
-        _param_names = ['populations', 'platform_units', 'samples', 'batches', 'paired_end']
-        _keys_to_param_names = dict(zip(_keys, _param_names))
-        _param_dict = dict(zip(_keys, (_pop, _pu, _samples, _batches, _pe)))
-        _layout = [dict(zip(_keys, p)) for p in combinator(_pop, _pu, _samples, _batches, _pe)]
-        _sample_counter = 1
-        _sample_map = {}
-        _setup_fn = safe_copy if copy else safe_symlink
-        p = safe_mktemp(tmpdir_factory, dirname, **kwargs)
-        i = 0
-        for l in _layout:
-            srckeys = l.copy()
-            if not l["SM"] in _sample_map.keys():
-                _sample_map[l["SM"]] = "{}{}".format(sample_prefix, _sample_counter)
-                _sample_counter = _sample_counter + 1
-            if use_short_sample_names:
-                l['SM'] = _sample_map[l['SM']]
-            if len(sample_aliases) > 0:
-                l['SM'] = sample_aliases[i]
-                i += 1
-            src = os.path.join(DATA_DIR, config['size'], srckeys['SM'] + "_1.fastq.gz")
-            repo._check_file_exists(src, config['size'])
-            _setup_fn(p, os.path.join(DATA_DIR, config['size'], srckeys['SM'] + "_1.fastq.gz"),
-                      runfmt.format(**l) + read1_suffix)
-            if l['PE']:
-                _setup_fn(p, os.path.join(DATA_DIR, config['size'], srckeys['SM'] + "_2.fastq.gz"),
-                          runfmt.format(**l) + read2_suffix)
+        kwargs.update(config)
+        kwargs['layout'] = layout
+        kwargs['alias'] = sample_aliases
+        kwargs['sample'] = samples
+        kwargs['population'] = populations
+        kwargs['platform_unit'] = platform_units
+        kwargs['batch'] = batches
+        kwargs['copy'] = copy
+        kwargs['sampleinfo'] = sampleinfo
+        kwargs['runfmt'] = runfmt
+        kwargs['paired_end'] = paired_end
+        kwargs['use_short_sample_names'] = use_short_sample_names
+        path = safe_mktemp(tmpdir_factory, dirname, **kwargs)
+        path = setup_sample_layout(path, **kwargs)
 
-        if sampleinfo:
-            outkeys = set([x for x in re.split("[{}/_]", runfmt) if x != ""] + ["fastq"])
-            if any(len(x[0]) != len(x[1]) for x in itertools.combinations((_param_dict[y] for y in outkeys if not y == "fastq"), 2)):
-                raise ParameterException("all parameters {} must be of equal length for sampleinfo file".format(",".join(_keys_to_param_names[y] for y in outkeys if not y == "fastq")))
-            outkeys = sorted(outkeys)
-            info = [",".join(outkeys)]
-            for l in _layout:
-                logger.debug("updating layout: {}".format(l))
-                l['fastq'] = runfmt.format(**l) + read1_suffix
-                info.append(",".join([l[k] for k in outkeys]))
-                if l['PE']:
-                    l['fastq'] = runfmt.format(**l) + read2_suffix
-                    info.append(",".join([l[k] for k in outkeys]))
-            p.join("sampleinfo.csv").write("\n".join(info) + "\n")
         # Alternatively print as debug
         if request.config.option.ngs_show_fixture:
             logger.info("sample_layout")
             logger.info("-------------")
-            for x in sorted(p.visit()):
+            for x in sorted(path.visit()):
                 logger.info(str(x))
-        return p
+        return path
     return sample_layout_fixture
 
 
@@ -195,28 +148,18 @@ def reference_layout(label="ref", dirname="ref", copy=False, **kwargs):
     def reference_layout_fixture(request, tmpdir_factory):
         """Reference layout fixture. Setup the one-chromosome reference files
         or scaffold reference files in a separate directory"""
-        _setup_fn = safe_copy if copy else safe_symlink
-        p = safe_mktemp(tmpdir_factory, dirname, **kwargs)
-        for dst, src in ref_dict.items():
-            if dst in ref_always:
-                _setup_fn(p, src, dst)
-            if label not in dst:
-                continue
-            if dst.endswith("chrom.sizes"):
-                dst = "chrom.sizes"
-            _setup_fn(p, src, dst)
+        path = safe_mktemp(tmpdir_factory, dirname, **kwargs)
+        path = setup_reference_layout(path, label=label, **kwargs)
         if request.config.option.ngs_show_fixture:
             logger.info("'{}' reference layout".format(label))
             logger.info("------------------------------------")
-            for x in sorted(p.visit()):
+            for x in sorted(path.visit()):
                 logger.info(str(x))
-        return p
+        return path
     return reference_layout_fixture
 
 
-def filetype(src, dst=None, fdir=None, rename=False, outprefix="test",
-             inprefix=['PUR.HG00731', 'PUR.HG00733'], copy=False,
-             **kwargs):
+def filetype(path, src=None, fdir=None, copy=False, **kwargs):
     """Fixture factory for file types. This factory is atomic in that it
     generates one fixture for one file.
 
@@ -243,27 +186,19 @@ def filetype(src, dst=None, fdir=None, rename=False, outprefix="test",
 
 
     Args:
-      src (str): fixture file name source
-      dst (str): fixture file name destination; link name
-      fdir (str): fixture output directory
-      rename (bool): rename fixture links
-      outprefix (str): output prefix
-      inprefix (list): list of input prefixes to substitute
+      path (str, py._path.local.LocalPath): fixture path destination; either a full path or a link name
+      src (str, py._path.local.LocalPath): fixture file name source. If relative path try to use source file from pytest_ngsfixtures application data. If empty, use basename
+      fdir (str, py._path.local.LocalPath): fixture output directory; either a full path, or relative to current tmpdir
       copy (bool): copy fixture file instead of symlinking
       kwargs (dict): keyword arguments
 
     """
-    dst = os.path.basename(src) if dst is None else dst
-    if rename:
-        pat = "(" + "|".join(inprefix) + ")"
-        dst = re.sub(pat, outprefix, dst)
-
     @pytest.fixture(scope=kwargs.get("scope", "function"), autouse=kwargs.get("autouse", False))
     def filetype_fixture(request, tmpdir_factory):
         """Filetype fixture"""
-        _setup_fn = safe_copy if copy else safe_symlink
         p = safe_mktemp(tmpdir_factory, fdir, **kwargs)
-        p = _setup_fn(p, src, dst)
+        p = p.join(path)
+        p = setup_filetype(path=p, src=src, setup=True, **kwargs)
         if request.config.option.ngs_show_fixture:
             logger.info("filetype fixture content")
             logger.info("------------------------")
@@ -324,10 +259,8 @@ def fileset(src, dst=None, fdir=None, copy=False, **kwargs):
         Returns:
           :obj:`py._path.local.LocalPath`: output directory in which the files reside
         """
-        _setup_fn = safe_copy if copy else safe_symlink
         p = safe_mktemp(tmpdir_factory, fdir, **kwargs)
-        for s, d in itertools.zip_longest(src, dst):
-            _setup_fn(p, s, d)
+        p = setup_fileset(path=p, src=src, dst=dst)
         if request.config.option.ngs_show_fixture:
             logger.info("fileset fixture content")
             logger.info("-----------------------")
@@ -337,7 +270,8 @@ def fileset(src, dst=None, fdir=None, copy=False, **kwargs):
     return fileset_fixture
 
 
-def application_output(application, command, version, end="se", **kwargs):
+def application_output(application, command, version, end="pe",
+                       fdir=None, **kwargs):
     """Fixture factory to generate a named application output.
 
     Args:
@@ -374,11 +308,15 @@ def application_output(application, command, version, end="se", **kwargs):
         _versions = [str(x) for x in conf[application]["_versions"]]
     assert version in _versions, "no such application output for version '{}', application '{}'".format(version, application)
     assert end in ["se", "pe"], "end must be either se or pe"
-    params = {'version': version, 'end': end}
-    output = [x.format(**params) for x in conf[application][command]['output'].values()]
-    if len(output) == 1:
-        src = os.path.join("applications", application, output[0])
-        return filetype(src, **kwargs)
-    else:
-        src = [os.path.join("applications", application, x) for x in output]
-        return fileset(src, **kwargs)
+
+    @pytest.fixture
+    def application_output_fixture(request, tmpdir_factory):
+        p = safe_mktemp(tmpdir_factory, fdir, **kwargs)
+        ao = ApplicationOutputFixture(application, command, version, end=end, path=p, setup=True)
+        if request.config.option.ngs_show_fixture:
+            logger.info("application output fixture content")
+            logger.info("----------------------------------")
+            for x in sorted(ao.visit()):
+                logger.info(str(x))
+        return ao
+    return application_output_fixture
