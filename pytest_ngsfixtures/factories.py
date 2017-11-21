@@ -6,6 +6,7 @@ import itertools
 import pytest
 from pytest_ngsfixtures.os import safe_symlink, safe_copy, safe_mktemp
 from pytest_ngsfixtures.layout import setup_sample_layout, setup_reference_layout
+from pytest_ngsfixtures.file import setup_fileset, setup_filetype
 
 
 logging.basicConfig(level=logging.INFO)
@@ -205,9 +206,8 @@ def filetype(src, dst=None, fdir=None, rename=False, outprefix="test",
     @pytest.fixture(scope=kwargs.get("scope", "function"), autouse=kwargs.get("autouse", False))
     def filetype_fixture(request, tmpdir_factory):
         """Filetype fixture"""
-        _setup_fn = safe_copy if copy else safe_symlink
         p = safe_mktemp(tmpdir_factory, fdir, **kwargs)
-        p = _setup_fn(p, src, dst)
+        p = setup_filetype(path=p, src=src, dst=dst, setup=True, **kwargs)
         if request.config.option.ngs_show_fixture:
             logger.info("filetype fixture content")
             logger.info("------------------------")
@@ -268,10 +268,8 @@ def fileset(src, dst=None, fdir=None, copy=False, **kwargs):
         Returns:
           :obj:`py._path.local.LocalPath`: output directory in which the files reside
         """
-        _setup_fn = safe_copy if copy else safe_symlink
         p = safe_mktemp(tmpdir_factory, fdir, **kwargs)
-        for s, d in itertools.zip_longest(src, dst):
-            _setup_fn(p, s, d)
+        p = setup_fileset(path=p, src=src, dst=dst)
         if request.config.option.ngs_show_fixture:
             logger.info("fileset fixture content")
             logger.info("-----------------------")
