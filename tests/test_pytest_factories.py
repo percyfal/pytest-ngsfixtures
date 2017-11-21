@@ -9,15 +9,16 @@ Tests for `pytest_ngsfixtures.factories` module.
 """
 import os
 import re
-import py
 import pytest
 from pytest_ngsfixtures import factories
 from pytest_ngsfixtures.os import safe_symlink, safe_mktemp
 from pytest_ngsfixtures.config import flattened_application_fixture_metadata
 
 
-def test_wrong_sample():
-    with pytest.raises(factories.SampleException):
+def test_wrong_sample(tmpdir, monkeypatch):
+    monkeypatch.setattr('pytest_ngsfixtures.factories.safe_mktemp',
+                        lambda *args, **kwargs: tmpdir)
+    with pytest.raises(AssertionError):
         factories.sample_layout(samples=["foo", "bar"])(None, None)
 
 
