@@ -15,13 +15,43 @@ class FixtureFile(LocalPath):
         cls._data_dir = LocalPath(DATA_DIR)
         return obj
 
-    def __init__(self, path=None, expanduser=False, setup=False, **kwargs):
+    def __init__(self, path=None, expanduser=False, setup=False,
+                 src=None, alias=None, copy=False, prefix="s",
+                 short_name=False, **kwargs):
         super(FixtureFile, self).__init__(path, expanduser)
-        self._copy = kwargs.get('copy', False)
-        self.src = kwargs.get('src', None)
+        self._prefix = prefix
+        self._short = short_name
+        self.alias = alias
+        if self.alias:
+            self.strpath = str(self.path.join(self.alias))
+        self._copy = copy
+        self.src = src
         self._setup_fn = safe_copy if self._copy else safe_symlink
         if setup:
             self.setup()
+
+    @property
+    def full_prefix(self):
+        return self.prefix
+
+    @property
+    def prefix(self):
+        return self._prefix
+
+    @property
+    def alias(self):
+        return self._alias
+
+    @alias.setter
+    def alias(self, alias):
+        if self.short and alias is None:
+            self._alias = self.full_prefix
+        else:
+            self._alias = alias
+
+    @property
+    def short(self):
+        return self._short
 
     @property
     def src(self):
@@ -29,6 +59,8 @@ class FixtureFile(LocalPath):
 
     @src.setter
     def src(self, src):
+        if src is None and not self.isdir():
+            src = self.basename
         assert src is not None, "source file must not be None"
         if isinstance(src, str):
             if os.path.isabs(src):
@@ -55,6 +87,14 @@ class FixtureFile(LocalPath):
     @property
     def data_dir(self):
         return self._data_dir
+
+    @property
+    def name(self):
+        return self.alias if self.alias else self.basename
+
+    @property
+    def id(self):
+        return self.name
 
     def __repr__(self):
         return "{} (src: {})".format(self, self.src)
@@ -104,23 +144,22 @@ class ReadFixtureFile(FixtureFile):
         cls.census += 1
         return obj
 
-    def __init__(self, sample="CHS.HG00512", path=None,
-                 expanduser=False, size="tiny", read=1, batch=None,
-                 runfmt="{SM}", alias=None, prefix="s",
-                 use_short_sample_name=False, *args,
-                 **kwargs):
-        self._size = size
+    def __init__(self, sample="CHS.HG00512", path=None, size="tiny",
+                 alias=None, short_name=False, read=1, batch=None,
+                 prefix="s", runfmt="{SM}", population=None,
+                 platform_unit=None, *args, **kwargs):
         self.sample = sample
+        self._size = size
+        self.read = read
+        self._short = short_name
+        self._prefix = prefix
+        self.alias = alias
         self._index = self._samples.index(sample)
-        self._population = kwargs.get("population", self._populations[self._index])
-        self._platform_unit = kwargs.get("platform_unit", self._platform_units[self._index])
+        self._population = population if population else self._populations[self._index]
+        self._platform_unit = platform_unit if platform_unit else self._platform_units[self._index]
         self._batch = batch
         self._runfmt = runfmt
-        self._short = use_short_sample_name
-        self._prefix = "s"
-        self.alias = alias
-        self.read = read
-        src = self.data_dir.join(self.size, "{}{}".format(self.sample, self.fastq_suffix))
+
         if path is None:
             path = self.runfmt.format(**dict(self)) + self.fastq_suffix
         else:
@@ -132,7 +171,10 @@ class ReadFixtureFile(FixtureFile):
                     path = path.join(self.fastq)
             else:
                 pass
-        super(ReadFixtureFile, self).__init__(src=src, path=path, expanduser=expanduser, **kwargs)
+        kwargs['src'] = self.data_dir.join(self._size, "{}{}".format(self.sample, self.fastq_suffix))
+        super(ReadFixtureFile, self).__init__(path=path, **kwargs)
+        if self.alias is not None:
+            self.strpath = str(self.path.join(self.fastq))
 
     @property
     def id(self):
@@ -142,19 +184,6 @@ class ReadFixtureFile(FixtureFile):
     def sample(self):
         return self._sample
 
-    @sample.setter
-    def sample(self, sample):
-        assert sample in self._samples, "sample has to be one of {}".format(", ".join(self._samples))
-        self._sample = sample
-
-    @property
-    def SM(self):
-        return self._sample
-
-    @property
-    def prefix(self):
-        return self._prefix
-
     @property
     def alias(self):
         return self._alias
@@ -162,13 +191,22 @@ class ReadFixtureFile(FixtureFile):
     @alias.setter
     def alias(self, alias):
         if self.short and alias is None:
-            self._alias = "{}{}".format(self.prefix, self.census)
+            self._alias = self.full_prefix
         else:
             self._alias = alias
 
+    @sample.setter
+    def sample(self, sample):
+        assert sample in self._samples, "sample has to be one of {}".format(", ".join(self._samples))
+        self._sample = sample
+
     @property
-    def short(self):
-        return self._short
+    def full_prefix(self):
+        return "{}{}".format(self.prefix, self.census)
+
+    @property
+    def SM(self):
+        return self._sample
 
     @property
     def read(self):
