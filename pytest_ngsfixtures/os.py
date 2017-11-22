@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def safe_copy(p, src, dst):
+def safe_copy(p, src, dst, ignore_errors=False):
     """Safely copy fixture file.
 
     Copy file from src to dst in LocalPath p. If src, dst are strings,
@@ -20,6 +20,7 @@ def safe_copy(p, src, dst):
       p (LocalPath): path in which link is setup
       src (str, LocalPath): source file that link points to. If string, assume relative to pytest_ngsfixtures data directory
       dst (str, LocalPath): link destination name. If string, assume relative to path and concatenate; else leave alone
+      ignore_errors (bool): ignore errors should target file exist
 
     Returns:
       dst (LocalPath): link name
@@ -38,12 +39,15 @@ def safe_copy(p, src, dst):
             raise py.error.EEXIST("copy('{src}', '{dst}')".format(src=src, dst=dst))
         src.copy(dst)
     except OSError as e:
-        logger.error(e)
-        raise
+        if ignore_errors:
+            logger.warn(e)
+        else:
+            logger.error(e)
+            raise
     return dst
 
 
-def safe_symlink(p, src, dst):
+def safe_symlink(p, src, dst, ignore_errors=False):
     """Safely make symlink.
 
     Make symlink from src to dst in LocalPath p. If src, dst are
@@ -55,6 +59,7 @@ def safe_symlink(p, src, dst):
       p (LocalPath): path in which link is setup
       src (str, LocalPath): source file that link points to. If string, assume relative to pytest_ngsfixtures data directory
       dst (str, LocalPath): link destination name. If string, assume relative to path and concatenate; else leave alone
+      ignore_errors (bool): ignore errors should target file exist
 
     Returns:
       dst (LocalPath): link name
@@ -71,8 +76,11 @@ def safe_symlink(p, src, dst):
         dst.dirpath().ensure(dir=True)
         dst.mksymlinkto(src)
     except OSError as e:
-        logger.error(e)
-        raise
+        if ignore_errors:
+            logger.warn(e)
+        else:
+            logger.error(e)
+            raise
     return dst
 
 

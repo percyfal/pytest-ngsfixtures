@@ -7,7 +7,6 @@ tox
 coverage
 Sphinx
 snakemake
-sphinx-rtd-theme
 
 pytest
 pytest-runner
