@@ -2,7 +2,6 @@
 import logging
 import itertools
 import pytest
-from pytest_ngsfixtures.config import sample_conf
 from pytest_ngsfixtures.os import safe_mktemp
 from pytest_ngsfixtures.layout import setup_sample_layout, setup_reference_layout
 from pytest_ngsfixtures.file import setup_fileset, setup_filetype, ApplicationOutputFixture
@@ -10,37 +9,6 @@ from pytest_ngsfixtures.file import setup_fileset, setup_filetype, ApplicationOu
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-
-@pytest.fixture(scope="function", autouse=False,
-                params=itertools.product(sample_conf.RUNFMT_ALIAS[1:7], sample_conf.SAMPLE_LAYOUTS[1:3]))
-def psample(request, tmpdir_factory):
-    """Parametrized sample fixture"""
-    fmt, layout = request.param
-    if fmt not in request.config.option.ngs_runfmt_alias:
-        pytest.skip("skipping {} as not in options")
-    dirname = "{}_{}".format(fmt, layout)
-    if layout == "pool":
-        if fmt.endswith("project_run"):
-            pytest.skip("pool layout can not be run in project run mode")
-    path = safe_mktemp(tmpdir_factory, dirname)
-    path = setup_sample_layout(path, layout=layout,
-                               copy=request.config.option.ngs_copy)
-    return path
-
-
-@pytest.fixture(scope="function", autouse=False)
-def pref(request, tmpdir_factory):
-    """Parametrized reference fixture"""
-    label = "scaffolds"
-    if request.config.option.ngs_ref:
-        label = "ref"
-    dirname = label
-    path = safe_mktemp(tmpdir_factory, dirname)
-    path = setup_reference_layout(path, label=label,
-                                  copy=request.config.option.ngs_copy,
-                                  setup=True, ignore_errors=True)
-    return path
 
 
 def sample_layout(
@@ -267,17 +235,7 @@ def fileset(src, dst=None, fdir=None, copy=False, **kwargs):
 
     @pytest.fixture(scope=kwargs.get("scope", "function"), autouse=kwargs.get("autouse", False))
     def fileset_fixture(request, tmpdir_factory):
-        """Fileset factory
-
-        Setup a set of files
-
-        Args:
-          request (FixtureRequest): fixture request object
-          tmpdir_factory (py.path.local): fixture request object
-
-        Returns:
-          :obj:`py._path.local.LocalPath`: output directory in which the files reside
-        """
+        """Fileset fixture - setup a set of files"""
         p = safe_mktemp(tmpdir_factory, fdir, **kwargs)
         p = setup_fileset(path=p, src=src, dst=dst)
         if request.config.option.ngs_show_fixture:
@@ -331,6 +289,7 @@ def application_output(application, command, version, end="pe",
 
     @pytest.fixture
     def application_output_fixture(request, tmpdir_factory):
+        """Setup application output fixture set"""
         p = safe_mktemp(tmpdir_factory, fdir, **kwargs)
         ao = ApplicationOutputFixture(application, command, version, end=end, path=p, setup=True)
         if request.config.option.ngs_show_fixture:
