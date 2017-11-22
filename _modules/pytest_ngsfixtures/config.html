@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pytest_ngsfixtures.config &mdash; pytest-ngsfixtures 0.5.0 documentation</title>
+  <title>pytest_ngsfixtures.config &mdash; pytest-ngsfixtures 0.6.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="pytest-ngsfixtures 0.5.0 documentation" href="../../index.html"/>
+    <link rel="top" title="pytest-ngsfixtures 0.6.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.6.0
               </div>
             
           
@@ -93,9 +93,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Developer guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#files">Files</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#advanced-usage">Advanced usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#plugin-options">Plugin options</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html">pytest_ngsfixtures</a></li>
 </ul>
 
@@ -168,40 +165,71 @@
 <span class="kn">import</span> <span class="nn">itertools</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">namedtuple</span>
-<span class="kn">from</span> <span class="nn">pytest_ngsfixtures</span> <span class="k">import</span> <span class="n">ROOT_DIR</span><span class="p">,</span> <span class="n">helpers</span>
+<span class="kn">from</span> <span class="nn">pytest_ngsfixtures</span> <span class="k">import</span> <span class="n">DATA_DIR</span><span class="p">,</span> <span class="n">helpers</span>
 
 <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
-<span class="n">DATADIR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ROOT_DIR</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;applications&quot;</span><span class="p">)</span>
+<span class="n">APPLICATION_DATA_DIR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATA_DIR</span><span class="p">,</span> <span class="s2">&quot;applications&quot;</span><span class="p">)</span>
 <span class="n">APPLICATION_BLACKLIST</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;pe&quot;</span><span class="p">,</span> <span class="s2">&quot;se&quot;</span><span class="p">]</span>
-<span class="n">APPLICATION_DIRECTORIES</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATADIR</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">DATADIR</span><span class="p">)</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATADIR</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span> <span class="ow">and</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">APPLICATION_BLACKLIST</span><span class="p">])</span>
-<span class="n">configfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATADIR</span><span class="p">,</span> <span class="s2">&quot;config.yaml&quot;</span><span class="p">)</span>
+<span class="n">APPLICATION_DIRECTORIES</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">APPLICATION_DATA_DIR</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">APPLICATION_DATA_DIR</span><span class="p">)</span> <span class="k">if</span>
+     <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">APPLICATION_DATA_DIR</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span> <span class="ow">and</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span>
+     <span class="n">APPLICATION_BLACKLIST</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">configfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">APPLICATION_DATA_DIR</span><span class="p">,</span> <span class="s2">&quot;config.yaml&quot;</span><span class="p">)</span>
 
 <span class="n">Config</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Config&#39;</span><span class="p">,</span> <span class="s1">&#39;SIZES SAMPLES POPULATIONS SAMPLE_LAYOUTS&#39;</span><span class="p">)</span>
 
 <span class="n">sample_conf</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span>
-    <span class="n">SIZES</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;tiny&quot;</span><span class="p">,</span> <span class="s2">&quot;small&quot;</span><span class="p">,</span> <span class="s2">&quot;medium&quot;</span><span class="p">,</span> <span class="s2">&quot;yuge&quot;</span><span class="p">],</span>
-    <span class="n">SAMPLES</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;CHS.HG00512&#39;</span><span class="p">,</span> <span class="s1">&#39;CHS.HG00513&#39;</span><span class="p">,</span> <span class="s1">&#39;CHS&#39;</span><span class="p">,</span>
+    <span class="n">SIZES</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;tiny&quot;</span><span class="p">,</span> <span class="s2">&quot;small&quot;</span><span class="p">,</span> <span class="s2">&quot;medium&quot;</span><span class="p">,</span> <span class="s2">&quot;yuge&quot;</span><span class="p">),</span>
+    <span class="n">SAMPLES</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;CHS.HG00512&#39;</span><span class="p">,</span> <span class="s1">&#39;CHS.HG00513&#39;</span><span class="p">,</span> <span class="s1">&#39;CHS&#39;</span><span class="p">,</span>
              <span class="s1">&#39;PUR.HG00731&#39;</span><span class="p">,</span> <span class="s1">&#39;PUR.HG00733&#39;</span><span class="p">,</span> <span class="s1">&#39;PUR&#39;</span><span class="p">,</span>
              <span class="s1">&#39;PUR.HG00731.A&#39;</span><span class="p">,</span> <span class="s1">&#39;PUR.HG00731.B&#39;</span><span class="p">,</span>
              <span class="s1">&#39;PUR.HG00733.A&#39;</span><span class="p">,</span> <span class="s1">&#39;PUR.HG00733.B&#39;</span><span class="p">,</span>
-             <span class="s1">&#39;YRI.NA19238&#39;</span><span class="p">,</span> <span class="s1">&#39;YRI.NA19239&#39;</span><span class="p">,</span> <span class="s1">&#39;YRI&#39;</span><span class="p">],</span>
-    <span class="n">POPULATIONS</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;CHS&quot;</span><span class="p">,</span> <span class="s2">&quot;PUR&quot;</span><span class="p">,</span> <span class="s2">&quot;YRI&quot;</span><span class="p">],</span>
-    <span class="n">SAMPLE_LAYOUTS</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="s2">&quot;sample_run&quot;</span><span class="p">,</span>
+             <span class="s1">&#39;YRI.NA19238&#39;</span><span class="p">,</span> <span class="s1">&#39;YRI.NA19239&#39;</span><span class="p">,</span> <span class="s1">&#39;YRI&#39;</span><span class="p">),</span>
+    <span class="n">POPULATIONS</span><span class="o">=</span><span class="nb">tuple</span><span class="p">([</span><span class="s2">&quot;CHS&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span>
+                      <span class="p">[</span><span class="s2">&quot;PUR&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">7</span> <span class="o">+</span>
+                      <span class="p">[</span><span class="s2">&quot;YRI&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="n">SAMPLE_LAYOUTS</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="s2">&quot;sample_run&quot;</span><span class="p">,</span>
                     <span class="s2">&quot;project_sample_run&quot;</span><span class="p">,</span> <span class="s2">&quot;pop_sample&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;pop_sample_run&quot;</span><span class="p">,</span> <span class="s2">&quot;pop_project_sample_run&quot;</span><span class="p">]</span>
+                    <span class="s2">&quot;pop_sample_run&quot;</span><span class="p">,</span> <span class="s2">&quot;pop_project_sample_run&quot;</span><span class="p">)</span>
 <span class="p">)</span>
 
 
 <div class="viewcode-block" id="application_config"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.config.application_config">[docs]</a><span class="k">def</span> <span class="nf">application_config</span><span class="p">(</span><span class="n">application</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Get application configuration</span>
+    <span class="sd">&quot;&quot;&quot;Get application configuration.</span>
 
-<span class="sd">    Params:</span>
+<span class="sd">    Application output files are stored in the &quot;data/applications&quot;</span>
+<span class="sd">    subdirectory of pytest-ngsfixtures installation directory. Every</span>
+<span class="sd">    application lives in its own subdirectory named after the</span>
+<span class="sd">    application.</span>
+
+<span class="sd">    The application configuration is a dictionary that merges a</span>
+<span class="sd">    top-level configuration file &#39;config.yaml&#39; with</span>
+<span class="sd">    application-specific &#39;config.yaml&#39; files residing in the</span>
+<span class="sd">    application directories. The general configuration defines keys</span>
+<span class="sd">    &#39;basedir&#39;, &#39;end&#39;, &#39;input&#39;, and &#39;params&#39;. The application</span>
+<span class="sd">    configuration sets metadata used by snakemake to auto-generate</span>
+<span class="sd">    application data output.</span>
+
+<span class="sd">    Args:</span>
 <span class="sd">      application (str): application name</span>
 
 <span class="sd">    Return:</span>
 <span class="sd">      dict: application configuration</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">      Retrieve application configuration and use it to generate a</span>
+<span class="sd">      fixture. See also</span>
+<span class="sd">      :mod:`~pytest_ngsfixtures.factories.application_output`.</span>
+
+<span class="sd">      &gt;&gt;&gt; from pytest_ngsfixtures import config</span>
+<span class="sd">      &gt;&gt;&gt; conf = config.application_config()</span>
+<span class="sd">      &gt;&gt;&gt; # Application rule metadata are formatted as python miniformat strings</span>
+<span class="sd">      &gt;&gt;&gt; conf[&#39;qualimap&#39;][&#39;qualimap_bamqc_pe&#39;][&#39;output&#39;][&#39;genome_results&#39;]</span>
+<span class="sd">      &#39;{version}/{end}/genome_results.txt&#39;</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">configfile</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
@@ -221,17 +249,34 @@
     <span class="k">return</span> <span class="n">application_config</span></div>
 
 
-<div class="viewcode-block" id="get_application_fixture"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.config.get_application_fixture">[docs]</a><span class="k">def</span> <span class="nf">get_application_fixture</span><span class="p">(</span><span class="n">application</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;se&quot;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Retrieve a application fixture as formatted strings</span>
+<div class="viewcode-block" id="get_application_fixture_output"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.config.get_application_fixture_output">[docs]</a><span class="k">def</span> <span class="nf">get_application_fixture_output</span><span class="p">(</span><span class="n">application</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;se&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Retrieve application output names as mapping from snakemake rule</span>
+<span class="sd">    keyword to output file name.</span>
 
-<span class="sd">    Params:</span>
+<span class="sd">    An application configuration file defines snakemake rule metadata</span>
+<span class="sd">    such as output. The output section simply maps a rule keyword to</span>
+<span class="sd">    an output file name. This function returns a key-value mapping</span>
+<span class="sd">    from keyword to *formatted* output file name.</span>
+
+<span class="sd">    Args:</span>
 <span class="sd">      application (str): application name</span>
 <span class="sd">      command (str): command name</span>
 <span class="sd">      version (str): version</span>
 <span class="sd">      end (str): se or pe</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">      dict: dictionary of application fixture names formatted as a string</span>
+<span class="sd">      dict: dictionary that maps snakemake rule keywords to formatted</span>
+<span class="sd">            application output strings</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">      &gt;&gt;&gt; from pytest_ngsfixtures import config</span>
+<span class="sd">      &gt;&gt;&gt; af = config.get_application_fixture_output(&#39;qualimap&#39;, &#39;qualimap_bamqc_pe&#39;, &#39;2.2.2&#39;)</span>
+<span class="sd">      &gt;&gt;&gt; print(list(af.keys())[0:2])</span>
+<span class="sd">      [&#39;genome_results&#39;, &#39;coverage_across_reference&#39;]</span>
+<span class="sd">      &gt;&gt;&gt; print(af[&#39;genome_results&#39;])</span>
+<span class="sd">      qualimap/2.2.2/se/genome_results.txt</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">conf</span> <span class="o">=</span> <span class="n">application_config</span><span class="p">(</span><span class="n">application</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
@@ -242,20 +287,38 @@
     <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">application</span><span class="p">,</span> <span class="n">o</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="n">version</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">output</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
 
 
-<div class="viewcode-block" id="application_fixtures"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.config.application_fixtures">[docs]</a><span class="k">def</span> <span class="nf">application_fixtures</span><span class="p">(</span><span class="n">application</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return the application fixtures.</span>
+<div class="viewcode-block" id="flattened_application_fixture_metadata"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.config.flattened_application_fixture_metadata">[docs]</a><span class="k">def</span> <span class="nf">flattened_application_fixture_metadata</span><span class="p">(</span><span class="n">application</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the application fixture metadata flattened as a list of tuples.</span>
 
-<span class="sd">    Returns the application fixtures defined in the application config</span>
-<span class="sd">    file (data/applications/config.yaml).</span>
+<span class="sd">    Returns the application fixture metadata defined in the</span>
+<span class="sd">    application config file (data/applications/config.yaml) as a list</span>
+<span class="sd">    of tuples.</span>
 
-<span class="sd">    Params:</span>
+<span class="sd">    Args:</span>
 <span class="sd">      application (str): application name</span>
 <span class="sd">      end (str): sequence configuration (single end/paired end)</span>
 <span class="sd">      version (str): version identifier</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">      list of fixtures, where each entry consists of application,</span>
-<span class="sd">      command, version, end, and the raw output.</span>
+<span class="sd">      flattened list of fixture metadata, where each entry consists of</span>
+<span class="sd">      application, command, version, end, and the raw unformatted output.</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">      Typically this function is used to collect all metadata needed</span>
+<span class="sd">      to setup a (parametrized) pytest fixture. See</span>
+<span class="sd">      :py:mod:`bioodo.tests.utils.fixture_factory` for an example</span>
+<span class="sd">      where a list of fixture metadata is used to generate a set of</span>
+<span class="sd">      parametrized fixtures.</span>
+
+<span class="sd">      &gt;&gt;&gt; from pytest_ngsfixtures import config</span>
+<span class="sd">      &gt;&gt;&gt; af = config.flattened_application_fixture_metadata(application=&quot;qualimap&quot;)</span>
+<span class="sd">      &gt;&gt;&gt; module, command, version, end, fmtdict = af[0]</span>
+<span class="sd">      &gt;&gt;&gt; module, command, version, end</span>
+<span class="sd">      (&#39;qualimap&#39;, &#39;qualimap_bamqc_pe&#39;, &#39;2.2.2&#39;, &#39;pe&#39;)</span>
+<span class="sd">      &gt;&gt;&gt; fmtdict[&#39;genome_results&#39;]</span>
+<span class="sd">      &#39;{version}/{end}/genome_results.txt&#39;</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">fixtures</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">conf</span> <span class="o">=</span> <span class="n">application_config</span><span class="p">(</span><span class="n">application</span><span class="p">)</span>
@@ -322,7 +385,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.5.0',
+            VERSION:'0.6.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

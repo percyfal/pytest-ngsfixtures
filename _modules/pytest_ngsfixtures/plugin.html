@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pytest_ngsfixtures.plugin &mdash; pytest-ngsfixtures 0.5.0 documentation</title>
+  <title>pytest_ngsfixtures.plugin &mdash; pytest-ngsfixtures 0.6.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="pytest-ngsfixtures 0.5.0 documentation" href="../../index.html"/>
+    <link rel="top" title="pytest-ngsfixtures 0.6.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.6.0
               </div>
             
           
@@ -93,9 +93,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Developer guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#files">Files</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#advanced-usage">Advanced usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html#plugin-options">Plugin options</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html">pytest_ngsfixtures</a></li>
 </ul>
 
@@ -249,7 +246,7 @@
     <span class="s1">&#39;platform_units&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;010101_AAABBB11XX&#39;</span><span class="p">,</span> <span class="s1">&#39;020202_AAABBB22XX&#39;</span><span class="p">,</span> <span class="s1">&#39;010101_AAABBB11XX&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;010101_AAABBB11XX&#39;</span><span class="p">,</span> <span class="s1">&#39;020202_AAABBB22XX&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
     <span class="s1">&#39;populations&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;PUR&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;CHS&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;YRI&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
     <span class="s1">&#39;paired_end&#39;</span><span class="p">:</span> <span class="p">[</span><span class="kc">True</span><span class="p">]</span> <span class="o">*</span> <span class="mi">7</span><span class="p">,</span>
-    <span class="s1">&#39;use_short_sample_names&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s1">&#39;short_names&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
     <span class="s1">&#39;numbered&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">}</span>
 
@@ -269,6 +266,28 @@
     <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;pop_project_sample_run&quot;</span><span class="p">,</span>
     <span class="n">runfmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{POP}</span><span class="s2">/</span><span class="si">{SM}</span><span class="s2">/</span><span class="si">{BATCH}</span><span class="s2">/</span><span class="si">{PU}</span><span class="s2">/</span><span class="si">{SM}</span><span class="s2">_</span><span class="si">{PU}</span><span class="s2">&quot;</span><span class="p">,</span>
     <span class="n">batches</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;p1&quot;</span><span class="p">,</span> <span class="s2">&quot;p2&quot;</span><span class="p">,</span> <span class="s2">&quot;p1&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;p1&quot;</span><span class="p">,</span> <span class="s2">&quot;p2&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+    <span class="s1">&#39;samples&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;CHS&quot;</span><span class="p">,</span> <span class="s2">&quot;PUR&quot;</span><span class="p">,</span> <span class="s2">&quot;YRI&quot;</span><span class="p">],</span>
+    <span class="s1">&#39;sample_aliases&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;CHS.pool&quot;</span><span class="p">,</span> <span class="s2">&quot;PUR.pool&quot;</span><span class="p">,</span> <span class="s2">&quot;YRI.pool&quot;</span><span class="p">],</span>
+    <span class="s1">&#39;populations&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;CHS&quot;</span><span class="p">,</span> <span class="s2">&quot;PUR&quot;</span><span class="p">,</span> <span class="s2">&quot;YRI&quot;</span><span class="p">],</span>
+    <span class="s1">&#39;platform_units&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;010101_AAABBB11XX&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;020202_AAABBB22XX&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;010101_AAABBB11XX&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;paired_end&#39;</span><span class="p">:</span> <span class="p">[</span><span class="kc">True</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span>
+<span class="p">})</span>
+
+<span class="n">pool_pop_sample</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span>
+    <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;pool_pop_sample&quot;</span><span class="p">,</span>
+    <span class="n">runfmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{POP}</span><span class="s2">/</span><span class="si">{SM}</span><span class="s2">/</span><span class="si">{SM}</span><span class="s2">_</span><span class="si">{PU}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">pool_pop_sample_run</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span>
+    <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;pool_pop_sample_run&quot;</span><span class="p">,</span>
+    <span class="n">runfmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{POP}</span><span class="s2">/</span><span class="si">{SM}</span><span class="s2">/</span><span class="si">{PU}</span><span class="s2">/</span><span class="si">{SM}</span><span class="s2">_</span><span class="si">{PU}</span><span class="s2">&quot;</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">)</span>
 
@@ -310,7 +329,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.5.0',
+            VERSION:'0.6.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

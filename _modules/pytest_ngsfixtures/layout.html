@@ -1,0 +1,356 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pytest_ngsfixtures.layout &mdash; pytest-ngsfixtures 0.6.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="pytest-ngsfixtures 0.6.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pytest-ngsfixtures
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.6.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Developer guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">pytest_ngsfixtures</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pytest-ngsfixtures</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>pytest_ngsfixtures.layout</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pytest_ngsfixtures.layout</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;layout</span>
+<span class="sd">----------------------------------</span>
+
+<span class="sd">Utility functions for sample and reference layouts.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">py</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">from</span> <span class="nn">pytest_ngsfixtures.file</span> <span class="k">import</span> <span class="n">ReadFixtureFile</span><span class="p">,</span> <span class="n">ReferenceFixtureFile</span>
+
+<span class="n">layouts</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;short&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;sample&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;PUR.HG00731.A&#39;</span><span class="p">,</span> <span class="s1">&#39;PUR.HG00731.B&#39;</span><span class="p">,</span> <span class="s1">&#39;PUR.HG00733.A&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;alias&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;s1&#39;</span><span class="p">,</span> <span class="s1">&#39;s1&#39;</span><span class="p">,</span> <span class="s1">&#39;s2&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;platform_unit&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;010101_AAABBB11XX&#39;</span><span class="p">,</span> <span class="s1">&#39;020202_AAABBB22XX&#39;</span><span class="p">,</span> <span class="s1">&#39;010101_AAABBB11XX&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;paired_end&#39;</span><span class="p">:</span> <span class="p">[</span><span class="kc">True</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;numbered&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;individual&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;sample&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;PUR.HG00731.A&#39;</span><span class="p">,</span> <span class="s1">&#39;PUR.HG00731.B&#39;</span><span class="p">,</span> <span class="s1">&#39;PUR.HG00733.A&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;CHS.HG00512&#39;</span><span class="p">,</span> <span class="s1">&#39;CHS.HG00513&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;YRI.NA19238&#39;</span><span class="p">,</span> <span class="s1">&#39;YRI.NA19239&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;alias&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;PUR.HG00731&#39;</span><span class="p">,</span> <span class="s1">&#39;PUR.HG00731&#39;</span><span class="p">,</span> <span class="s1">&#39;PUR.HG00733&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;CHS.HG00512&#39;</span><span class="p">,</span> <span class="s1">&#39;CHS.HG00513&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;YRI.NA19238&#39;</span><span class="p">,</span> <span class="s1">&#39;YRI.NA19239&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;platform_unit&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;010101_AAABBB11XX&#39;</span><span class="p">,</span> <span class="s1">&#39;020202_AAABBB22XX&#39;</span><span class="p">,</span> <span class="s1">&#39;010101_AAABBB11XX&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;010101_AAABBB11XX&#39;</span><span class="p">,</span> <span class="s1">&#39;020202_AAABBB22XX&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s1">&#39;population&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;PUR&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;CHS&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;YRI&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s1">&#39;paired_end&#39;</span><span class="p">:</span> <span class="p">[</span><span class="kc">True</span><span class="p">]</span> <span class="o">*</span> <span class="mi">7</span><span class="p">,</span>
+        <span class="s1">&#39;batch&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;p1&quot;</span><span class="p">,</span> <span class="s2">&quot;p2&quot;</span><span class="p">,</span> <span class="s2">&quot;p1&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;p1&quot;</span><span class="p">,</span> <span class="s2">&quot;p2&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;pool&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;sample&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;CHS&quot;</span><span class="p">,</span> <span class="s2">&quot;PUR&quot;</span><span class="p">,</span> <span class="s2">&quot;YRI&quot;</span><span class="p">],</span>
+        <span class="s1">&#39;alias&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;CHS.pool&quot;</span><span class="p">,</span> <span class="s2">&quot;PUR.pool&quot;</span><span class="p">,</span> <span class="s2">&quot;YRI.pool&quot;</span><span class="p">],</span>
+        <span class="s1">&#39;population&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;CHS&quot;</span><span class="p">,</span> <span class="s2">&quot;PUR&quot;</span><span class="p">,</span> <span class="s2">&quot;YRI&quot;</span><span class="p">],</span>
+        <span class="s1">&#39;platform_unit&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;010101_AAABBB11XX&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;020202_AAABBB22XX&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;010101_AAABBB11XX&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;paired_end&#39;</span><span class="p">:</span> <span class="p">[</span><span class="kc">True</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="generate_sample_layouts"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.layout.generate_sample_layouts">[docs]</a><span class="k">def</span> <span class="nf">generate_sample_layouts</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">&quot;short&quot;</span><span class="p">,</span>
+                            <span class="n">combinator</span><span class="o">=</span><span class="n">itertools</span><span class="o">.</span><span class="n">zip_longest</span><span class="p">,</span>
+                            <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generate list of sample layout structures.</span>
+
+<span class="sd">    A sample layout structure is a dictionary holding metadata for a</span>
+<span class="sd">    sample layout. The keys are samtools read group specifiers and</span>
+<span class="sd">    some custom labels, consisting of &#39;POP&#39;, &#39;PU&#39;, &#39;SM&#39;, &#39;BATCH&#39;, and</span>
+<span class="sd">    &#39;PE&#39;.</span>
+
+
+<span class="sd">    Args:</span>
+<span class="sd">      layout (str): layout name</span>
+<span class="sd">      population (list): list of population names</span>
+<span class="sd">      sample (list): list of sample names</span>
+<span class="sd">      platform_unit (list): list of platform units</span>
+<span class="sd">      batch (list): list of batch (project) names</span>
+<span class="sd">      paired_end (list): list of booleans indicating if a sample run</span>
+<span class="sd">                         is paired end (True) or single end (False)</span>
+<span class="sd">      alias (list): list of sample alias names</span>
+<span class="sd">      combinator (fun): function to combine population,</span>
+<span class="sd">                        platform_units, samples, batches, and</span>
+<span class="sd">                        paired_end</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;population&#39;</span><span class="p">,</span> <span class="s1">&#39;platform_unit&#39;</span><span class="p">,</span> <span class="s1">&#39;sample&#39;</span><span class="p">,</span> <span class="s1">&#39;batch&#39;</span><span class="p">,</span> <span class="s1">&#39;paired_end&#39;</span><span class="p">,</span> <span class="s1">&#39;alias&#39;</span><span class="p">]</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">}</span>
+    <span class="k">if</span> <span class="n">layout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">layout</span> <span class="ow">in</span> <span class="n">layouts</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="s2">&quot;named layout must be one of </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">layouts</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">layouts</span><span class="p">[</span><span class="n">layout</span><span class="p">])</span>
+    <span class="k">return</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">p</span><span class="p">))</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">combinator</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">config</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">])]</span></div>
+
+
+<div class="viewcode-block" id="setup_sample_layout"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.layout.setup_sample_layout">[docs]</a><span class="k">def</span> <span class="nf">setup_sample_layout</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sample_prefix</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span>
+                        <span class="n">runfmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{SM}</span><span class="s2">/</span><span class="si">{SM}</span><span class="s2">_</span><span class="si">{PU}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">short_names</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                        <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Setup sample layout.</span>
+
+
+<span class="sd">    Args:</span>
+<span class="sd">      path (py._path.local.LocalPath): :py:class:`~py._path.local.LocalPath` path where test files will be setup</span>
+<span class="sd">      layout (str): predefined layout name</span>
+<span class="sd">      copy (bool): copy test files instead of symlinking (required for dockerized tests)</span>
+<span class="sd">      sample_prefix (str): sample prefix for short names</span>
+<span class="sd">      kwargs (dict): arguments that are passed on to :py:func:`~pytest_ngsfixtures.layout.generate_sample_layouts`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ReadFixtureFile</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">layout_list</span> <span class="o">=</span> <span class="n">generate_sample_layouts</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">layout_list</span><span class="p">:</span>
+        <span class="n">l</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;short_name&#39;</span><span class="p">:</span> <span class="n">short_names</span><span class="p">,</span>
+                  <span class="s1">&#39;prefix&#39;</span><span class="p">:</span> <span class="n">sample_prefix</span><span class="p">})</span>
+        <span class="n">r1</span> <span class="o">=</span> <span class="n">ReadFixtureFile</span><span class="p">(</span><span class="n">runfmt</span><span class="o">=</span><span class="n">runfmt</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">,</span> <span class="o">**</span><span class="n">l</span><span class="p">)</span>
+        <span class="n">r1</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+        <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">l</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;paired_end&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+            <span class="n">r2</span> <span class="o">=</span> <span class="n">ReadFixtureFile</span><span class="p">(</span><span class="n">runfmt</span><span class="o">=</span><span class="n">runfmt</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">,</span>
+                                 <span class="n">read</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="o">**</span><span class="n">l</span><span class="p">)</span>
+            <span class="n">r2</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sampleinfo&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">sampleinfo_keys</span><span class="p">)]</span>
+        <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">output</span><span class="p">:</span>
+            <span class="n">info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">o</span><span class="o">.</span><span class="n">sampleinfo</span><span class="p">)</span>
+        <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;sampleinfo.csv&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">info</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">path</span></div>
+
+
+<div class="viewcode-block" id="setup_reference_layout"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.layout.setup_reference_layout">[docs]</a><span class="k">def</span> <span class="nf">setup_reference_layout</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;ref&quot;</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Setup reference layout</span>
+
+<span class="sd">    Wrapper to setup multiple reference files. Either choose between</span>
+<span class="sd">    &#39;ref&#39; or &#39;scaffolds&#39; label.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      path (py._path.local.LocalPath): :py:class:`~py._path.local.LocalPath` path where reference test files will be setup</span>
+<span class="sd">      label (str): reference fixture label (&#39;ref&#39; or &#39;scaffolds&#39;)</span>
+<span class="sd">      copy (bool): copy fixture files instead of symlinking</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      py._path.local.LocalPath: modified :py:class:`~py._path.local.LocalPath` object with test files setup</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ref_dict</span> <span class="o">=</span> <span class="n">ReferenceFixtureFile</span><span class="p">()</span><span class="o">.</span><span class="n">ref</span>
+    <span class="k">assert</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">ref_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="s2">&quot;label &#39;</span><span class="si">{}</span><span class="s2">&#39; must be one of </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">ref_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
+    <span class="n">flist</span> <span class="o">=</span> <span class="n">ref_dict</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">+</span> <span class="n">ref_dict</span><span class="p">[</span><span class="s1">&#39;_always&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">dst</span> <span class="ow">in</span> <span class="n">flist</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dst</span><span class="o">.</span><span class="n">basename</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;ref.chrom.sizes&quot;</span><span class="p">,</span> <span class="s2">&quot;scaffolds.chrom.sizes&quot;</span><span class="p">]:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">ReferenceFixtureFile</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;chrom.sizes&quot;</span><span class="p">),</span> <span class="n">src</span><span class="o">=</span><span class="n">dst</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">ReferenceFixtureFile</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">py</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">local</span><span class="p">(</span><span class="n">dst</span><span class="p">)</span><span class="o">.</span><span class="n">basename</span><span class="p">))</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">path</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Per Unneberg.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.6.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
