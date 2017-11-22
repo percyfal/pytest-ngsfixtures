@@ -8,6 +8,7 @@ Tests for `pytest_ngsfixtures.layout` module.
 """
 import pytest
 import py
+from pytest_ngsfixtures.os import safe_mktemp
 from pytest_ngsfixtures.file import ReadFixtureFile
 from pytest_ngsfixtures.layout import generate_sample_layouts, setup_sample_layout, setup_reference_layout
 
@@ -59,11 +60,24 @@ def test_setup_sample_layout_individual(tmpdir):
     assert header == "PU,SM,fastq"
 
 
-def test_setup_reference_layout(tmpdir):
-    path = setup_reference_layout(tmpdir.join("ref"))
+def test_setup_reference_layout(tmpdir_factory):
+    path = safe_mktemp(tmpdir_factory, dirname="ref", numbered=True)
+    path = setup_reference_layout(path)
     flist = [x.basename for x in path.visit()]
     assert "ref.fa" in flist
     assert "scaffolds.fa" not in flist
+
+
+@pytest.fixture(scope="function", autouse=False)
+def reference_data(tmpdir_factory):
+    path = safe_mktemp(tmpdir_factory, dirname="ref", numbered=True)
+    path = setup_reference_layout(path, label="ref")
+    return path
+
+
+def test_reference_data(reference_data):
+    print(reference_data)
+    print(reference_data.listdir())
 
 
 def test_setup_sample_layout_individual_pop(tmpdir):

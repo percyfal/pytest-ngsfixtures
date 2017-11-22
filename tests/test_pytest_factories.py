@@ -76,7 +76,7 @@ custom_samples = factories.sample_layout(
 )
 
 
-def test_custom(custom_samples, ref):
+def test_custom(custom_samples):
     assert custom_samples.basename == "foo"
     flist = [str(x.basename) for x in custom_samples.visit()]
     assert "CHS.HG00512_bar_1.fastq.gz" in flist
