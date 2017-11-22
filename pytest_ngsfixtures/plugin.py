@@ -79,7 +79,7 @@ def pytest_configure(config):
     return config
 
 
-flat = factories.sample_layout(samples=['CHS.HG00512'])
+flat = factories.sample_layout(sample=['CHS.HG00512'])
 
 ref = factories.reference_layout(dirname="ref")
 scaffolds = factories.reference_layout(label="scaffolds", dirname="scaffolds")
