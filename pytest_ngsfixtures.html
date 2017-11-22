@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pytest_ngsfixtures package &mdash; pytest-ngsfixtures 0.5.0 documentation</title>
+  <title>pytest_ngsfixtures package &mdash; pytest-ngsfixtures 0.6.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="pytest-ngsfixtures 0.5.0 documentation" href="index.html"/>
+    <link rel="top" title="pytest-ngsfixtures 0.6.0 documentation" href="index.html"/>
         <link rel="up" title="pytest_ngsfixtures" href="modules.html"/>
         <link rel="prev" title="pytest_ngsfixtures" href="modules.html"/> 
 
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.6.0
               </div>
             
           
@@ -94,18 +94,23 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Developer guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html#files">Files</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html#advanced-usage">Advanced usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html#plugin-options">Plugin options</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">pytest_ngsfixtures</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">pytest_ngsfixtures package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.applications">pytest_ngsfixtures.applications module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.config">pytest_ngsfixtures.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.exceptions">pytest_ngsfixtures.exceptions module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.factories">pytest_ngsfixtures.factories module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.file">pytest_ngsfixtures.file module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.filetypes">pytest_ngsfixtures.filetypes module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.helpers">pytest_ngsfixtures.helpers module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.layout">pytest_ngsfixtures.layout module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#layout">layout</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.os">pytest_ngsfixtures.os module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.plugin">pytest_ngsfixtures.plugin module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.repo">pytest_ngsfixtures.repo module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.utils">pytest_ngsfixtures.utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures">Module contents</a></li>
 </ul>
@@ -264,75 +269,294 @@ dry_run (bool): dry run</dd>
 <dl class="function">
 <dt id="pytest_ngsfixtures.config.application_config">
 <code class="descclassname">pytest_ngsfixtures.config.</code><code class="descname">application_config</code><span class="sig-paren">(</span><em>application=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/config.html#application_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.config.application_config" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get application configuration</p>
-<dl class="docutils">
-<dt>Params:</dt>
-<dd>application (str): application name</dd>
-</dl>
+<dd><p>Get application configuration.</p>
+<p>Application output files are stored in the “data/applications”
+subdirectory of pytest-ngsfixtures installation directory. Every
+application lives in its own subdirectory named after the
+application.</p>
+<p>The application configuration is a dictionary that merges a
+top-level configuration file ‘config.yaml’ with
+application-specific ‘config.yaml’ files residing in the
+application directories. The general configuration defines keys
+‘basedir’, ‘end’, ‘input’, and ‘params’. The application
+configuration sets metadata used by snakemake to auto-generate
+application data output.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">application configuration</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>application</strong> (<em>str</em>) – application name</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">application configuration</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Example</p>
+<p>Retrieve application configuration and use it to generate a
+fixture. See also
+<a class="reference internal" href="#pytest_ngsfixtures.factories.application_output" title="pytest_ngsfixtures.factories.application_output"><code class="xref py py-mod docutils literal"><span class="pre">application_output</span></code></a>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pytest_ngsfixtures</span> <span class="k">import</span> <span class="n">config</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">conf</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">application_config</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Application rule metadata are formatted as python miniformat strings</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;qualimap&#39;</span><span class="p">][</span><span class="s1">&#39;qualimap_bamqc_pe&#39;</span><span class="p">][</span><span class="s1">&#39;output&#39;</span><span class="p">][</span><span class="s1">&#39;genome_results&#39;</span><span class="p">]</span>
+<span class="go">&#39;{version}/{end}/genome_results.txt&#39;</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
-<dt id="pytest_ngsfixtures.config.application_fixtures">
-<code class="descclassname">pytest_ngsfixtures.config.</code><code class="descname">application_fixtures</code><span class="sig-paren">(</span><em>application=None</em>, <em>end=None</em>, <em>version=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/config.html#application_fixtures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.config.application_fixtures" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the application fixtures.</p>
-<p>Returns the application fixtures defined in the application config
-file (data/applications/config.yaml).</p>
-<dl class="docutils">
-<dt>Params:</dt>
-<dd>application (str): application name
-end (str): sequence configuration (single end/paired end)
-version (str): version identifier</dd>
-</dl>
+<dt id="pytest_ngsfixtures.config.flattened_application_fixture_metadata">
+<code class="descclassname">pytest_ngsfixtures.config.</code><code class="descname">flattened_application_fixture_metadata</code><span class="sig-paren">(</span><em>application=None</em>, <em>end=None</em>, <em>version=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/config.html#flattened_application_fixture_metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.config.flattened_application_fixture_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the application fixture metadata flattened as a list of tuples.</p>
+<p>Returns the application fixture metadata defined in the
+application config file (data/applications/config.yaml) as a list
+of tuples.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of fixtures, where each entry consists of application,
-command, version, end, and the raw output.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>application</strong> (<em>str</em>) – application name</li>
+<li><strong>end</strong> (<em>str</em>) – sequence configuration (single end/paired end)</li>
+<li><strong>version</strong> (<em>str</em>) – version identifier</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">flattened list of fixture metadata, where each entry consists of
+application, command, version, end, and the raw unformatted output.</p>
+</td>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Example</p>
+<p>Typically this function is used to collect all metadata needed
+to setup a (parametrized) pytest fixture. See
+<code class="xref py py-mod docutils literal"><span class="pre">bioodo.tests.utils.fixture_factory</span></code> for an example
+where a list of fixture metadata is used to generate a set of
+parametrized fixtures.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pytest_ngsfixtures</span> <span class="k">import</span> <span class="n">config</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">af</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">flattened_application_fixture_metadata</span><span class="p">(</span><span class="n">application</span><span class="o">=</span><span class="s2">&quot;qualimap&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">module</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">fmtdict</span> <span class="o">=</span> <span class="n">af</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">module</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span> <span class="n">end</span>
+<span class="go">(&#39;qualimap&#39;, &#39;qualimap_bamqc_pe&#39;, &#39;2.2.2&#39;, &#39;pe&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fmtdict</span><span class="p">[</span><span class="s1">&#39;genome_results&#39;</span><span class="p">]</span>
+<span class="go">&#39;{version}/{end}/genome_results.txt&#39;</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
-<dt id="pytest_ngsfixtures.config.get_application_fixture">
-<code class="descclassname">pytest_ngsfixtures.config.</code><code class="descname">get_application_fixture</code><span class="sig-paren">(</span><em>application</em>, <em>command</em>, <em>version</em>, <em>end='se'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/config.html#get_application_fixture"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.config.get_application_fixture" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrieve a application fixture as formatted strings</p>
-<dl class="docutils">
-<dt>Params:</dt>
-<dd>application (str): application name
-command (str): command name
-version (str): version
-end (str): se or pe</dd>
-</dl>
+<dt id="pytest_ngsfixtures.config.get_application_fixture_output">
+<code class="descclassname">pytest_ngsfixtures.config.</code><code class="descname">get_application_fixture_output</code><span class="sig-paren">(</span><em>application</em>, <em>command</em>, <em>version</em>, <em>end='se'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/config.html#get_application_fixture_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.config.get_application_fixture_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve application output names as mapping from snakemake rule
+keyword to output file name.</p>
+<p>An application configuration file defines snakemake rule metadata
+such as output. The output section simply maps a rule keyword to
+an output file name. This function returns a key-value mapping
+from keyword to <em>formatted</em> output file name.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dictionary of application fixture names formatted as a string</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>application</strong> (<em>str</em>) – application name</li>
+<li><strong>command</strong> (<em>str</em>) – command name</li>
+<li><strong>version</strong> (<em>str</em>) – version</li>
+<li><strong>end</strong> (<em>str</em>) – se or pe</li>
+</ul>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>dictionary that maps snakemake rule keywords to formatted</dt>
+<dd><p class="first last">application output strings</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Example</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pytest_ngsfixtures</span> <span class="k">import</span> <span class="n">config</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">af</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get_application_fixture_output</span><span class="p">(</span><span class="s1">&#39;qualimap&#39;</span><span class="p">,</span> <span class="s1">&#39;qualimap_bamqc_pe&#39;</span><span class="p">,</span> <span class="s1">&#39;2.2.2&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">af</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">])</span>
+<span class="go">[&#39;genome_results&#39;, &#39;coverage_across_reference&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">af</span><span class="p">[</span><span class="s1">&#39;genome_results&#39;</span><span class="p">])</span>
+<span class="go">qualimap/2.2.2/se/genome_results.txt</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pytest_ngsfixtures.exceptions">
+<span id="pytest-ngsfixtures-exceptions-module"></span><h2>pytest_ngsfixtures.exceptions module<a class="headerlink" href="#module-pytest_ngsfixtures.exceptions" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="pytest_ngsfixtures.exceptions.ParameterException">
+<em class="property">exception </em><code class="descclassname">pytest_ngsfixtures.exceptions.</code><code class="descname">ParameterException</code><a class="reference internal" href="_modules/pytest_ngsfixtures/exceptions.html#ParameterException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.exceptions.ParameterException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="pytest_ngsfixtures.exceptions.SampleException">
+<em class="property">exception </em><code class="descclassname">pytest_ngsfixtures.exceptions.</code><code class="descname">SampleException</code><a class="reference internal" href="_modules/pytest_ngsfixtures/exceptions.html#SampleException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.exceptions.SampleException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">Exception</span></code></p>
 </dd></dl>
 
 </div>
 <div class="section" id="module-pytest_ngsfixtures.factories">
 <span id="pytest-ngsfixtures-factories-module"></span><h2>pytest_ngsfixtures.factories module<a class="headerlink" href="#module-pytest_ngsfixtures.factories" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
+<dt id="pytest_ngsfixtures.factories.application_output">
+<code class="descclassname">pytest_ngsfixtures.factories.</code><code class="descname">application_output</code><span class="sig-paren">(</span><em>application</em>, <em>command</em>, <em>version</em>, <em>end='pe'</em>, <em>fdir=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/factories.html#application_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.factories.application_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fixture factory to generate a named application output.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>application</strong> (<em>str</em>) – application name</li>
+<li><strong>command</strong> (<em>str</em>) – application command name</li>
+<li><strong>version</strong> (<em>str</em>) – application version</li>
+<li><strong>end</strong> (<em>str</em>) – paired end or single end</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a filetype fixture function</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">func</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<p>This factory function can be used to generate named application
+outputs that then can be used in a test.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pytest_ngsfixtures</span> <span class="kn">import</span> <span class="n">factories</span>
+<span class="n">flagstat</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">application_output</span><span class="p">(</span><span class="s2">&quot;samtools&quot;</span><span class="p">,</span> <span class="s2">&quot;samtools_flagstat&quot;</span><span class="p">,</span> <span class="s2">&quot;1.2&quot;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">test_flagstat</span><span class="p">(</span><span class="n">flagstat</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">flagstat</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.factories.fileset">
+<code class="descclassname">pytest_ngsfixtures.factories.</code><code class="descname">fileset</code><span class="sig-paren">(</span><em>src</em>, <em>dst=None</em>, <em>fdir=None</em>, <em>copy=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/factories.html#fileset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.factories.fileset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fixture factory to generate a <em>named</em> fileset fixture.</p>
+<p>This factory function can be used to generate a named fileset
+fixture based on a set of files that then can be used in a test.
+The test files can be renamed for the test by supplying a list of
+destination names.</p>
+<p>Note that the fileset fixture factory does not look for files in
+the pytest_ngsfixtures installation directory.</p>
+<p class="rubric">Example</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pytest_ngsfixtures</span> <span class="kn">import</span> <span class="n">factories</span>
+<span class="n">bamfiles</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;foo.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;bar.bam&#39;</span><span class="p">]</span>
+<span class="n">bamset</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">fileset</span><span class="p">(</span><span class="n">src</span><span class="o">=</span><span class="n">bamfiles</span><span class="p">,</span> <span class="n">fdir</span><span class="o">=</span><span class="s2">&quot;bamset&quot;</span><span class="p">,</span>
+                           <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;function&quot;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">test_bamset</span><span class="p">(</span><span class="n">bamset</span><span class="p">):</span>
+    <span class="c1"># Do something with bam files</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>src</strong> (<em>list</em>) – list of sources</li>
+<li><strong>dst</strong> (<em>list</em>) – list of destination; if None, use src basename</li>
+<li><strong>fdir</strong> (<code class="xref py py-obj docutils literal"><span class="pre">str</span></code> or <code class="xref py py-obj docutils literal"><span class="pre">py._path.local.LocalPath</span></code>) – output directory</li>
+<li><strong>copy</strong> (<em>bool</em>) – copy fixture file instead of symlinking</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – keyword arguments</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a fixture function</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">func</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.factories.filetype">
+<code class="descclassname">pytest_ngsfixtures.factories.</code><code class="descname">filetype</code><span class="sig-paren">(</span><em>path</em>, <em>src=None</em>, <em>fdir=None</em>, <em>copy=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/factories.html#filetype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.factories.filetype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fixture factory for file types. This factory is atomic in that it
+generates one fixture for one file.</p>
+<p>This factory function can be used to generate a named fixtures based
+on a file that then can be used in a test. The test file can be
+renamed for the test by supplying a destination name.</p>
+<p>If the source file is given as a relative path, the function will
+look for existing files in the data directory of the
+pytest_ngsfixtures installation. In order to use a local source
+file use absolute path names.</p>
+<p class="rubric">Example</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pytest_ngsfixtures</span> <span class="kn">import</span> <span class="n">factories</span>
+<span class="n">bamfile</span> <span class="o">=</span> <span class="s1">&#39;/path/to/foo.bam&#39;</span>
+<span class="n">bam</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">filetype</span><span class="p">(</span><span class="n">src</span><span class="o">=</span><span class="n">bamfile</span><span class="p">,</span> <span class="n">fdir</span><span class="o">=</span><span class="s2">&quot;bam&quot;</span><span class="p">,</span>
+                         <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;function&quot;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">test_bam</span><span class="p">(</span><span class="n">bam</span><span class="p">):</span>
+    <span class="c1"># Do something with bam files</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path</strong> (<em>str</em><em>, </em><em>py._path.local.LocalPath</em>) – fixture path destination; either a full path or a link name</li>
+<li><strong>src</strong> (<em>str</em><em>, </em><em>py._path.local.LocalPath</em>) – fixture file name source. If relative path try to use source file from pytest_ngsfixtures application data. If empty, use basename</li>
+<li><strong>fdir</strong> (<em>str</em><em>, </em><em>py._path.local.LocalPath</em>) – fixture output directory; either a full path, or relative to current tmpdir</li>
+<li><strong>copy</strong> (<em>bool</em>) – copy fixture file instead of symlinking</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – keyword arguments</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.factories.get_config">
+<code class="descclassname">pytest_ngsfixtures.factories.</code><code class="descname">get_config</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/factories.html#get_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.factories.get_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a dictionary with config options.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.factories.reference_layout">
+<code class="descclassname">pytest_ngsfixtures.factories.</code><code class="descname">reference_layout</code><span class="sig-paren">(</span><em>label='ref'</em>, <em>dirname='ref'</em>, <em>copy=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/factories.html#reference_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.factories.reference_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fixture factory for reference layouts.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>label</strong> (<em>str</em>) – ref or scaffolds layout</li>
+<li><strong>dirname</strong> (<em>str</em>) – reference directory name</li>
+<li><strong>copy</strong> (<em>bool</em>) – copy file fixture instead of symlinking</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – keyword arguments</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="pytest_ngsfixtures.factories.sample_layout">
-<code class="descclassname">pytest_ngsfixtures.factories.</code><code class="descname">sample_layout</code><span class="sig-paren">(</span><em>runfmt='{SM}', sample_prefix='s', use_short_sample_names=True, read1_suffix='_1.fastq.gz', read2_suffix='_2.fastq.gz', dirname=None, sampleinfo=True, combinator=&lt;class 'itertools.zip_longest'&gt;, sample_aliases=[], samples=[None], platform_units=[None], batches=[None], populations=[None], paired_end=[True], **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/factories.html#sample_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.factories.sample_layout" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pytest_ngsfixtures.factories.</code><code class="descname">sample_layout</code><span class="sig-paren">(</span><em>runfmt='{SM}', layout=None, sample_prefix='s', use_short_sample_names=True, dirname=None, sampleinfo=True, combinator=&lt;class 'itertools.zip_longest'&gt;, sample_aliases=[], samples=[None], platform_units=[None], batches=[None], populations=[None], paired_end=[True], copy=False, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/factories.html#sample_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.factories.sample_layout" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fixture factory for pytest-ngsfixtures sample layouts.</p>
 <p>Generates a directory structure by linking to data files in
 pytest-ngsfixtures data directory. A certain amount of generality
@@ -347,7 +571,7 @@ batches=None, platform_units=[“010101_AAABBB11XX”], and
 runfmt=”{SM}/{PU}/{SM}_{PU}”, input files will be organized as
 “CHR.HG00512/010101_AAABBB11XX/CHR.HG00512_010101_AAABBB11XX_1.fastq.gz”
 and similarly for the second read.</p>
-<p>Usage:</p>
+<p>Example:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pytest_ngsfixtures</span> <span class="kn">import</span> <span class="n">factories</span>
 <span class="n">my_layout</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span>
     <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span>
@@ -359,80 +583,465 @@ and similarly for the second read.</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-<dl class="docutils">
-<dt>Params:</dt>
-<dd>runfmt (str): run format string
-sample_prefix (str): sample prefix for short names
-use_short_sample_names (bool): use short sample names
-read1_suffix (str): read1 suffix
-read2_suffix (str): read2 suffix
-dirname (str): data directory name
-sampleinfo (bool): create sampleinfo file
-combinator (fun): function to combine sample, platform unit, batch, population labels
-sample_aliases (list): list of sample alias names
-samples (list): list of sample names
-platform_units (list): list of platform units
-batches (list): list of batch (project) names
-populations (list): list of population names
-paired_end (list): list of booleans indicating if a sample run is paired end (True) or single end (False)</dd>
-</dl>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">tmp directory with sample layout setup</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>runfmt</strong> (<em>str</em>) – run format string</li>
+<li><strong>layout</strong> (<em>str</em>) – layout label</li>
+<li><strong>sample_prefix</strong> (<em>str</em>) – sample prefix for short names</li>
+<li><strong>use_short_sample_names</strong> (<em>bool</em>) – use short sample names</li>
+<li><strong>dirname</strong> (<em>str</em>) – data directory name</li>
+<li><strong>sampleinfo</strong> (<em>bool</em>) – create sampleinfo file</li>
+<li><strong>combinator</strong> (<em>fun</em>) – function to combine sample, platform unit, batch, population labels</li>
+<li><strong>sample_aliases</strong> (<em>list</em>) – list of sample alias names</li>
+<li><strong>samples</strong> (<em>list</em>) – list of sample names</li>
+<li><strong>platform_units</strong> (<em>list</em>) – list of platform units</li>
+<li><strong>batches</strong> (<em>list</em>) – list of batch (project) names</li>
+<li><strong>populations</strong> (<em>list</em>) – list of population names</li>
+<li><strong>paired_end</strong> (<em>list</em>) – list of booleans indicating if a sample run is paired end (True) or single end (False)</li>
+<li><strong>copy</strong> (<em>bool</em>) – copy fixtures instead of symlinking</li>
+</ul>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">p (py.path.local)</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">tmp directory with sample layout setup</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">p (py.path.local)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pytest_ngsfixtures.file">
+<span id="pytest-ngsfixtures-file-module"></span><h2>pytest_ngsfixtures.file module<a class="headerlink" href="#module-pytest_ngsfixtures.file" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pytest_ngsfixtures.file.ApplicationFixtureFile">
+<em class="property">class </em><code class="descclassname">pytest_ngsfixtures.file.</code><code class="descname">ApplicationFixtureFile</code><span class="sig-paren">(</span><em>path</em>, <em>end='pe'</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/file.html#ApplicationFixtureFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.file.ApplicationFixtureFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pytest_ngsfixtures.file.FixtureFile" title="pytest_ngsfixtures.file.FixtureFile"><code class="xref py py-class docutils literal"><span class="pre">pytest_ngsfixtures.file.FixtureFile</span></code></a></p>
+<p>Class that represents application test files.</p>
+<p>The class constructor sets the data directory to the applications
+data file directory.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path</strong> (<em>str</em><em>, </em><em>py._path.local.LocalPath</em>) – test file path</li>
+<li><strong>end</strong> (<em>str</em>) – paired end (“pe”) or single end (“se”)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="pytest_ngsfixtures.file.ApplicationOutputFixture">
+<em class="property">class </em><code class="descclassname">pytest_ngsfixtures.file.</code><code class="descname">ApplicationOutputFixture</code><span class="sig-paren">(</span><em>application</em>, <em>command</em>, <em>version</em>, <em>end='pe'</em>, <em>path=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/file.html#ApplicationOutputFixture"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.file.ApplicationOutputFixture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pytest_ngsfixtures.file.FixtureFileSet" title="pytest_ngsfixtures.file.FixtureFileSet"><code class="xref py py-class docutils literal"><span class="pre">pytest_ngsfixtures.file.FixtureFileSet</span></code></a></p>
+<p>Class that represents application outputs.</p>
+<p>The class constructor sets the data directory to the applications
+data file directory.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>application</strong> (<em>str</em>) – application name</li>
+<li><strong>command</strong> (<em>str</em>) – application command name</li>
+<li><strong>version</strong> (<em>str</em>) – version number as string</li>
+<li><strong>end</strong> (<em>str</em>) – paired end (“pe”) or single end (“se”)</li>
+<li><strong>path</strong> (<em>str</em><em>, </em><em>py._path.local.LocalPath</em>) – test file path</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="pytest_ngsfixtures.file.FixtureFile">
+<em class="property">class </em><code class="descclassname">pytest_ngsfixtures.file.</code><code class="descname">FixtureFile</code><span class="sig-paren">(</span><em>path=None</em>, <em>src=None</em>, <em>setup=False</em>, <em>alias=None</em>, <em>copy=False</em>, <em>prefix='s'</em>, <em>short_name=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/file.html#FixtureFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.file.FixtureFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">py._path.local.LocalPath</span></code></p>
+<p>Class that represents test file and source file locations. It
+extends <code class="xref py py-class docutils literal"><span class="pre">LocalPath</span></code> by adding a number
+of attributes.</p>
+<p>The __new__ constructor adds the _data_dir attribute, which is a
+(tentative) source data directory. Unless the provided src
+parameter is a full path, the _data_dir is where the class will
+look for input files</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> (<em>str</em><em>, </em><em>py._path.local.LocalPath</em>) – test file path</li>
+<li><strong>src</strong> (<em>str</em><em>, </em><em>py._path.local.LocalPath</em>) – src file path</li>
+<li><strong>setup</strong> (<em>bool</em>) – setup test file on the fly</li>
+<li><strong>alias</strong> (<em>str</em>) – alias test file name</li>
+<li><strong>copy</strong> (<em>bool</em>) – copy src file to test file</li>
+<li><strong>prefix</strong> (<em>str</em>) – prefix for short file output</li>
+<li><strong>short_name</strong> (<em>bool</em>) – use short names instead of full output names</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last"><strong>expanduser</strong> (<em>bool</em>) – expand tilde</p>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.FixtureFile.alias">
+<code class="descname">alias</code><a class="headerlink" href="#pytest_ngsfixtures.file.FixtureFile.alias" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get alias</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.FixtureFile.data_dir">
+<code class="descname">data_dir</code><a class="headerlink" href="#pytest_ngsfixtures.file.FixtureFile.data_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get data directory.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.FixtureFile.full_prefix">
+<code class="descname">full_prefix</code><a class="headerlink" href="#pytest_ngsfixtures.file.FixtureFile.full_prefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get full prefix path</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.FixtureFile.id">
+<code class="descname">id</code><a class="headerlink" href="#pytest_ngsfixtures.file.FixtureFile.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for self.name</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.FixtureFile.name">
+<code class="descname">name</code><a class="headerlink" href="#pytest_ngsfixtures.file.FixtureFile.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get name</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.FixtureFile.path">
+<code class="descname">path</code><a class="headerlink" href="#pytest_ngsfixtures.file.FixtureFile.path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get path</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.FixtureFile.prefix">
+<code class="descname">prefix</code><a class="headerlink" href="#pytest_ngsfixtures.file.FixtureFile.prefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get prefix</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pytest_ngsfixtures.file.FixtureFile.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/file.html#FixtureFile.setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.file.FixtureFile.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setup test file by copying or via symlink from self.src to self.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.FixtureFile.short">
+<code class="descname">short</code><a class="headerlink" href="#pytest_ngsfixtures.file.FixtureFile.short" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get short attribute, indicating whether or not to use short names.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.FixtureFile.src">
+<code class="descname">src</code><a class="headerlink" href="#pytest_ngsfixtures.file.FixtureFile.src" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get src path</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pytest_ngsfixtures.file.FixtureFileSet">
+<em class="property">class </em><code class="descclassname">pytest_ngsfixtures.file.</code><code class="descname">FixtureFileSet</code><span class="sig-paren">(</span><em>path</em>, <em>full=True</em>, <em>output=[]</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/file.html#FixtureFileSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.file.FixtureFileSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pytest_ngsfixtures.file.FixtureFile" title="pytest_ngsfixtures.file.FixtureFile"><code class="xref py py-class docutils literal"><span class="pre">pytest_ngsfixtures.file.FixtureFile</span></code></a></p>
+<p>Class that represents test file and source file sets.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> (str, <code class="xref py py-class docutils literal"><span class="pre">py._path.local.LocalPath</span></code>) – test output path; must be a directory</li>
+<li><strong>full</strong> (<em>bool</em>) – use full path names. If False, use output basenames.</li>
+<li><strong>output</strong> (<em>list</em>) – list of output file names that will be concatenated to path</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last"><strong>src</strong> (str, <code class="xref py py-class docutils literal"><span class="pre">py._path.local.LocalPath</span></code>) – src input path; must be a directory</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>For full list of keyword arguments, see <a class="reference internal" href="#pytest_ngsfixtures.file.FixtureFile" title="pytest_ngsfixtures.file.FixtureFile"><code class="xref py py-class docutils literal"><span class="pre">FixtureFile</span></code></a>.</p>
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.FixtureFileSet.full">
+<code class="descname">full</code><a class="headerlink" href="#pytest_ngsfixtures.file.FixtureFileSet.full" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.FixtureFileSet.output">
+<code class="descname">output</code><a class="headerlink" href="#pytest_ngsfixtures.file.FixtureFileSet.output" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pytest_ngsfixtures.file.FixtureFileSet.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/file.html#FixtureFileSet.setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.file.FixtureFileSet.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setup test files</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pytest_ngsfixtures.file.ReadFixtureFile">
+<em class="property">class </em><code class="descclassname">pytest_ngsfixtures.file.</code><code class="descname">ReadFixtureFile</code><span class="sig-paren">(</span><em>sample='CHS.HG00512'</em>, <em>path=None</em>, <em>size='tiny'</em>, <em>alias=None</em>, <em>short_name=False</em>, <em>read=1</em>, <em>batch=None</em>, <em>prefix='s'</em>, <em>runfmt='{SM}'</em>, <em>population=None</em>, <em>platform_unit=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/file.html#ReadFixtureFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.file.ReadFixtureFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pytest_ngsfixtures.file.FixtureFile" title="pytest_ngsfixtures.file.FixtureFile"><code class="xref py py-class docutils literal"><span class="pre">pytest_ngsfixtures.file.FixtureFile</span></code></a></p>
+<p>Class that represents read test files.</p>
+<p>The class constructor sets a census attribute that keeps track of
+the number of objects.</p>
+<p>The constructor sets the data directory to the base data directory
+joined with the size.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>sample</strong> (<em>str</em>) – sample name</li>
+<li><strong>path</strong> (str, <code class="xref py py-class docutils literal"><span class="pre">py._path.local.LocalPath</span></code>) – test output path</li>
+<li><strong>size</strong> (<em>str</em>) – sequence file size</li>
+<li><strong>alias</strong> (<em>str</em>) – alias output name</li>
+<li><strong>short_name</strong> (<em>bool</em>) – use short output names, prefixed by prefix and numbered by class census</li>
+<li><strong>read</strong> (<em>int</em>) – read number (1 or 2)</li>
+<li><strong>batch</strong> (<em>str</em>) – batch name</li>
+<li><strong>prefix</strong> (<em>str</em>) – short name prefix</li>
+<li><strong>runfmt</strong> (<em>str</em>) – python miniformat string that represents formatted fastq output file. Can contain keys SM, PU, POP, BATCH.</li>
+<li><strong>population</strong> (<em>str</em>) – population name</li>
+<li><strong>platform_unit</strong> (<em>str</em>) – platform_unit name</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.ReadFixtureFile.BATCH">
+<code class="descname">BATCH</code><a class="headerlink" href="#pytest_ngsfixtures.file.ReadFixtureFile.BATCH" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.ReadFixtureFile.POP">
+<code class="descname">POP</code><a class="headerlink" href="#pytest_ngsfixtures.file.ReadFixtureFile.POP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.ReadFixtureFile.PU">
+<code class="descname">PU</code><a class="headerlink" href="#pytest_ngsfixtures.file.ReadFixtureFile.PU" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.ReadFixtureFile.SM">
+<code class="descname">SM</code><a class="headerlink" href="#pytest_ngsfixtures.file.ReadFixtureFile.SM" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.ReadFixtureFile.alias">
+<code class="descname">alias</code><a class="headerlink" href="#pytest_ngsfixtures.file.ReadFixtureFile.alias" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.ReadFixtureFile.batch">
+<code class="descname">batch</code><a class="headerlink" href="#pytest_ngsfixtures.file.ReadFixtureFile.batch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.ReadFixtureFile.census">
+<code class="descname">census</code><em class="property"> = 0</em><a class="headerlink" href="#pytest_ngsfixtures.file.ReadFixtureFile.census" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.ReadFixtureFile.fastq">
+<code class="descname">fastq</code><a class="headerlink" href="#pytest_ngsfixtures.file.ReadFixtureFile.fastq" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.ReadFixtureFile.fastq_suffix">
+<code class="descname">fastq_suffix</code><a class="headerlink" href="#pytest_ngsfixtures.file.ReadFixtureFile.fastq_suffix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.ReadFixtureFile.full_prefix">
+<code class="descname">full_prefix</code><a class="headerlink" href="#pytest_ngsfixtures.file.ReadFixtureFile.full_prefix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.ReadFixtureFile.id">
+<code class="descname">id</code><a class="headerlink" href="#pytest_ngsfixtures.file.ReadFixtureFile.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.ReadFixtureFile.platform_unit">
+<code class="descname">platform_unit</code><a class="headerlink" href="#pytest_ngsfixtures.file.ReadFixtureFile.platform_unit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.ReadFixtureFile.population">
+<code class="descname">population</code><a class="headerlink" href="#pytest_ngsfixtures.file.ReadFixtureFile.population" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.ReadFixtureFile.read">
+<code class="descname">read</code><a class="headerlink" href="#pytest_ngsfixtures.file.ReadFixtureFile.read" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="pytest_ngsfixtures.file.ReadFixtureFile.reset">
+<em class="property">classmethod </em><code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/file.html#ReadFixtureFile.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.file.ReadFixtureFile.reset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.ReadFixtureFile.runfmt">
+<code class="descname">runfmt</code><a class="headerlink" href="#pytest_ngsfixtures.file.ReadFixtureFile.runfmt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.ReadFixtureFile.sample">
+<code class="descname">sample</code><a class="headerlink" href="#pytest_ngsfixtures.file.ReadFixtureFile.sample" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.ReadFixtureFile.sampleinfo">
+<code class="descname">sampleinfo</code><a class="headerlink" href="#pytest_ngsfixtures.file.ReadFixtureFile.sampleinfo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.ReadFixtureFile.sampleinfo_keys">
+<code class="descname">sampleinfo_keys</code><a class="headerlink" href="#pytest_ngsfixtures.file.ReadFixtureFile.sampleinfo_keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.ReadFixtureFile.size">
+<code class="descname">size</code><a class="headerlink" href="#pytest_ngsfixtures.file.ReadFixtureFile.size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pytest_ngsfixtures.file.ReferenceFixtureFile">
+<em class="property">class </em><code class="descclassname">pytest_ngsfixtures.file.</code><code class="descname">ReferenceFixtureFile</code><span class="sig-paren">(</span><em>path='ref.fa'</em>, <em>src=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/file.html#ReferenceFixtureFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.file.ReferenceFixtureFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pytest_ngsfixtures.file.FixtureFile" title="pytest_ngsfixtures.file.FixtureFile"><code class="xref py py-class docutils literal"><span class="pre">pytest_ngsfixtures.file.FixtureFile</span></code></a></p>
+<p>Class that represents reference test files.</p>
+<p>The class constructor sets the data directory to the reference
+data file directory. In addition, the reference data files are
+stored in a dictionary where ‘ref’ and ‘scaffold’ reference data
+sets are partitioned by corresponding keys.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path</strong> (<em>str</em><em>, </em><em>py._path.local.LocalPath</em>) – test file path</li>
+<li><strong>src</strong> (<em>str</em><em>, </em><em>py._path.local.LocalPath</em>) – src file path</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.ReferenceFixtureFile.ref">
+<code class="descname">ref</code><a class="headerlink" href="#pytest_ngsfixtures.file.ReferenceFixtureFile.ref" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.file.fixturefile_factory">
+<code class="descclassname">pytest_ngsfixtures.file.</code><code class="descname">fixturefile_factory</code><span class="sig-paren">(</span><em>path=None</em>, <em>setup=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/file.html#fixturefile_factory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.file.fixturefile_factory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Factory function to auto-generate a FixtureFile.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path</strong> (<em>str</em><em>, </em><em>py._path.local.LocalPath</em>) – test file destination path</li>
+<li><strong>setup</strong> (<em>bool</em>) – setup test file creation on the fly</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="function">
-<dt id="pytest_ngsfixtures.factories.reference_layout">
-<code class="descclassname">pytest_ngsfixtures.factories.</code><code class="descname">reference_layout</code><span class="sig-paren">(</span><em>label='ref'</em>, <em>dirname='ref'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/factories.html#reference_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.factories.reference_layout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fixture factory for reference layouts.</p>
-<dl class="docutils">
-<dt>Params:</dt>
-<dd>label (str): ref or scaffolds layout
-dirname (str): reference directory name</dd>
-</dl>
-</dd></dl>
+<dt id="pytest_ngsfixtures.file.setup_fileset">
+<code class="descclassname">pytest_ngsfixtures.file.</code><code class="descname">setup_fileset</code><span class="sig-paren">(</span><em>path</em>, <em>src</em>, <em>dst=[]</em>, <em>copy=False</em>, <em>setup=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/file.html#setup_fileset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.file.setup_fileset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setup fileset fixture files.</p>
+<p>Wrapper function to setup fileset fixture.</p>
+<p class="rubric">Example</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">py</span>
+<span class="kn">from</span> <span class="nn">pytest_ngsfixtures.file</span> <span class="kn">import</span> <span class="n">setup_fileset</span>
 
-<dl class="function">
-<dt id="pytest_ngsfixtures.factories.filetype">
-<code class="descclassname">pytest_ngsfixtures.factories.</code><code class="descname">filetype</code><span class="sig-paren">(</span><em>src, dst=None, fdir=None, rename=False, outprefix='test', inprefix=['PUR.HG00731', 'PUR.HG00733'], **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/factories.html#filetype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.factories.filetype" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fixture factory for file types. This factory is atomic in that it
-generates one fixture for one file.</p>
-<dl class="docutils">
-<dt>Params:</dt>
-<dd>src (str): fixture file name source
-dst (str): fixture file name destination; link name
-fdir (str): fixture output directory
-rename (bool): rename fixture links
-outprefix (str): output prefix
-inprefix (list): list of input prefixes to substitute
-kwargs (dict): keyword arguments</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="pytest_ngsfixtures.factories.fileset">
-<code class="descclassname">pytest_ngsfixtures.factories.</code><code class="descname">fileset</code><span class="sig-paren">(</span><em>src</em>, <em>dst=None</em>, <em>fdir=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/factories.html#fileset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.factories.fileset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fixture factory to generate filesets.</p>
-<dl class="docutils">
-<dt>Params:</dt>
-<dd>src (list): list of sources
-dst (list): list of destination; if None, use src basename
-fdir (<code class="xref py py-obj docutils literal"><span class="pre">str</span></code> or <code class="xref py py-obj docutils literal"><span class="pre">py._path.local.LocalPath</span></code>): output directory</dd>
-</dl>
+<span class="n">p</span> <span class="o">=</span> <span class="n">py</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">local</span><span class="p">()</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">setup_fileset</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">p</span><span class="p">,</span> <span class="n">src</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;/path/to/s.bam&quot;</span><span class="p">,</span> <span class="s2">&quot;path/to/s.bai&quot;</span><span class="p">],</span> <span class="n">dst</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;s.bam&#39;</span><span class="p">,</span> <span class="s1">&#39;s.bam.bai&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a fixture function</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> (<em>list</em>) – <code class="xref py py-class docutils literal"><span class="pre">LocalPath</span></code> destination path</li>
+<li><strong>src</strong> (<em>list</em>) – list of source file names</li>
+<li><strong>path</strong> – list of destination file names; if empty, use src basenames</li>
+<li><strong>copy</strong> (<em>bool</em>) – copy test files instead of symlinking</li>
+<li><strong>setup</strong> (<em>bool</em>) – setup test files on the fly</li>
+</ul>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">func</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">modified <code class="xref py py-class docutils literal"><span class="pre">LocalPath</span></code> with test files setup</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">py._path.local.LocalPath</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.file.setup_filetype">
+<code class="descclassname">pytest_ngsfixtures.file.</code><code class="descname">setup_filetype</code><span class="sig-paren">(</span><em>path</em>, <em>src=None</em>, <em>copy=False</em>, <em>setup=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/file.html#setup_filetype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.file.setup_filetype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setup filetype fixture file.</p>
+<p>Wrapper function to setup single filetype fixture.</p>
+<p class="rubric">Example</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">py</span>
+<span class="kn">from</span> <span class="nn">pytest_ngsfixtures.file</span> <span class="kn">import</span> <span class="n">setup_filetype</span>
+
+<span class="n">p</span> <span class="o">=</span> <span class="n">py</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">local</span><span class="p">()</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">setup_fileset</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;s.bam&#39;</span><span class="p">),</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;/path/to/s.bam&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> (<em>str</em><em>, </em><em>py._path.local.LocalPath</em>) – <code class="xref py py-class docutils literal"><span class="pre">LocalPath</span></code> destination path</li>
+<li><strong>src</strong> (<em>str</em><em>, </em><em>py._path.local.LocalPath</em>) – source file location</li>
+<li><strong>copy</strong> (<em>bool</em>) – copy test file instead of symlinking</li>
+<li><strong>setup</strong> (<em>bool</em>) – setup test file on the fly</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">modified <code class="xref py py-class docutils literal"><span class="pre">LocalPath</span></code> with test file setup</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">py._path.local.LocalPath</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -502,6 +1111,165 @@ fdir (<code class="xref py py-obj docutils literal"><span class="pre">str</span>
 <dd></dd></dl>
 
 </div>
+<div class="section" id="module-pytest_ngsfixtures.layout">
+<span id="pytest-ngsfixtures-layout-module"></span><h2>pytest_ngsfixtures.layout module<a class="headerlink" href="#module-pytest_ngsfixtures.layout" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="layout">
+<h3>layout<a class="headerlink" href="#layout" title="Permalink to this headline">¶</a></h3>
+<p>Utility functions for sample and reference layouts.</p>
+<dl class="function">
+<dt id="pytest_ngsfixtures.layout.generate_sample_layouts">
+<code class="descclassname">pytest_ngsfixtures.layout.</code><code class="descname">generate_sample_layouts</code><span class="sig-paren">(</span><em>layout='short'</em>, <em>combinator=&lt;class 'itertools.zip_longest'&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/layout.html#generate_sample_layouts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.layout.generate_sample_layouts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate list of sample layout structures.</p>
+<p>A sample layout structure is a dictionary holding metadata for a
+sample layout. The keys are samtools read group specifiers and
+some custom labels, consisting of ‘POP’, ‘PU’, ‘SM’, ‘BATCH’, and
+‘PE’.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>layout</strong> (<em>str</em>) – layout name</li>
+<li><strong>population</strong> (<em>list</em>) – list of population names</li>
+<li><strong>sample</strong> (<em>list</em>) – list of sample names</li>
+<li><strong>platform_unit</strong> (<em>list</em>) – list of platform units</li>
+<li><strong>batch</strong> (<em>list</em>) – list of batch (project) names</li>
+<li><strong>paired_end</strong> (<em>list</em>) – list of booleans indicating if a sample run
+is paired end (True) or single end (False)</li>
+<li><strong>alias</strong> (<em>list</em>) – list of sample alias names</li>
+<li><strong>combinator</strong> (<em>fun</em>) – function to combine population,
+platform_units, samples, batches, and
+paired_end</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.layout.setup_reference_layout">
+<code class="descclassname">pytest_ngsfixtures.layout.</code><code class="descname">setup_reference_layout</code><span class="sig-paren">(</span><em>path</em>, <em>label='ref'</em>, <em>copy=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/layout.html#setup_reference_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.layout.setup_reference_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setup reference layout</p>
+<p>Wrapper to setup multiple reference files. Either choose between
+‘ref’ or ‘scaffolds’ label.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> (<em>py._path.local.LocalPath</em>) – <code class="xref py py-class docutils literal"><span class="pre">LocalPath</span></code> path where reference test files will be setup</li>
+<li><strong>label</strong> (<em>str</em>) – reference fixture label (‘ref’ or ‘scaffolds’)</li>
+<li><strong>copy</strong> (<em>bool</em>) – copy fixture files instead of symlinking</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">modified <code class="xref py py-class docutils literal"><span class="pre">LocalPath</span></code> object with test files setup</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">py._path.local.LocalPath</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.layout.setup_sample_layout">
+<code class="descclassname">pytest_ngsfixtures.layout.</code><code class="descname">setup_sample_layout</code><span class="sig-paren">(</span><em>path</em>, <em>layout=None</em>, <em>copy=False</em>, <em>sample_prefix='s'</em>, <em>runfmt='{SM}/{SM}_{PU}'</em>, <em>short_names=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/layout.html#setup_sample_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.layout.setup_sample_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setup sample layout.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path</strong> (<em>py._path.local.LocalPath</em>) – <code class="xref py py-class docutils literal"><span class="pre">LocalPath</span></code> path where test files will be setup</li>
+<li><strong>layout</strong> (<em>str</em>) – predefined layout name</li>
+<li><strong>copy</strong> (<em>bool</em>) – copy test files instead of symlinking (required for dockerized tests)</li>
+<li><strong>sample_prefix</strong> (<em>str</em>) – sample prefix for short names</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – arguments that are passed on to <a class="reference internal" href="#pytest_ngsfixtures.layout.generate_sample_layouts" title="pytest_ngsfixtures.layout.generate_sample_layouts"><code class="xref py py-func docutils literal"><span class="pre">generate_sample_layouts()</span></code></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-pytest_ngsfixtures.os">
+<span id="pytest-ngsfixtures-os-module"></span><h2>pytest_ngsfixtures.os module<a class="headerlink" href="#module-pytest_ngsfixtures.os" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="pytest_ngsfixtures.os.localpath">
+<code class="descclassname">pytest_ngsfixtures.os.</code><code class="descname">localpath</code><span class="sig-paren">(</span><em>src</em>, <em>path='/home/peru/dev/pytest-ngsfixtures/pytest_ngsfixtures/data'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/os.html#localpath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.os.localpath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a py.path.local path given a source and a path</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.os.safe_copy">
+<code class="descclassname">pytest_ngsfixtures.os.</code><code class="descname">safe_copy</code><span class="sig-paren">(</span><em>p</em>, <em>src</em>, <em>dst</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/os.html#safe_copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.os.safe_copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Safely copy fixture file.</p>
+<p>Copy file from src to dst in LocalPath p. If src, dst are strings,
+they will be joined to p, assuming they are relative to p. If src,
+dst are LocalPath instances, they are left alone since LocalPath
+objects are always absolute paths.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>p</strong> (<em>LocalPath</em>) – path in which link is setup</li>
+<li><strong>src</strong> (<em>str</em><em>, </em><em>LocalPath</em>) – source file that link points to. If string, assume relative to pytest_ngsfixtures data directory</li>
+<li><strong>dst</strong> (<em>str</em><em>, </em><em>LocalPath</em>) – link destination name. If string, assume relative to path and concatenate; else leave alone</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">link name</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dst (LocalPath)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.os.safe_mktemp">
+<code class="descclassname">pytest_ngsfixtures.os.</code><code class="descname">safe_mktemp</code><span class="sig-paren">(</span><em>tmpdir_factory</em>, <em>dirname=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/os.html#safe_mktemp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.os.safe_mktemp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Safely make directory</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.os.safe_symlink">
+<code class="descclassname">pytest_ngsfixtures.os.</code><code class="descname">safe_symlink</code><span class="sig-paren">(</span><em>p</em>, <em>src</em>, <em>dst</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/os.html#safe_symlink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.os.safe_symlink" title="Permalink to this definition">¶</a></dt>
+<dd><p>Safely make symlink.</p>
+<p>Make symlink from src to dst in LocalPath p. If src, dst are
+strings, they will be joined to p, assuming they are relative to
+p. If src, dst are LocalPath instances, they are left alone since
+LocalPath objects are always absolute paths.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>p</strong> (<em>LocalPath</em>) – path in which link is setup</li>
+<li><strong>src</strong> (<em>str</em><em>, </em><em>LocalPath</em>) – source file that link points to. If string, assume relative to pytest_ngsfixtures data directory</li>
+<li><strong>dst</strong> (<em>str</em><em>, </em><em>LocalPath</em>) – link destination name. If string, assume relative to path and concatenate; else leave alone</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">link name</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dst (LocalPath)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 <div class="section" id="module-pytest_ngsfixtures.plugin">
 <span id="pytest-ngsfixtures-plugin-module"></span><h2>pytest_ngsfixtures.plugin module<a class="headerlink" href="#module-pytest_ngsfixtures.plugin" title="Permalink to this headline">¶</a></h2>
 <p>Plugin configuration module for pytest-ngsfixtures</p>
@@ -509,6 +1277,37 @@ fdir (<code class="xref py py-obj docutils literal"><span class="pre">str</span>
 <dt id="pytest_ngsfixtures.plugin.pytest_addoption">
 <code class="descclassname">pytest_ngsfixtures.plugin.</code><code class="descname">pytest_addoption</code><span class="sig-paren">(</span><em>parser</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/plugin.html#pytest_addoption"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.plugin.pytest_addoption" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+</div>
+<div class="section" id="module-pytest_ngsfixtures.repo">
+<span id="pytest-ngsfixtures-repo-module"></span><h2>pytest_ngsfixtures.repo module<a class="headerlink" href="#module-pytest_ngsfixtures.repo" title="Permalink to this headline">¶</a></h2>
+<p>Utilities for interacting with pytest-ngsfixtures repo.</p>
+<dl class="function">
+<dt id="pytest_ngsfixtures.repo.download_sample_file">
+<code class="descclassname">pytest_ngsfixtures.repo.</code><code class="descname">download_sample_file</code><span class="sig-paren">(</span><em>fn</em>, <em>size</em>, <em>dry_run=False</em>, <em>force=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/repo.html#download_sample_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.repo.download_sample_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download sample file if it doesn’t yet exist</p>
+<p>Setup urllib connection and download data file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>fn</strong> (<em>str</em>) – file name as it appears in installed pytest_ngsfixtures data repository</li>
+<li><strong>size</strong> (<em>str</em>) – fixture file size</li>
+<li><strong>dry_run</strong> (<em>bool</em>) – don’t do anything if set</li>
+<li><strong>force</strong> (<em>bool</em>) – force download</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">url of target file if dry_run option passed, None otherwise</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">url (str)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 <div class="section" id="module-pytest_ngsfixtures.utils">
@@ -566,7 +1365,7 @@ fdir (<code class="xref py py-obj docutils literal"><span class="pre">str</span>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.5.0',
+            VERSION:'0.6.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
