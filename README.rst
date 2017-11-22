@@ -1,11 +1,10 @@
-====================
- pytest-ngsfixtures
-====================
+pytest-ngsfixtures
+==================
 
 .. image:: https://anaconda.org/percyfal/pytest-ngsfixtures/badges/version.svg
 	   :target: https://anaconda.org/percyfal/pytest-ngsfixtures
 .. image:: https://img.shields.io/pypi/dm/pytest-ngsfixtures.svg
-	   :target: https://pypi.python.org/pypi/pytest_ngsfixtures
+	   :target: https://pypi.python.org/pypi/pytest-ngsfixtures
 		
 About
 =====
@@ -37,7 +36,8 @@ Installation
 
 .. code-block:: bash
 
-   $ conda install pytest-ngsfixtures
+   $ conda install -c percyfal pytest-ngsfixtures
+   $ pip install pytest-ngsfixtures
 
 
 Credits

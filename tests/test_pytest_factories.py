@@ -76,7 +76,7 @@ custom_samples = factories.sample_layout(
 )
 
 
-def test_custom(custom_samples, ref):
+def test_custom(custom_samples):
     assert custom_samples.basename == "foo"
     flist = [str(x.basename) for x in custom_samples.visit()]
     assert "CHS.HG00512_bar_1.fastq.gz" in flist
@@ -114,7 +114,7 @@ def test_fileset_fixture_raises():
 
 def test_fileset_fixture(bamset, PURFILES):
     flist = sorted([x.basename for x in bamset.visit() if x.basename != ".lock"])
-    assert flist == sorted([os.path.basename(x) for x in PURFILES])
+    assert flist == sorted([x.basename for x in PURFILES])
 
 
 def test_fileset_fixture_dst(bamset2, dstfiles, bamfile):
