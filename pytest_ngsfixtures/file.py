@@ -27,6 +27,7 @@ class FixtureFile(LocalPath):
       copy (bool): copy src file to test file
       prefix (str): prefix for short file output
       short_name (bool): use short names instead of full output names
+      ignore_errors (bool): ignore errors should target file exist
 
     Keyword Args:
       expanduser (bool): expand tilde
@@ -37,7 +38,8 @@ class FixtureFile(LocalPath):
         return obj
 
     def __init__(self, path=None, src=None, setup=False, alias=None,
-                 copy=False, prefix="s", short_name=False, **kwargs):
+                 copy=False, prefix="s", short_name=False,
+                 ignore_errors=False, **kwargs):
         super(FixtureFile, self).__init__(path, kwargs.get("expanduser", False))
         self._prefix = prefix
         self._short = short_name
@@ -46,6 +48,7 @@ class FixtureFile(LocalPath):
             self.strpath = str(self.path.join(self.alias))
         self._copy = copy
         self.src = src
+        self._ignore_errors = ignore_errors
         self._setup_fn = safe_copy if self._copy else safe_symlink
         if setup:
             self.setup()
@@ -109,14 +112,19 @@ class FixtureFile(LocalPath):
     def setup(self):
         """Setup test file by copying or via symlink from self.src to self."""
         if self.isdir():
-            self._setup_fn(self.path, self.src, self.src.basename)
+            self._setup_fn(self.path, self.src, self.src.basename, self.ignore_errors)
         else:
-            self._setup_fn(self.path, self.src, self.basename)
+            self._setup_fn(self.path, self.src, self.basename, self.ignore_errors)
 
     @property
     def data_dir(self):
         """Get data directory."""
         return self._data_dir
+
+    @property
+    def ignore_errors(self):
+        """Ignore errors on setup"""
+        return self._ignore_errors
 
     @property
     def name(self):
