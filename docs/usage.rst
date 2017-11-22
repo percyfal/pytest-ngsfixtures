@@ -36,7 +36,7 @@ level and always loaded. The remaining eight sample are defined in the
 :py:data:`~pytest_ngsfixtures.fixture.pop_sample_project_run`,
 :py:data:`~pytest_ngsfixtures.fixture.pool_pop_sample`,
 :py:data:`~pytest_ngsfixtures.fixture.pool_pop_sample_run`
-    
+
 To use a fixture, simply depend on it in a test, e.g.:
 
 .. code-block:: python
@@ -53,14 +53,32 @@ To use a fixture, simply depend on it in a test, e.g.:
        # Do something with sample and ref
 
 
+Parametrized fixtures
++++++++++++++++++++++
+
+There are also two parametrized fixtures,
+:py:fun:`~pytest_ngsfixtures.fixture.psample` and
+:py:fun:`~pytest_ngsfixtures.fixture.pref` that generate fixtures
+depending on values of plugin options (primarily
+:ref:`plugin-option-runfmt`, :ref:`plugin-option-layout`, and
+:ref:`plugin-option-ref`). For instance, the following command would
+generate all combinations of provided layouts and run formats:
+
+.. code-block:: shell
+
+   pytest --ngs-runfmt sample sample_run --ngs-layout individual pool
+
+provided of course there is a test that requires the
+:py:func:`~pytest_ngsfixtures.fixtures.psample` fixture.
+
 .. _fixture-factories:
-       
+
 Fixture factories
 ------------------
 
 Layout fixture factories
 +++++++++++++++++++++++++
-       
+
 The predefined sample layouts cover some common cases. However,
 alternative layouts can be added by using the
 :py:func:`~pytest_ngsfixtures.factories.sample_layout` factory
@@ -108,7 +126,7 @@ Note that the
 provides a choice between two reference data fixtures. The `ref`
 treats the reference as one chromosome, whereas the `scaffolds`
 fixture partitions the reference into several scaffolds.
-   
+
 File fixture factories
 +++++++++++++++++++++++
 
@@ -181,7 +199,7 @@ fixture factory.
 
    def test_bamset(bamset):
        # Do something with bamset
-       
+
 
 Fixture setup wrappers
 ----------------------
@@ -278,7 +296,7 @@ the existence of the (inferred) source file:
    >>> type(p)
    <class 'pytest_ngsfixtures.file.ReferenceFixtureFile'>
 
-       
+
 Files
 -----
 
@@ -322,7 +340,7 @@ tiny/
 
 yuge/
 
-  Yuge sequence files. All sequence files can be setup as test fixtures with the 
+  Yuge sequence files. All sequence files can be setup as test fixtures with the
   :py:class:`~pytest_ngsfixtures.file.ReadFixtureFile` class.
 
 
@@ -454,17 +472,69 @@ Example:
 -L, --ngs-layout
 +++++++++++++++++
 
-Select one of the predefined sample layouts. Note that this option
-only affects tests that actually depend on the layouts in some
-parametrized way. See ``pytest_ngsfixtures.plugin`` for the setup
-of the predefined sample layouts. Example:
+Select one or more of the predefined sample layouts for parametrized
+fixtures. See documentation for
+:py:func:`pytest_ngsfixtures.fixtures.psample` for
+:py:func:`pytest_ngsfixtures.fixtures.pref`. Example usage:
 
 .. code-block:: shell
 
-   pytest -L sample sample_data
+   pytest -L individual
+
+Here, the :py:func:`~pytest_ngsfixtures.fixtures.psample` fixture will
+return fixtures with the `individual` sample layout.
+
+.. _plugin-option-runfmt:
+
+--ngs-runfmt
++++++++++++++++++
+
+Layout sequence files according to one or more formats determined by
+python miniformat strings. The format specifiers should be one of `SM`
+(sample), `PU` (platform unit), `POP` (population), `BATCH` (batch
+name). For instance, the following example would setup samples in the
+root test directory using sample and platform unit as unique
+identifier prefix:
+
+.. code-block:: shell
+
+   pytest --ngs-runfmt "{SM}/{SM}_{PU}"
+
+There are also predefined aliases that can be used for convenience;
+see :py:data:`pytest_ngsfixtures.config.sample_conf`. For instance,
+the following is equivalent to the option above:
+
+.. code-block:: shell
+
+   pytest --ngs-runfmt sample
+
+
+.. _plugin-option-pool:
+
+--ngs-pool
++++++++++++++++++
+
+Run tests on pooled data.
+
+.. _plugin-option-copy:
+
+--ngs-copy
++++++++++++++++++
+
+Copy tests instead of symlinking. Only affects parametrized fixtures.
+
+.. _plugin-option-ref:
+
+--ngs-ref
++++++++++++++++++
+
+Use ref reference layout instead of scaffolds. Only affects
+parametrized fixtures.
+
+
 
 .. _plugin-option-F:
-   
+
 -F, --ngs-show-fixture
 +++++++++++++++++++++++
 
