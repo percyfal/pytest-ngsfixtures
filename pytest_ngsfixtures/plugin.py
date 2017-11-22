@@ -2,7 +2,7 @@
 """Plugin configuration module for pytest-ngsfixtures"""
 import re
 from pytest_ngsfixtures import factories
-from pytest_ngsfixtures.factories import psample, pref
+from pytest_ngsfixtures.fixtures import psample, pref
 from pytest_ngsfixtures.config import sample_conf, runfmt_alias
 
 _help_ngs_size = "select sample size (choices: {})".format(", ".join("'{}'".format(x) for x in sample_conf.SIZES))
