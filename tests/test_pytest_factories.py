@@ -114,7 +114,7 @@ def test_fileset_fixture_raises():
 
 def test_fileset_fixture(bamset, PURFILES):
     flist = sorted([x.basename for x in bamset.visit() if x.basename != ".lock"])
-    assert flist == sorted([os.path.basename(x) for x in PURFILES])
+    assert flist == sorted([x.basename for x in PURFILES])
 
 
 def test_fileset_fixture_dst(bamset2, dstfiles, bamfile):
