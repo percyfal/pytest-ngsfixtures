@@ -134,7 +134,7 @@ def reference_layout(label="ref", dirname="ref", copy=False, **kwargs):
         """Reference layout fixture. Setup the one-chromosome reference files
         or scaffold reference files in a separate directory"""
         path = safe_mktemp(tmpdir_factory, dirname, **kwargs)
-        path = setup_reference_layout(path, label=label, **kwargs)
+        path = setup_reference_layout(path, label=label, copy=copy, **kwargs)
         if request.config.option.ngs_show_fixture:
             logger.info("------------------------------------")
             logger.info("'{}' reference layout".format(label))
