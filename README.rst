@@ -5,6 +5,8 @@ pytest-ngsfixtures
 	   :target: https://anaconda.org/percyfal/pytest-ngsfixtures
 .. image:: https://img.shields.io/pypi/dm/pytest-ngsfixtures.svg
 	   :target: https://pypi.python.org/pypi/pytest-ngsfixtures
+.. image:: https://travis-ci.org/percyfal/pytest-ngsfixtures.svg?branch=master
+	   :target: https://travis-ci.org/percyfal/pytest-ngsfixtures
 		
 About
 =====

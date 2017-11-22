@@ -13,23 +13,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def get_config(request):
-    """Return a dictionary with config options."""
-    config = {}
-    options = [
-        'size',
-    ]
-    for option in options:
-        option_name = 'ngs_' + option
-        if request is not None:
-            conf = request.config.getoption(option_name) or \
-                request.config.getini(option_name)
-        else:
-            conf = None
-        config[option] = conf
-    return config
-
-
 def sample_layout(
         runfmt="{SM}",
         layout=None,
@@ -106,9 +89,11 @@ def sample_layout(
     def sample_layout_fixture(request, tmpdir_factory):
         """Sample layout fixture. Setup sequence input files according to a
         specified sample organization"""
-        config = get_config(request)
-        kwargs.update(config)
+        kwargs['size'] = kwargs.get("size", "tiny")
+        if request is not None:
+            kwargs['size'] = request.config.getoption("ngs_size")
         kwargs['layout'] = layout
+        kwargs['runfmt'] = runfmt
         kwargs['alias'] = sample_aliases
         kwargs['sample'] = samples
         kwargs['population'] = populations
@@ -116,7 +101,6 @@ def sample_layout(
         kwargs['batch'] = batches
         kwargs['copy'] = copy
         kwargs['sampleinfo'] = sampleinfo
-        kwargs['runfmt'] = runfmt
         kwargs['paired_end'] = paired_end
         kwargs['use_short_sample_names'] = use_short_sample_names
         path = safe_mktemp(tmpdir_factory, dirname, **kwargs)
