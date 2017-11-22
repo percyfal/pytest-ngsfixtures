@@ -8,12 +8,11 @@ Layout fixture factories
 +++++++++++++++++++++++++
 
 The plugin contains two fixture factories that generate sample layouts
-(:py:func:`~pytest_ngsfixtures.factories.sample_layout`) and
-reference data
-(:py:func:`~pytest_ngsfixtures.factories.sample_layout`). A layout
-is simply a set of links to the distributed data files, where the link
-organization and naming reflect typical file naming schemes of
-sequencing files delivered by sequence providers or as used in
+(:py:func:`~pytest_ngsfixtures.factories.sample_layout`) and reference
+data (:py:func:`~pytest_ngsfixtures.factories.reference_layout`). A
+layout is simply a set of links to the distributed data files, where
+the link organization and naming reflect typical file naming schemes
+of sequencing files delivered by sequence providers or as used in
 projects.
 
 There are nine predefined sample layouts:

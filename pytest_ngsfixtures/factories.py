@@ -176,9 +176,11 @@ def filetype(path, src=None, fdir=None, copy=False, **kwargs):
 
       .. code-block:: python
 
+         import os
          from pytest_ngsfixtures import factories
          bamfile = '/path/to/foo.bam'
-         bam = factories.filetype(src=bamfile, fdir="bam",
+         bam = factories.filetype('foolink.bam', src=bamfile,
+                                  fdir="bam",
                                   scope="function")
 
          def test_bam(bam):
