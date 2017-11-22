@@ -39,10 +39,11 @@ def test_make_targets(subconfig):
 
 
 def test_get_versions(subconfig):
-    all_versions = helpers.get_versions(subconfig)
-    samtools_stats_versions = helpers.get_versions(subconfig['samtools_stats'], all_versions)
-    samtools_rmdup_versions = helpers.get_versions(subconfig['samtools_rmdup'], all_versions)
-    assert all_versions == set(subconfig["_versions"]).intersection(set(subconfig["_conda_versions"]))
+    conf = subconfig['samtools']
+    all_versions = helpers.get_versions(conf)
+    samtools_stats_versions = helpers.get_versions(conf['samtools_stats'], all_versions)
+    samtools_rmdup_versions = helpers.get_versions(conf['samtools_rmdup'], all_versions)
+    assert all_versions == set(conf["_versions"]).intersection(set(conf["_conda_versions"]))
     assert samtools_stats_versions == all_versions
     assert samtools_rmdup_versions != all_versions
 
