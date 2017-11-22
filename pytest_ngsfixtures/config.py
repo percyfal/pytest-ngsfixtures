@@ -19,7 +19,7 @@ APPLICATION_DIRECTORIES = sorted(
 )
 configfile = os.path.join(APPLICATION_DATA_DIR, "config.yaml")
 
-Config = namedtuple('Config', 'SIZES SAMPLES POPULATIONS SAMPLE_LAYOUTS')
+Config = namedtuple('Config', 'SIZES SAMPLES POPULATIONS SAMPLE_LAYOUTS RUNFMT RUNFMT_ALIAS')
 
 sample_conf = Config(
     SIZES=("tiny", "small", "medium", "yuge"),
@@ -31,10 +31,15 @@ sample_conf = Config(
     POPULATIONS=tuple(["CHS"] * 3 +
                       ["PUR"] * 7 +
                       ["YRI"] * 3),
-    SAMPLE_LAYOUTS=("sample", "sample_run",
-                    "project_sample_run", "pop_sample",
-                    "pop_sample_run", "pop_project_sample_run")
+    SAMPLE_LAYOUTS=("short", "individual", "pool"),
+    RUNFMT=("{SM}", "{SM}/{SM}_{PU}", "{SM}/{PU}/{SM}_{PU}", "{SM}/{BATCH}/{PU}/{BATCH}_{PU}",
+            "{POP}/{SM}/{SM}_{PU}", "{POP}/{SM}/{PU}/{SM}_{PU}", "{POP}/{SM}/{BATCH}/{PU}/{BATCH}_{PU}"),
+    RUNFMT_ALIAS=("flat", "sample", "sample_run", "sample_project_run", "pop_sample",
+                  "pop_sample_run", "pop_sample_project_run")
 )
+
+
+runfmt_alias = {k: v for k, v in zip(sample_conf.RUNFMT_ALIAS, sample_conf.RUNFMT)}
 
 
 def application_config(application=None):

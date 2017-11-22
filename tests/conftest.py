@@ -3,6 +3,7 @@ import os
 import pytest
 from pytest_ngsfixtures import DATA_DIR, factories
 from pytest_ngsfixtures.os import localpath
+from pytest_ngsfixtures.fixtures import *
 
 pytest_plugins = 'pytester'
 
