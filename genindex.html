@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; pytest-ngsfixtures 0.6.0 documentation</title>
+  <title>Index &mdash; pytest-ngsfixtures 0.6.1 documentation</title>
   
 
   
@@ -36,7 +36,7 @@
         <link rel="index" title="Index"
               href="#"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="pytest-ngsfixtures 0.6.0 documentation" href="index.html"/> 
+    <link rel="top" title="pytest-ngsfixtures 0.6.1 documentation" href="index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.6.0
+                0.6.1
               </div>
             
           
@@ -288,8 +288,6 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pytest_ngsfixtures.html#pytest_ngsfixtures.factories.get_config">get_config() (in module pytest_ngsfixtures.factories)</a>
-</li>
       <li><a href="pytest_ngsfixtures.html#pytest_ngsfixtures.applications.get_github_info">get_github_info() (in module pytest_ngsfixtures.applications)</a>
 </li>
       <li><a href="pytest_ngsfixtures.html#pytest_ngsfixtures.applications.get_other_info">get_other_info() (in module pytest_ngsfixtures.applications)</a>
@@ -310,6 +308,10 @@
         <li><a href="pytest_ngsfixtures.html#pytest_ngsfixtures.file.ReadFixtureFile.id">(pytest_ngsfixtures.file.ReadFixtureFile attribute)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pytest_ngsfixtures.html#pytest_ngsfixtures.file.FixtureFile.ignore_errors">ignore_errors (pytest_ngsfixtures.file.FixtureFile attribute)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -370,12 +372,14 @@
 </li>
       <li><a href="pytest_ngsfixtures.html#pytest_ngsfixtures.plugin.pytest_addoption">pytest_addoption() (in module pytest_ngsfixtures.plugin)</a>
 </li>
-      <li><a href="pytest_ngsfixtures.html#module-pytest_ngsfixtures">pytest_ngsfixtures (module)</a>
+      <li><a href="pytest_ngsfixtures.html#pytest_ngsfixtures.plugin.pytest_configure">pytest_configure() (in module pytest_ngsfixtures.plugin)</a>
 </li>
-      <li><a href="pytest_ngsfixtures.html#module-pytest_ngsfixtures.applications">pytest_ngsfixtures.applications (module)</a>
+      <li><a href="pytest_ngsfixtures.html#module-pytest_ngsfixtures">pytest_ngsfixtures (module)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pytest_ngsfixtures.html#module-pytest_ngsfixtures.applications">pytest_ngsfixtures.applications (module)</a>
+</li>
       <li><a href="pytest_ngsfixtures.html#module-pytest_ngsfixtures.config">pytest_ngsfixtures.config (module)</a>
 </li>
       <li><a href="pytest_ngsfixtures.html#module-pytest_ngsfixtures.exceptions">pytest_ngsfixtures.exceptions (module)</a>
@@ -414,17 +418,21 @@
 </li>
       <li><a href="pytest_ngsfixtures.html#pytest_ngsfixtures.filetypes.ref_transcripts_genePred">ref_transcripts_genePred() (in module pytest_ngsfixtures.filetypes)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pytest_ngsfixtures.html#pytest_ngsfixtures.filetypes.ref_transcripts_gtf">ref_transcripts_gtf() (in module pytest_ngsfixtures.filetypes)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pytest_ngsfixtures.html#pytest_ngsfixtures.factories.reference_layout">reference_layout() (in module pytest_ngsfixtures.factories)</a>
 </li>
       <li><a href="pytest_ngsfixtures.html#pytest_ngsfixtures.file.ReferenceFixtureFile">ReferenceFixtureFile (class in pytest_ngsfixtures.file)</a>
 </li>
       <li><a href="pytest_ngsfixtures.html#pytest_ngsfixtures.file.ReadFixtureFile.reset">reset() (pytest_ngsfixtures.file.ReadFixtureFile class method)</a>
 </li>
+      <li><a href="pytest_ngsfixtures.html#pytest_ngsfixtures.config.Config.RUNFMT">RUNFMT (pytest_ngsfixtures.config.Config attribute)</a>
+</li>
       <li><a href="pytest_ngsfixtures.html#pytest_ngsfixtures.file.ReadFixtureFile.runfmt">runfmt (pytest_ngsfixtures.file.ReadFixtureFile attribute)</a>
+</li>
+      <li><a href="pytest_ngsfixtures.html#pytest_ngsfixtures.config.Config.RUNFMT_ALIAS">RUNFMT_ALIAS (pytest_ngsfixtures.config.Config attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -517,7 +525,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.6.0',
+            VERSION:'0.6.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pytest_ngsfixtures package &mdash; pytest-ngsfixtures 0.6.0 documentation</title>
+  <title>pytest_ngsfixtures package &mdash; pytest-ngsfixtures 0.6.1 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="pytest-ngsfixtures 0.6.0 documentation" href="index.html"/>
+    <link rel="top" title="pytest-ngsfixtures 0.6.1 documentation" href="index.html"/>
         <link rel="up" title="pytest_ngsfixtures" href="modules.html"/>
         <link rel="prev" title="pytest_ngsfixtures" href="modules.html"/> 
 
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.6.0
+                0.6.1
               </div>
             
           
@@ -238,12 +238,24 @@ dry_run (bool): dry run</dd>
 <p>Configuration settings for pytest-ngsfixtures</p>
 <dl class="class">
 <dt id="pytest_ngsfixtures.config.Config">
-<em class="property">class </em><code class="descclassname">pytest_ngsfixtures.config.</code><code class="descname">Config</code><span class="sig-paren">(</span><em>SIZES</em>, <em>SAMPLES</em>, <em>POPULATIONS</em>, <em>SAMPLE_LAYOUTS</em><span class="sig-paren">)</span><a class="headerlink" href="#pytest_ngsfixtures.config.Config" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pytest_ngsfixtures.config.</code><code class="descname">Config</code><span class="sig-paren">(</span><em>SIZES</em>, <em>SAMPLES</em>, <em>POPULATIONS</em>, <em>SAMPLE_LAYOUTS</em>, <em>RUNFMT</em>, <em>RUNFMT_ALIAS</em><span class="sig-paren">)</span><a class="headerlink" href="#pytest_ngsfixtures.config.Config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></p>
 <dl class="attribute">
 <dt id="pytest_ngsfixtures.config.Config.POPULATIONS">
 <code class="descname">POPULATIONS</code><a class="headerlink" href="#pytest_ngsfixtures.config.Config.POPULATIONS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.config.Config.RUNFMT">
+<code class="descname">RUNFMT</code><a class="headerlink" href="#pytest_ngsfixtures.config.Config.RUNFMT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 4</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.config.Config.RUNFMT_ALIAS">
+<code class="descname">RUNFMT_ALIAS</code><a class="headerlink" href="#pytest_ngsfixtures.config.Config.RUNFMT_ALIAS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 5</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -502,9 +514,11 @@ look for existing files in the data directory of the
 pytest_ngsfixtures installation. In order to use a local source
 file use absolute path names.</p>
 <p class="rubric">Example</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pytest_ngsfixtures</span> <span class="kn">import</span> <span class="n">factories</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">pytest_ngsfixtures</span> <span class="kn">import</span> <span class="n">factories</span>
 <span class="n">bamfile</span> <span class="o">=</span> <span class="s1">&#39;/path/to/foo.bam&#39;</span>
-<span class="n">bam</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">filetype</span><span class="p">(</span><span class="n">src</span><span class="o">=</span><span class="n">bamfile</span><span class="p">,</span> <span class="n">fdir</span><span class="o">=</span><span class="s2">&quot;bam&quot;</span><span class="p">,</span>
+<span class="n">bam</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">filetype</span><span class="p">(</span><span class="s1">&#39;foolink.bam&#39;</span><span class="p">,</span> <span class="n">src</span><span class="o">=</span><span class="n">bamfile</span><span class="p">,</span>
+                         <span class="n">fdir</span><span class="o">=</span><span class="s2">&quot;bam&quot;</span><span class="p">,</span>
                          <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;function&quot;</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">test_bam</span><span class="p">(</span><span class="n">bam</span><span class="p">):</span>
@@ -529,12 +543,6 @@ file use absolute path names.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="pytest_ngsfixtures.factories.get_config">
-<code class="descclassname">pytest_ngsfixtures.factories.</code><code class="descname">get_config</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/factories.html#get_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.factories.get_config" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a dictionary with config options.</p>
-</dd></dl>
-
-<dl class="function">
 <dt id="pytest_ngsfixtures.factories.reference_layout">
 <code class="descclassname">pytest_ngsfixtures.factories.</code><code class="descname">reference_layout</code><span class="sig-paren">(</span><em>label='ref'</em>, <em>dirname='ref'</em>, <em>copy=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/factories.html#reference_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.factories.reference_layout" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fixture factory for reference layouts.</p>
@@ -556,18 +564,18 @@ file use absolute path names.</p>
 
 <dl class="function">
 <dt id="pytest_ngsfixtures.factories.sample_layout">
-<code class="descclassname">pytest_ngsfixtures.factories.</code><code class="descname">sample_layout</code><span class="sig-paren">(</span><em>runfmt='{SM}', layout=None, sample_prefix='s', use_short_sample_names=True, dirname=None, sampleinfo=True, combinator=&lt;class 'itertools.zip_longest'&gt;, sample_aliases=[], samples=[None], platform_units=[None], batches=[None], populations=[None], paired_end=[True], copy=False, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/factories.html#sample_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.factories.sample_layout" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pytest_ngsfixtures.factories.</code><code class="descname">sample_layout</code><span class="sig-paren">(</span><em>runfmt='{SM}', layout=None, prefix='s', short_name=True, dirname=None, sampleinfo=True, combinator=&lt;class 'itertools.zip_longest'&gt;, alias=[], sample=[None], platform_unit=[None], batches=[None], populations=[None], paired_end=[True], copy=False, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/factories.html#sample_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.factories.sample_layout" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fixture factory for pytest-ngsfixtures sample layouts.</p>
 <p>Generates a directory structure by linking to data files in
 pytest-ngsfixtures data directory. A certain amount of generality
 is allowed in that platform units and batches can be named at
 will. Short sample names can also be used.</p>
 <p>Briefly, sample file names are generated by combining labels in
-the lists <strong>samples</strong> (SM), <strong>platform_units</strong> (PU), <strong>batches</strong>
+the lists <strong>sample</strong> (SM), <strong>platform_unit</strong> (PU), <strong>batches</strong>
 (BATCH), and <strong>populations</strong> (POP), and formatting the directory
 structure following the <em>runfmt</em> format specification. For
-instance, with samples = [“CHR.HG00512”], populations=None,
-batches=None, platform_units=[“010101_AAABBB11XX”], and
+instance, with sample = [“CHR.HG00512”], populations=None,
+batches=None, platform_unit=[“010101_AAABBB11XX”], and
 runfmt=”{SM}/{PU}/{SM}_{PU}”, input files will be organized as
 “CHR.HG00512/010101_AAABBB11XX/CHR.HG00512_010101_AAABBB11XX_1.fastq.gz”
 and similarly for the second read.</p>
@@ -575,8 +583,8 @@ and similarly for the second read.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pytest_ngsfixtures</span> <span class="kn">import</span> <span class="n">factories</span>
 <span class="n">my_layout</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span>
     <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span>
-    <span class="n">samples</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;CHR.HG00512&quot;</span><span class="p">],</span>
-    <span class="n">platform_units</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;010101_AAABBB11XX&quot;</span><span class="p">],</span>
+    <span class="n">sample</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;CHR.HG00512&quot;</span><span class="p">],</span>
+    <span class="n">platform_unit</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;010101_AAABBB11XX&quot;</span><span class="p">],</span>
     <span class="n">populations</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;CHR&quot;</span><span class="p">],</span>
     <span class="n">batches</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;batch1&quot;</span><span class="p">],</span>
     <span class="n">runfmt</span><span class="o">=</span><span class="s2">&quot;{POP}/{SM}/{BATCH}/{PU}/{SM}_{PU}&quot;</span><span class="p">,</span>
@@ -590,14 +598,14 @@ and similarly for the second read.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>runfmt</strong> (<em>str</em>) – run format string</li>
 <li><strong>layout</strong> (<em>str</em>) – layout label</li>
-<li><strong>sample_prefix</strong> (<em>str</em>) – sample prefix for short names</li>
-<li><strong>use_short_sample_names</strong> (<em>bool</em>) – use short sample names</li>
+<li><strong>prefix</strong> (<em>str</em>) – sample prefix for short names</li>
+<li><strong>short_name</strong> (<em>bool</em>) – use short sample names</li>
 <li><strong>dirname</strong> (<em>str</em>) – data directory name</li>
 <li><strong>sampleinfo</strong> (<em>bool</em>) – create sampleinfo file</li>
 <li><strong>combinator</strong> (<em>fun</em>) – function to combine sample, platform unit, batch, population labels</li>
-<li><strong>sample_aliases</strong> (<em>list</em>) – list of sample alias names</li>
-<li><strong>samples</strong> (<em>list</em>) – list of sample names</li>
-<li><strong>platform_units</strong> (<em>list</em>) – list of platform units</li>
+<li><strong>alias</strong> (<em>list</em>) – list of sample alias names</li>
+<li><strong>sample</strong> (<em>list</em>) – list of sample names</li>
+<li><strong>platform_unit</strong> (<em>list</em>) – list of platform units</li>
 <li><strong>batches</strong> (<em>list</em>) – list of batch (project) names</li>
 <li><strong>populations</strong> (<em>list</em>) – list of population names</li>
 <li><strong>paired_end</strong> (<em>list</em>) – list of booleans indicating if a sample run is paired end (True) or single end (False)</li>
@@ -665,7 +673,7 @@ data file directory.</p>
 
 <dl class="class">
 <dt id="pytest_ngsfixtures.file.FixtureFile">
-<em class="property">class </em><code class="descclassname">pytest_ngsfixtures.file.</code><code class="descname">FixtureFile</code><span class="sig-paren">(</span><em>path=None</em>, <em>src=None</em>, <em>setup=False</em>, <em>alias=None</em>, <em>copy=False</em>, <em>prefix='s'</em>, <em>short_name=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/file.html#FixtureFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.file.FixtureFile" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pytest_ngsfixtures.file.</code><code class="descname">FixtureFile</code><span class="sig-paren">(</span><em>path=None</em>, <em>src=None</em>, <em>setup=False</em>, <em>alias=None</em>, <em>copy=False</em>, <em>prefix='s'</em>, <em>short_name=False</em>, <em>ignore_errors=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/file.html#FixtureFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.file.FixtureFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">py._path.local.LocalPath</span></code></p>
 <p>Class that represents test file and source file locations. It
 extends <code class="xref py py-class docutils literal"><span class="pre">LocalPath</span></code> by adding a number
@@ -686,6 +694,7 @@ look for input files</p>
 <li><strong>copy</strong> (<em>bool</em>) – copy src file to test file</li>
 <li><strong>prefix</strong> (<em>str</em>) – prefix for short file output</li>
 <li><strong>short_name</strong> (<em>bool</em>) – use short names instead of full output names</li>
+<li><strong>ignore_errors</strong> (<em>bool</em>) – ignore errors should target file exist</li>
 </ul>
 </td>
 </tr>
@@ -717,6 +726,12 @@ look for input files</p>
 <dt id="pytest_ngsfixtures.file.FixtureFile.id">
 <code class="descname">id</code><a class="headerlink" href="#pytest_ngsfixtures.file.FixtureFile.id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for self.name</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pytest_ngsfixtures.file.FixtureFile.ignore_errors">
+<code class="descname">ignore_errors</code><a class="headerlink" href="#pytest_ngsfixtures.file.FixtureFile.ignore_errors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ignore errors on setup</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -1176,7 +1191,7 @@ paired_end</li>
 
 <dl class="function">
 <dt id="pytest_ngsfixtures.layout.setup_sample_layout">
-<code class="descclassname">pytest_ngsfixtures.layout.</code><code class="descname">setup_sample_layout</code><span class="sig-paren">(</span><em>path</em>, <em>layout=None</em>, <em>copy=False</em>, <em>sample_prefix='s'</em>, <em>runfmt='{SM}/{SM}_{PU}'</em>, <em>short_names=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/layout.html#setup_sample_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.layout.setup_sample_layout" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pytest_ngsfixtures.layout.</code><code class="descname">setup_sample_layout</code><span class="sig-paren">(</span><em>path</em>, <em>layout=None</em>, <em>copy=False</em>, <em>prefix='s'</em>, <em>runfmt='{SM}/{SM}_{PU}'</em>, <em>short_name=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/layout.html#setup_sample_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.layout.setup_sample_layout" title="Permalink to this definition">¶</a></dt>
 <dd><p>Setup sample layout.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1186,7 +1201,7 @@ paired_end</li>
 <li><strong>path</strong> (<em>py._path.local.LocalPath</em>) – <code class="xref py py-class docutils literal"><span class="pre">LocalPath</span></code> path where test files will be setup</li>
 <li><strong>layout</strong> (<em>str</em>) – predefined layout name</li>
 <li><strong>copy</strong> (<em>bool</em>) – copy test files instead of symlinking (required for dockerized tests)</li>
-<li><strong>sample_prefix</strong> (<em>str</em>) – sample prefix for short names</li>
+<li><strong>prefix</strong> (<em>str</em>) – sample prefix for short names</li>
 <li><strong>kwargs</strong> (<em>dict</em>) – arguments that are passed on to <a class="reference internal" href="#pytest_ngsfixtures.layout.generate_sample_layouts" title="pytest_ngsfixtures.layout.generate_sample_layouts"><code class="xref py py-func docutils literal"><span class="pre">generate_sample_layouts()</span></code></a></li>
 </ul>
 </td>
@@ -1207,7 +1222,7 @@ paired_end</li>
 
 <dl class="function">
 <dt id="pytest_ngsfixtures.os.safe_copy">
-<code class="descclassname">pytest_ngsfixtures.os.</code><code class="descname">safe_copy</code><span class="sig-paren">(</span><em>p</em>, <em>src</em>, <em>dst</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/os.html#safe_copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.os.safe_copy" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pytest_ngsfixtures.os.</code><code class="descname">safe_copy</code><span class="sig-paren">(</span><em>p</em>, <em>src</em>, <em>dst</em>, <em>ignore_errors=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/os.html#safe_copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.os.safe_copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Safely copy fixture file.</p>
 <p>Copy file from src to dst in LocalPath p. If src, dst are strings,
 they will be joined to p, assuming they are relative to p. If src,
@@ -1221,6 +1236,7 @@ objects are always absolute paths.</p>
 <li><strong>p</strong> (<em>LocalPath</em>) – path in which link is setup</li>
 <li><strong>src</strong> (<em>str</em><em>, </em><em>LocalPath</em>) – source file that link points to. If string, assume relative to pytest_ngsfixtures data directory</li>
 <li><strong>dst</strong> (<em>str</em><em>, </em><em>LocalPath</em>) – link destination name. If string, assume relative to path and concatenate; else leave alone</li>
+<li><strong>ignore_errors</strong> (<em>bool</em>) – ignore errors should target file exist</li>
 </ul>
 </td>
 </tr>
@@ -1242,7 +1258,7 @@ objects are always absolute paths.</p>
 
 <dl class="function">
 <dt id="pytest_ngsfixtures.os.safe_symlink">
-<code class="descclassname">pytest_ngsfixtures.os.</code><code class="descname">safe_symlink</code><span class="sig-paren">(</span><em>p</em>, <em>src</em>, <em>dst</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/os.html#safe_symlink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.os.safe_symlink" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pytest_ngsfixtures.os.</code><code class="descname">safe_symlink</code><span class="sig-paren">(</span><em>p</em>, <em>src</em>, <em>dst</em>, <em>ignore_errors=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/os.html#safe_symlink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.os.safe_symlink" title="Permalink to this definition">¶</a></dt>
 <dd><p>Safely make symlink.</p>
 <p>Make symlink from src to dst in LocalPath p. If src, dst are
 strings, they will be joined to p, assuming they are relative to
@@ -1256,6 +1272,7 @@ LocalPath objects are always absolute paths.</p>
 <li><strong>p</strong> (<em>LocalPath</em>) – path in which link is setup</li>
 <li><strong>src</strong> (<em>str</em><em>, </em><em>LocalPath</em>) – source file that link points to. If string, assume relative to pytest_ngsfixtures data directory</li>
 <li><strong>dst</strong> (<em>str</em><em>, </em><em>LocalPath</em>) – link destination name. If string, assume relative to path and concatenate; else leave alone</li>
+<li><strong>ignore_errors</strong> (<em>bool</em>) – ignore errors should target file exist</li>
 </ul>
 </td>
 </tr>
@@ -1276,6 +1293,11 @@ LocalPath objects are always absolute paths.</p>
 <dl class="function">
 <dt id="pytest_ngsfixtures.plugin.pytest_addoption">
 <code class="descclassname">pytest_ngsfixtures.plugin.</code><code class="descname">pytest_addoption</code><span class="sig-paren">(</span><em>parser</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/plugin.html#pytest_addoption"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.plugin.pytest_addoption" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.plugin.pytest_configure">
+<code class="descclassname">pytest_ngsfixtures.plugin.</code><code class="descname">pytest_configure</code><span class="sig-paren">(</span><em>config</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/plugin.html#pytest_configure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.plugin.pytest_configure" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -1365,7 +1387,7 @@ LocalPath objects are always absolute paths.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.6.0',
+            VERSION:'0.6.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
