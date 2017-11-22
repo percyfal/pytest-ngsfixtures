@@ -2,6 +2,7 @@
 """Plugin configuration module for pytest-ngsfixtures"""
 import re
 from pytest_ngsfixtures import factories
+from pytest_ngsfixtures.factories import psample, pref
 from pytest_ngsfixtures.config import sample_conf, runfmt_alias
 
 _help_ngs_size = "select sample size (choices: {})".format(", ".join("'{}'".format(x) for x in sample_conf.SIZES))
@@ -27,7 +28,7 @@ def pytest_addoption(parser):
         '--ngs-layout',
         action='store',
         dest='ngs_layout',
-        default="short",
+        default=["short"],
         help=_help_ngs_layout,
         nargs="+",
         metavar="layout",
@@ -60,18 +61,37 @@ def pytest_addoption(parser):
         "--ngs-runfmt",
         action="store",
         help="sample test run format; organization of samples",
-        default=None,
+        default=["sample"],
+        nargs="+",
         dest="ngs_runfmt",
         metavar="runfmt",
+    )
+    group.addoption(
+        "--ngs-copy",
+        action="store_true",
+        help="copy test data instead of symlinking",
+        default=False,
+        dest="ngs_copy",
+    )
+    group.addoption(
+        "--ngs-ref",
+        action="store_true",
+        help="use ref reference layout instead of scaffolds",
+        default=False,
+        dest="ngs_ref",
     )
 
 
 def pytest_configure(config):
+    config.option.ngs_runfmt_alias = config.option.ngs_runfmt
+    runfmt = []
     if config.option.ngs_runfmt:
-        if re.search("[{}]", config.option.ngs_runfmt) is None:
-            assert config.option.ngs_runfmt in sample_conf.RUNFMT_ALIAS, "if run format is given as string, must be one of {}".format(", ".join(sample_conf.RUNFMT_ALIAS))
+        for rf in config.option.ngs_runfmt:
+            if re.search("[{}]", rf) is None:
+                assert rf in sample_conf.RUNFMT_ALIAS, "if run format is given as string, must be one of {}".format(", ".join(sample_conf.RUNFMT_ALIAS))
 
-            config.option.ngs_runfmt = runfmt_alias[config.option.ngs_runfmt]
+            runfmt.append(runfmt_alias[rf])
+        config.option.ngs_runfmt = runfmt
     if config.option.ngs_pool:
         config.option.ngs_layout = "pool"
     if config.option.ngs_layout == "pool":
@@ -80,6 +100,6 @@ def pytest_configure(config):
 
 
 flat = factories.sample_layout(sample=['CHS.HG00512'])
-
 ref = factories.reference_layout(dirname="ref")
-scaffolds = factories.reference_layout(label="scaffolds", dirname="scaffolds")
+scaffolds = factories.reference_layout(label="scaffolds",
+                                       dirname="scaffolds")
