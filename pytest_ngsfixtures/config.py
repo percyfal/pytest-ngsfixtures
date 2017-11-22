@@ -167,11 +167,11 @@ def flattened_application_fixture_metadata(application=None, end=None, version=N
             continue
         if application is not None and app != application:
             continue
-        versions = helpers.get_versions(conf[app]) if version is None else set([version])
+        all_versions = helpers.get_versions(conf[app]) if version is None else set([version])
         for command, params in d.items():
             if command.startswith("_"):
                 continue
-            versions = helpers.get_versions(conf[app][command], versions)
+            versions = helpers.get_versions(conf[app][command], all_versions)
             _raw_output = params["output"]
             if end is None:
                 _ends = [params["_end"]] if "_end" in params.keys() else ["se", "pe"]

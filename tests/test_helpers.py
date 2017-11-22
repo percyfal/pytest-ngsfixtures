@@ -7,7 +7,14 @@ test_helpers
 
 Tests for `pytest_ngsfixtures.helpers` module.
 """
+import pytest
 from pytest_ngsfixtures import helpers, config
+
+
+@pytest.fixture
+def subconfig():
+    conf = {'samtools': config.application_config()['samtools']}
+    return conf
 
 
 class MockRule(object):
@@ -24,9 +31,28 @@ class MockRule(object):
         return self._output
 
 
-def test_make_targets():
+def test_make_targets(subconfig):
     rules = [MockRule(name="samtools_depth", output={"txt": "{version}/{end}/medium.depth.txt"}),
              MockRule(name="samtools_rmdup", output={"txt": "{version}/{end}/medium.rmdup.txt"})]
-    conf = config.application_config()
-    tgt = helpers.make_targets(rules, conf, 'samtools', end='se')
+    tgt = helpers.make_targets(rules, subconfig, 'samtools', end='se')
     assert len(tgt) == 8
+
+
+def test_get_versions(subconfig):
+    all_versions = helpers.get_versions(subconfig)
+    samtools_stats_versions = helpers.get_versions(subconfig['samtools_stats'], all_versions)
+    samtools_rmdup_versions = helpers.get_versions(subconfig['samtools_rmdup'], all_versions)
+    assert all_versions == set(subconfig["_versions"]).intersection(set(subconfig["_conda_versions"]))
+    assert samtools_stats_versions == all_versions
+    assert samtools_rmdup_versions != all_versions
+
+
+def test_make_stats_targets(subconfig):
+    rules = [
+        MockRule(name="samtools_rmdup", output={"txt": "{version}/{end}/medium.rmdup.txt"}),
+        MockRule(name="samtools_stats", output={"txt": "{version}/{end}/medium.stats.txt"}),
+    ]
+    tgt = helpers.make_targets(rules, subconfig, 'samtools', end='se')
+    assert "1.5/se/medium.stats.txt" in tgt
+    tgt = helpers.make_targets(rules, subconfig, 'samtools', end='pe')
+    assert "1.5/pe/medium.stats.txt" in tgt
