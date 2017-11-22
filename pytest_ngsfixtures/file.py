@@ -360,7 +360,7 @@ class ReferenceFixtureFile(FixtureFile):
     """
     def __new__(cls, *args, **kwargs):
         obj = super(ReferenceFixtureFile, cls).__new__(cls)
-        cls._data_dir = LocalPath(os.path.join(DATA_DIR, "ref"))
+        cls._data_dir = LocalPath(os.path.join(str(DATA_DIR), "ref"))
         cls._ref = {
             'ref': [],
             'scaffolds': [],
@@ -381,7 +381,7 @@ class ReferenceFixtureFile(FixtureFile):
             # Makes custom paths possible
             path = py.path.local(path)
         if src is None:
-            src = py.path.local(os.path.join(self.data_dir, path.basename))
+            src = py.path.local(os.path.join(str(self.data_dir), path.basename))
         super(ReferenceFixtureFile, self).__init__(path=path, src=src,
                                                    *args, **kwargs)
 
@@ -405,7 +405,7 @@ class ApplicationFixtureFile(FixtureFile):
 
     def __new__(cls, *args, **kwargs):
         obj = super(ApplicationFixtureFile, cls).__new__(cls)
-        cls._data_dir = LocalPath(os.path.join(DATA_DIR, "applications"))
+        cls._data_dir = LocalPath(os.path.join(str(DATA_DIR), "applications"))
         return obj
 
     def __init__(self, path, end="pe", *args, **kwargs):
@@ -433,7 +433,7 @@ class ApplicationOutputFixture(FixtureFileSet):
 
     def __new__(cls, *args, **kwargs):
         obj = super(ApplicationOutputFixture, cls).__new__(cls)
-        cls._data_dir = LocalPath(os.path.join(DATA_DIR, "applications"))
+        cls._data_dir = LocalPath(os.path.join(str(DATA_DIR), "applications"))
         return obj
 
     def __init__(self, application, command, version, end="pe",
