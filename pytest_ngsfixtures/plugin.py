@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """Plugin configuration module for pytest-ngsfixtures"""
+import re
 from pytest_ngsfixtures import factories
-from pytest_ngsfixtures.config import sample_conf
+from pytest_ngsfixtures.config import sample_conf, runfmt_alias
 
 _help_ngs_size = "select sample size (choices: {})".format(", ".join("'{}'".format(x) for x in sample_conf.SIZES))
 _help_ngs_layout = "select predefined sample layout(s) (allowed choices: {})".format(", ".join("'{}'".format(x) for x in sample_conf.SAMPLE_LAYOUTS))
@@ -26,11 +27,18 @@ def pytest_addoption(parser):
         '--ngs-layout',
         action='store',
         dest='ngs_layout',
-        default=[],
+        default="short",
         help=_help_ngs_layout,
         nargs="+",
         metavar="layout",
         choices=sample_conf.SAMPLE_LAYOUTS,
+    )
+    group.addoption(
+        "--ngs-pool",
+        action="store_true",
+        help="run tests on pooled data",
+        default=False,
+        dest="ngs_pool",
     )
     group.addoption(
         '-F',
@@ -48,88 +56,30 @@ def pytest_addoption(parser):
         default=1,
         help=_help_ngs_threads,
     )
+    group.addoption(
+        "--ngs-runfmt",
+        action="store",
+        help="sample test run format; organization of samples",
+        default=None,
+        dest="ngs_runfmt",
+        metavar="runfmt",
+    )
+
+
+def pytest_configure(config):
+    if config.option.ngs_runfmt:
+        if re.search("[{}]", config.option.ngs_runfmt) is None:
+            assert config.option.ngs_runfmt in sample_conf.RUNFMT_ALIAS, "if run format is given as string, must be one of {}".format(", ".join(sample_conf.RUNFMT_ALIAS))
+
+            config.option.ngs_runfmt = runfmt_alias[config.option.ngs_runfmt]
+    if config.option.ngs_pool:
+        config.option.ngs_layout = "pool"
+    if config.option.ngs_layout == "pool":
+        config.option.ngs_pool = True
+    return config
 
 
 flat = factories.sample_layout(samples=['CHS.HG00512'])
-
-kwargs = {
-    'samples': ['PUR.HG00731.A', 'PUR.HG00731.B', 'PUR.HG00733.A'],
-    'sample_aliases': ['s1', 's1', 's2'],
-    'platform_units': ['010101_AAABBB11XX', '020202_AAABBB22XX', '010101_AAABBB11XX'],
-    'paired_end': [True] * 3, 'numbered': True,
-}
-
-
-sample = factories.sample_layout(
-    dirname="sample",
-    runfmt="{SM}/{SM}_{PU}",
-    **kwargs,
-)
-
-sample_run = factories.sample_layout(
-    dirname="sample_run",
-    runfmt="{SM}/{PU}/{SM}_{PU}",
-    **kwargs,
-)
-
-sample_project_run = factories.sample_layout(
-    dirname="sample_project_run",
-    runfmt="{SM}/{BATCH}/{PU}/{BATCH}_{PU}",
-    batches=["p1", "p2", "p1"],
-    **kwargs,
-)
-
-
-kwargs = {
-    'samples': ['PUR.HG00731.A', 'PUR.HG00731.B', 'PUR.HG00733.A'] + ['CHS.HG00512', 'CHS.HG00513'] + ['YRI.NA19238', 'YRI.NA19239'],
-    'sample_aliases': ['PUR.HG00731', 'PUR.HG00731', 'PUR.HG00733'] + ['CHS.HG00512', 'CHS.HG00513'] + ['YRI.NA19238', 'YRI.NA19239'],
-    'platform_units': ['010101_AAABBB11XX', '020202_AAABBB22XX', '010101_AAABBB11XX'] + ['010101_AAABBB11XX', '020202_AAABBB22XX'] * 2,
-    'populations': ['PUR'] * 3 + ['CHS'] * 2 + ['YRI'] * 2,
-    'paired_end': [True] * 7,
-    'short_names': False,
-    'numbered': True,
-}
-
-pop_sample = factories.sample_layout(
-    dirname="pop_sample",
-    runfmt="{POP}/{SM}/{SM}_{PU}",
-    **kwargs,
-)
-
-pop_sample_run = factories.sample_layout(
-    dirname="pop_sample_run",
-    runfmt="{POP}/{SM}/{PU}/{SM}_{PU}",
-    **kwargs,
-)
-
-pop_sample_project_run = factories.sample_layout(
-    dirname="pop_project_sample_run",
-    runfmt="{POP}/{SM}/{BATCH}/{PU}/{SM}_{PU}",
-    batches=["p1", "p2", "p1"] + ["p1", "p2"] * 2,
-    **kwargs,
-)
-
-kwargs.update({
-    'samples': ["CHS", "PUR", "YRI"],
-    'sample_aliases': ["CHS.pool", "PUR.pool", "YRI.pool"],
-    'populations': ["CHS", "PUR", "YRI"],
-    'platform_units': ['010101_AAABBB11XX',
-                       '020202_AAABBB22XX',
-                       '010101_AAABBB11XX'],
-    'paired_end': [True] * 3,
-})
-
-pool_pop_sample = factories.sample_layout(
-    dirname="pool_pop_sample",
-    runfmt="{POP}/{SM}/{SM}_{PU}",
-    **kwargs,
-)
-
-pool_pop_sample_run = factories.sample_layout(
-    dirname="pool_pop_sample_run",
-    runfmt="{POP}/{SM}/{PU}/{SM}_{PU}",
-    **kwargs,
-)
 
 ref = factories.reference_layout(dirname="ref")
 scaffolds = factories.reference_layout(label="scaffolds", dirname="scaffolds")
