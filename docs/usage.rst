@@ -1,43 +1,70 @@
 Usage
 =====
 
-Fixture factories
-------------------
+Next-generation sequencing fixtures
+-----------------------------------
 
-Layout fixture factories
-+++++++++++++++++++++++++
+One of the main purposes of :py:mod:`pytest_ngsfixtures` is to provide
+predefined test fixtures that can be used to test applications, such
+as workflows. The predefined test fixtures consist of a test path
+(formally a :py:class:`py._path.local.LocalPath` object) in which test
+files have been setup following some file organization setup,
+henceforth referred to as *test layout* or simply *layout*. Basicall,
+a layout is a set of links to (or copies of) the distributed data
+files, where the link organization and naming reflect typical file
+naming schemes of sequencing files delivered by sequence providers or
+as used in projects. Currently there are predefined test fixtures for
+sequence data and reference data, with the main purpose of being used
+for testing analysis workflows from scratch.
 
-The plugin contains two fixture factories that generate sample layouts
-(:py:func:`~pytest_ngsfixtures.factories.sample_layout`) and reference
-data (:py:func:`~pytest_ngsfixtures.factories.reference_layout`). A
-layout is simply a set of links to the distributed data files, where
-the link organization and naming reflect typical file naming schemes
-of sequencing files delivered by sequence providers or as used in
-projects.
+The plugin contains two :ref:`fixture-factories` that generate sample
+layouts (:py:func:`~pytest_ngsfixtures.factories.sample_layout`) and
+reference data
+(:py:func:`~pytest_ngsfixtures.factories.reference_layout`). There are
+two predefined reference layouts and nine predefined sample layouts.
+The reference layouts (:py:data:`~pytest_ngsfixtures.plugin.ref` and
+:py:data:`~pytest_ngsfixtures.plugin.scaffolds`) and one sample layout
+(:py:data:`~pytest_ngsfixtures.plugin.flat`) are defined at the plugin
+level and always loaded. The remaining eight sample are defined in the
+:py:mod:`~pytest_ngsfixtures.fixtures` module:
 
-There are nine predefined sample layouts:
-:py:data:`~pytest_ngsfixtures.plugin.flat`,
-:py:data:`~pytest_ngsfixtures.plugin.sample`,
-:py:data:`~pytest_ngsfixtures.plugin.sample_run`,
-:py:data:`~pytest_ngsfixtures.plugin.sample_project_run`,
-:py:data:`~pytest_ngsfixtures.plugin.pop_sample`,
-:py:data:`~pytest_ngsfixtures.plugin.pop_sample_run`,
-:py:data:`~pytest_ngsfixtures.plugin.pop_sample_project_run`,
-:py:data:`~pytest_ngsfixtures.plugin.pool_pop_sample`,
-:py:data:`~pytest_ngsfixtures.plugin.pool_pop_sample_run`, and two
-reference layouts:
-:py:data:`~pytest_ngsfixtures.plugin.ref`,
-:py:data:`~pytest_ngsfixtures.plugin.scaffolds`.
+:py:data:`~pytest_ngsfixtures.fixture.sample`,
+:py:data:`~pytest_ngsfixtures.fixture.sample_run`,
+:py:data:`~pytest_ngsfixtures.fixture.sample_project_run`,
+:py:data:`~pytest_ngsfixtures.fixture.pop_sample`,
+:py:data:`~pytest_ngsfixtures.fixture.pop_sample_run`,
+:py:data:`~pytest_ngsfixtures.fixture.pop_sample_project_run`,
+:py:data:`~pytest_ngsfixtures.fixture.pool_pop_sample`,
+:py:data:`~pytest_ngsfixtures.fixture.pool_pop_sample_run`
     
 To use a fixture, simply depend on it in a test, e.g.:
 
 .. code-block:: python
 
-   def test_foo(sample):
-       # Do something with sample
+   # flat fixture is always loaded
+   def test_foo(flat):
+       # Do something with flat
 
+   # sample is not automatically loaded
+   from pytest_ngsfixtures.fixtures import sample
+
+   # ref fixture is always loaded
+   def test_bar(sample, ref):
+       # Do something with sample and ref
+
+
+.. _fixture-factories:
+       
+Fixture factories
+------------------
+
+Layout fixture factories
++++++++++++++++++++++++++
+       
 The predefined sample layouts cover some common cases. However,
-alternative layouts can be added by using the factory function:
+alternative layouts can be added by using the
+:py:func:`~pytest_ngsfixtures.factories.sample_layout` factory
+function:
 
 .. code-block:: python
 
@@ -45,10 +72,10 @@ alternative layouts can be added by using the factory function:
 
    custom_samples = factories.sample_layout(
        dirname="foo",
-       samples=["CHS.HG00512", "YRI.NA19238"],
-       platform_units=['bar', 'foobar'],
+       sample=["CHS.HG00512", "YRI.NA19238"],
+       platform_unit=['bar', 'foobar'],
        paired_end=[True, False],
-       short_names=False,
+       short_name=False,
        runfmt="{SM}/{SM}_{PU}",
        numbered=False,
        scope="function",
@@ -76,7 +103,12 @@ running a test that depends on the sample fixture:
    INFO:pytest_ngsfixtures.factories:/tmp/pytest-of-user/pytest-1/sample0/s2/s2_010101_AAABBB11XX_2.fastq.gz
    INFO:pytest_ngsfixtures.factories:/tmp/pytest-of-user/pytest-1/sample0/sampleinfo.csv
 
-
+Note that the
+:py:func:`~pytest_ngsfixtures.factories.reference_layout` only
+provides a choice between two reference data fixtures. The `ref`
+treats the reference as one chromosome, whereas the `scaffolds`
+fixture partitions the reference into several scaffolds.
+   
 File fixture factories
 +++++++++++++++++++++++
 
@@ -341,13 +373,13 @@ format arguments relate to the function parameters as follows:
 
 SM
 
-  samples - list of sample names (one or several of CHS.HG00512,
+  sample - list of sample names (one or several of CHS.HG00512,
   CHS.HG00513, PUR.HG00731, PUR.HG00733, YRI.NA19238, and
   YRI.NA19239.)
 
 PU
 
-  platform_units - platform unit names, e.g. flowcell name.
+  platform_unit - platform unit names, e.g. flowcell name.
 
 BATCH
 
@@ -361,9 +393,9 @@ POP
 :py:func:`~pytest_ngsfixtures.factories.sample_layout` generates
 output file names by iterating over the parameters and formatting
 names according to runfmt. For instance, if
-``runfmt="{SM}/{SM}_{PU}"``, values in ``samples`` and
-``platform_units`` will be used to produce the final file names. In
-this case, ``samples`` and ``platform_units`` must be of equal length.
+``runfmt="{SM}/{SM}_{PU}"``, values in ``sample`` and
+``platform_unit`` will be used to produce the final file names. In
+this case, ``sample`` and ``platform_unit`` must be of equal length.
 
 See the predefined fixtures in :py:mod:`pytest_ngsfixtures.plugin` and
 the tests for examples.
