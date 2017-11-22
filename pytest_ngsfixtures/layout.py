@@ -124,8 +124,8 @@ def setup_reference_layout(path, label="ref", copy=False, **kwargs):
     flist = ref_dict[label] + ref_dict['_always']
     for dst in flist:
         if dst.basename in ["ref.chrom.sizes", "scaffolds.chrom.sizes"]:
-            r = ReferenceFixtureFile(path.join("chrom.sizes"), src=dst)
+            r = ReferenceFixtureFile(path.join("chrom.sizes"), src=dst, copy=copy, **kwargs)
         else:
-            r = ReferenceFixtureFile(path.join(py.path.local(dst).basename))
+            r = ReferenceFixtureFile(path.join(py.path.local(dst).basename), copy=copy, **kwargs)
         r.setup()
     return path
