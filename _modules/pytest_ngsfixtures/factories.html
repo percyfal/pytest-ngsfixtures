@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pytest_ngsfixtures.factories &mdash; pytest-ngsfixtures 0.6.0 documentation</title>
+  <title>pytest_ngsfixtures.factories &mdash; pytest-ngsfixtures 0.6.1 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="pytest-ngsfixtures 0.6.0 documentation" href="../../index.html"/>
+    <link rel="top" title="pytest-ngsfixtures 0.6.1 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.6.0
+                0.6.1
               </div>
             
           
@@ -159,8 +159,6 @@
             
   <h1>Source code for pytest_ngsfixtures.factories</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
 <span class="kn">import</span> <span class="nn">pytest</span>
@@ -173,34 +171,17 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="get_config"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.factories.get_config">[docs]</a><span class="k">def</span> <span class="nf">get_config</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return a dictionary with config options.&quot;&quot;&quot;</span>
-    <span class="n">config</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">options</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s1">&#39;size&#39;</span><span class="p">,</span>
-    <span class="p">]</span>
-    <span class="k">for</span> <span class="n">option</span> <span class="ow">in</span> <span class="n">options</span><span class="p">:</span>
-        <span class="n">option_name</span> <span class="o">=</span> <span class="s1">&#39;ngs_&#39;</span> <span class="o">+</span> <span class="n">option</span>
-        <span class="k">if</span> <span class="n">request</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">conf</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">getoption</span><span class="p">(</span><span class="n">option_name</span><span class="p">)</span> <span class="ow">or</span> \
-                <span class="n">request</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">getini</span><span class="p">(</span><span class="n">option_name</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">conf</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">config</span><span class="p">[</span><span class="n">option</span><span class="p">]</span> <span class="o">=</span> <span class="n">conf</span>
-    <span class="k">return</span> <span class="n">config</span></div>
-
-
 <div class="viewcode-block" id="sample_layout"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.factories.sample_layout">[docs]</a><span class="k">def</span> <span class="nf">sample_layout</span><span class="p">(</span>
         <span class="n">runfmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{SM}</span><span class="s2">&quot;</span><span class="p">,</span>
         <span class="n">layout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">sample_prefix</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span>
-        <span class="n">use_short_sample_names</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span>
+        <span class="n">short_name</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">dirname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">sampleinfo</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">combinator</span><span class="o">=</span><span class="n">itertools</span><span class="o">.</span><span class="n">zip_longest</span><span class="p">,</span>
-        <span class="n">sample_aliases</span><span class="o">=</span><span class="p">[],</span>
-        <span class="n">samples</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
-        <span class="n">platform_units</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+        <span class="n">alias</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">sample</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+        <span class="n">platform_unit</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
         <span class="n">batches</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
         <span class="n">populations</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
         <span class="n">paired_end</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">],</span>
@@ -215,11 +196,11 @@
 <span class="sd">    will. Short sample names can also be used.</span>
 
 <span class="sd">    Briefly, sample file names are generated by combining labels in</span>
-<span class="sd">    the lists **samples** (SM), **platform_units** (PU), **batches**</span>
+<span class="sd">    the lists **sample** (SM), **platform_unit** (PU), **batches**</span>
 <span class="sd">    (BATCH), and **populations** (POP), and formatting the directory</span>
 <span class="sd">    structure following the *runfmt* format specification. For</span>
-<span class="sd">    instance, with samples = [&quot;CHR.HG00512&quot;], populations=None,</span>
-<span class="sd">    batches=None, platform_units=[&quot;010101_AAABBB11XX&quot;], and</span>
+<span class="sd">    instance, with sample = [&quot;CHR.HG00512&quot;], populations=None,</span>
+<span class="sd">    batches=None, platform_unit=[&quot;010101_AAABBB11XX&quot;], and</span>
 <span class="sd">    runfmt=&quot;{SM}/{PU}/{SM}_{PU}&quot;, input files will be organized as</span>
 <span class="sd">    &quot;CHR.HG00512/010101_AAABBB11XX/CHR.HG00512_010101_AAABBB11XX_1.fastq.gz&quot;</span>
 <span class="sd">    and similarly for the second read.</span>
@@ -231,8 +212,8 @@
 <span class="sd">       from pytest_ngsfixtures import factories</span>
 <span class="sd">       my_layout = factories.sample_layout(</span>
 <span class="sd">           dirname=&quot;foo&quot;,</span>
-<span class="sd">           samples=[&quot;CHR.HG00512&quot;],</span>
-<span class="sd">           platform_units=[&quot;010101_AAABBB11XX&quot;],</span>
+<span class="sd">           sample=[&quot;CHR.HG00512&quot;],</span>
+<span class="sd">           platform_unit=[&quot;010101_AAABBB11XX&quot;],</span>
 <span class="sd">           populations=[&quot;CHR&quot;],</span>
 <span class="sd">           batches=[&quot;batch1&quot;],</span>
 <span class="sd">           runfmt=&quot;{POP}/{SM}/{BATCH}/{PU}/{SM}_{PU}&quot;,</span>
@@ -242,14 +223,14 @@
 <span class="sd">    Args:</span>
 <span class="sd">      runfmt (str): run format string</span>
 <span class="sd">      layout (str): layout label</span>
-<span class="sd">      sample_prefix (str): sample prefix for short names</span>
-<span class="sd">      use_short_sample_names (bool): use short sample names</span>
+<span class="sd">      prefix (str): sample prefix for short names</span>
+<span class="sd">      short_name (bool): use short sample names</span>
 <span class="sd">      dirname (str): data directory name</span>
 <span class="sd">      sampleinfo (bool): create sampleinfo file</span>
 <span class="sd">      combinator (fun): function to combine sample, platform unit, batch, population labels</span>
-<span class="sd">      sample_aliases (list): list of sample alias names</span>
-<span class="sd">      samples (list): list of sample names</span>
-<span class="sd">      platform_units (list): list of platform units</span>
+<span class="sd">      alias (list): list of sample alias names</span>
+<span class="sd">      sample (list): list of sample names</span>
+<span class="sd">      platform_unit (list): list of platform units</span>
 <span class="sd">      batches (list): list of batch (project) names</span>
 <span class="sd">      populations (list): list of population names</span>
 <span class="sd">      paired_end (list): list of booleans indicating if a sample run is paired end (True) or single end (False)</span>
@@ -259,31 +240,33 @@
 <span class="sd">      p (py.path.local): tmp directory with sample layout setup</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_aliases</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_aliases</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">),</span> <span class="s2">&quot;length of sample_aliases (</span><span class="si">{}</span><span class="s2">) and samples (</span><span class="si">{}</span><span class="s2">) must be equal&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sample_aliases</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="p">),</span> <span class="s2">&quot;length of alias (</span><span class="si">{}</span><span class="s2">) and samples (</span><span class="si">{}</span><span class="s2">) must be equal&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">alias</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="p">))</span>
 
     <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">autouse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">sample_layout_fixture</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">tmpdir_factory</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sample layout fixture. Setup sequence input files according to a</span>
 <span class="sd">        specified sample organization&quot;&quot;&quot;</span>
-        <span class="n">config</span> <span class="o">=</span> <span class="n">get_config</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
-        <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">,</span> <span class="s2">&quot;tiny&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">request</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">getoption</span><span class="p">(</span><span class="s2">&quot;ngs_size&quot;</span><span class="p">)</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;layout&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">layout</span>
-        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;alias&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample_aliases</span>
-        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">samples</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;runfmt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">runfmt</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;alias&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">alias</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;population&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">populations</span>
-        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;platform_unit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">platform_units</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;platform_unit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">platform_unit</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;batch&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">batches</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;copy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;sampleinfo&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sampleinfo</span>
-        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;runfmt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">runfmt</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;paired_end&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">paired_end</span>
-        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;use_short_sample_names&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">use_short_sample_names</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;short_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">short_name</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">safe_mktemp</span><span class="p">(</span><span class="n">tmpdir_factory</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">setup_sample_layout</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="c1"># Alternatively print as debug</span>
         <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_show_fixture</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;-------------&quot;</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;sample_layout&quot;</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;-------------&quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">visit</span><span class="p">()):</span>
@@ -309,8 +292,9 @@
         <span class="sd">&quot;&quot;&quot;Reference layout fixture. Setup the one-chromosome reference files</span>
 <span class="sd">        or scaffold reference files in a separate directory&quot;&quot;&quot;</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">safe_mktemp</span><span class="p">(</span><span class="n">tmpdir_factory</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="n">setup_reference_layout</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">setup_reference_layout</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_show_fixture</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;------------------------------------&quot;</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&#39;</span><span class="si">{}</span><span class="s2">&#39; reference layout&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">label</span><span class="p">))</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;------------------------------------&quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">visit</span><span class="p">()):</span>
@@ -336,9 +320,11 @@
 
 <span class="sd">      .. code-block:: python</span>
 
+<span class="sd">         import os</span>
 <span class="sd">         from pytest_ngsfixtures import factories</span>
 <span class="sd">         bamfile = &#39;/path/to/foo.bam&#39;</span>
-<span class="sd">         bam = factories.filetype(src=bamfile, fdir=&quot;bam&quot;,</span>
+<span class="sd">         bam = factories.filetype(&#39;foolink.bam&#39;, src=bamfile,</span>
+<span class="sd">                                  fdir=&quot;bam&quot;,</span>
 <span class="sd">                                  scope=&quot;function&quot;)</span>
 
 <span class="sd">         def test_bam(bam):</span>
@@ -360,6 +346,7 @@
         <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">setup_filetype</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">p</span><span class="p">,</span> <span class="n">src</span><span class="o">=</span><span class="n">src</span><span class="p">,</span> <span class="n">setup</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_show_fixture</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;------------------------&quot;</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;filetype fixture content&quot;</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;------------------------&quot;</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
@@ -408,20 +395,11 @@
 
     <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;scope&quot;</span><span class="p">,</span> <span class="s2">&quot;function&quot;</span><span class="p">),</span> <span class="n">autouse</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;autouse&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
     <span class="k">def</span> <span class="nf">fileset_fixture</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">tmpdir_factory</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Fileset factory</span>
-
-<span class="sd">        Setup a set of files</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">          request (FixtureRequest): fixture request object</span>
-<span class="sd">          tmpdir_factory (py.path.local): fixture request object</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">          :obj:`py._path.local.LocalPath`: output directory in which the files reside</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Fileset fixture - setup a set of files&quot;&quot;&quot;</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">safe_mktemp</span><span class="p">(</span><span class="n">tmpdir_factory</span><span class="p">,</span> <span class="n">fdir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">setup_fileset</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">p</span><span class="p">,</span> <span class="n">src</span><span class="o">=</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="o">=</span><span class="n">dst</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_show_fixture</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;-----------------------&quot;</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;fileset fixture content&quot;</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;-----------------------&quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">visit</span><span class="p">()):</span>
@@ -471,9 +449,11 @@
 
     <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
     <span class="k">def</span> <span class="nf">application_output_fixture</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">tmpdir_factory</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Setup application output fixture set&quot;&quot;&quot;</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">safe_mktemp</span><span class="p">(</span><span class="n">tmpdir_factory</span><span class="p">,</span> <span class="n">fdir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">ao</span> <span class="o">=</span> <span class="n">ApplicationOutputFixture</span><span class="p">(</span><span class="n">application</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">p</span><span class="p">,</span> <span class="n">setup</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_show_fixture</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;----------------------------------&quot;</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;application output fixture content&quot;</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;----------------------------------&quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">ao</span><span class="o">.</span><span class="n">visit</span><span class="p">()):</span>
@@ -516,7 +496,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.6.0',
+            VERSION:'0.6.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pytest_ngsfixtures.plugin &mdash; pytest-ngsfixtures 0.6.0 documentation</title>
+  <title>pytest_ngsfixtures.plugin &mdash; pytest-ngsfixtures 0.6.1 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="pytest-ngsfixtures 0.6.0 documentation" href="../../index.html"/>
+    <link rel="top" title="pytest-ngsfixtures 0.6.1 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.6.0
+                0.6.1
               </div>
             
           
@@ -160,8 +160,10 @@
   <h1>Source code for pytest_ngsfixtures.plugin</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Plugin configuration module for pytest-ngsfixtures&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">pytest_ngsfixtures</span> <span class="k">import</span> <span class="n">factories</span>
-<span class="kn">from</span> <span class="nn">pytest_ngsfixtures.config</span> <span class="k">import</span> <span class="n">sample_conf</span>
+<span class="kn">from</span> <span class="nn">pytest_ngsfixtures.fixtures</span> <span class="k">import</span> <span class="n">psample</span><span class="p">,</span> <span class="n">pref</span>
+<span class="kn">from</span> <span class="nn">pytest_ngsfixtures.config</span> <span class="k">import</span> <span class="n">sample_conf</span><span class="p">,</span> <span class="n">runfmt_alias</span>
 
 <span class="n">_help_ngs_size</span> <span class="o">=</span> <span class="s2">&quot;select sample size (choices: </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;&#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sample_conf</span><span class="o">.</span><span class="n">SIZES</span><span class="p">))</span>
 <span class="n">_help_ngs_layout</span> <span class="o">=</span> <span class="s2">&quot;select predefined sample layout(s) (allowed choices: </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;&#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sample_conf</span><span class="o">.</span><span class="n">SAMPLE_LAYOUTS</span><span class="p">))</span>
@@ -186,11 +188,18 @@
         <span class="s1">&#39;--ngs-layout&#39;</span><span class="p">,</span>
         <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store&#39;</span><span class="p">,</span>
         <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;ngs_layout&#39;</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;short&quot;</span><span class="p">],</span>
         <span class="n">help</span><span class="o">=</span><span class="n">_help_ngs_layout</span><span class="p">,</span>
         <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
         <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;layout&quot;</span><span class="p">,</span>
         <span class="n">choices</span><span class="o">=</span><span class="n">sample_conf</span><span class="o">.</span><span class="n">SAMPLE_LAYOUTS</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">addoption</span><span class="p">(</span>
+        <span class="s2">&quot;--ngs-pool&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;run tests on pooled data&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;ngs_pool&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">group</span><span class="o">.</span><span class="n">addoption</span><span class="p">(</span>
         <span class="s1">&#39;-F&#39;</span><span class="p">,</span>
@@ -207,92 +216,53 @@
         <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;ngs_threads&quot;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="n">_help_ngs_threads</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">addoption</span><span class="p">(</span>
+        <span class="s2">&quot;--ngs-runfmt&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;sample test run format; organization of samples&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sample&quot;</span><span class="p">],</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;ngs_runfmt&quot;</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;runfmt&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">addoption</span><span class="p">(</span>
+        <span class="s2">&quot;--ngs-copy&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;copy test data instead of symlinking&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;ngs_copy&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">addoption</span><span class="p">(</span>
+        <span class="s2">&quot;--ngs-ref&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;use ref reference layout instead of scaffolds&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;ngs_ref&quot;</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
-<span class="n">flat</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span><span class="n">samples</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;CHS.HG00512&#39;</span><span class="p">])</span>
+<div class="viewcode-block" id="pytest_configure"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.plugin.pytest_configure">[docs]</a><span class="k">def</span> <span class="nf">pytest_configure</span><span class="p">(</span><span class="n">config</span><span class="p">):</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_runfmt_alias</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_runfmt</span>
+    <span class="n">runfmt</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_runfmt</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">rf</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_runfmt</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;[</span><span class="si">{}</span><span class="s2">]&quot;</span><span class="p">,</span> <span class="n">rf</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">rf</span> <span class="ow">in</span> <span class="n">sample_conf</span><span class="o">.</span><span class="n">RUNFMT_ALIAS</span><span class="p">,</span> <span class="s2">&quot;if run format is given as string, must be one of </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sample_conf</span><span class="o">.</span><span class="n">RUNFMT_ALIAS</span><span class="p">))</span>
 
-<span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;samples&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;PUR.HG00731.A&#39;</span><span class="p">,</span> <span class="s1">&#39;PUR.HG00731.B&#39;</span><span class="p">,</span> <span class="s1">&#39;PUR.HG00733.A&#39;</span><span class="p">],</span>
-    <span class="s1">&#39;sample_aliases&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;s1&#39;</span><span class="p">,</span> <span class="s1">&#39;s1&#39;</span><span class="p">,</span> <span class="s1">&#39;s2&#39;</span><span class="p">],</span>
-    <span class="s1">&#39;platform_units&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;010101_AAABBB11XX&#39;</span><span class="p">,</span> <span class="s1">&#39;020202_AAABBB22XX&#39;</span><span class="p">,</span> <span class="s1">&#39;010101_AAABBB11XX&#39;</span><span class="p">],</span>
-    <span class="s1">&#39;paired_end&#39;</span><span class="p">:</span> <span class="p">[</span><span class="kc">True</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;numbered&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-<span class="p">}</span>
-
-
-<span class="n">sample</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span>
-    <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span>
-    <span class="n">runfmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{SM}</span><span class="s2">/</span><span class="si">{SM}</span><span class="s2">_</span><span class="si">{PU}</span><span class="s2">&quot;</span><span class="p">,</span>
-    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">sample_run</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span>
-    <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;sample_run&quot;</span><span class="p">,</span>
-    <span class="n">runfmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{SM}</span><span class="s2">/</span><span class="si">{PU}</span><span class="s2">/</span><span class="si">{SM}</span><span class="s2">_</span><span class="si">{PU}</span><span class="s2">&quot;</span><span class="p">,</span>
-    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">sample_project_run</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span>
-    <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;sample_project_run&quot;</span><span class="p">,</span>
-    <span class="n">runfmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{SM}</span><span class="s2">/</span><span class="si">{BATCH}</span><span class="s2">/</span><span class="si">{PU}</span><span class="s2">/</span><span class="si">{BATCH}</span><span class="s2">_</span><span class="si">{PU}</span><span class="s2">&quot;</span><span class="p">,</span>
-    <span class="n">batches</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;p1&quot;</span><span class="p">,</span> <span class="s2">&quot;p2&quot;</span><span class="p">,</span> <span class="s2">&quot;p1&quot;</span><span class="p">],</span>
-    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-<span class="p">)</span>
+            <span class="n">runfmt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">runfmt_alias</span><span class="p">[</span><span class="n">rf</span><span class="p">])</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_runfmt</span> <span class="o">=</span> <span class="n">runfmt</span>
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_pool</span><span class="p">:</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_layout</span> <span class="o">=</span> <span class="s2">&quot;pool&quot;</span>
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_layout</span> <span class="o">==</span> <span class="s2">&quot;pool&quot;</span><span class="p">:</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_pool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="n">config</span></div>
 
 
-<span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;samples&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;PUR.HG00731.A&#39;</span><span class="p">,</span> <span class="s1">&#39;PUR.HG00731.B&#39;</span><span class="p">,</span> <span class="s1">&#39;PUR.HG00733.A&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;CHS.HG00512&#39;</span><span class="p">,</span> <span class="s1">&#39;CHS.HG00513&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;YRI.NA19238&#39;</span><span class="p">,</span> <span class="s1">&#39;YRI.NA19239&#39;</span><span class="p">],</span>
-    <span class="s1">&#39;sample_aliases&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;PUR.HG00731&#39;</span><span class="p">,</span> <span class="s1">&#39;PUR.HG00731&#39;</span><span class="p">,</span> <span class="s1">&#39;PUR.HG00733&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;CHS.HG00512&#39;</span><span class="p">,</span> <span class="s1">&#39;CHS.HG00513&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;YRI.NA19238&#39;</span><span class="p">,</span> <span class="s1">&#39;YRI.NA19239&#39;</span><span class="p">],</span>
-    <span class="s1">&#39;platform_units&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;010101_AAABBB11XX&#39;</span><span class="p">,</span> <span class="s1">&#39;020202_AAABBB22XX&#39;</span><span class="p">,</span> <span class="s1">&#39;010101_AAABBB11XX&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;010101_AAABBB11XX&#39;</span><span class="p">,</span> <span class="s1">&#39;020202_AAABBB22XX&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
-    <span class="s1">&#39;populations&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;PUR&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;CHS&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;YRI&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
-    <span class="s1">&#39;paired_end&#39;</span><span class="p">:</span> <span class="p">[</span><span class="kc">True</span><span class="p">]</span> <span class="o">*</span> <span class="mi">7</span><span class="p">,</span>
-    <span class="s1">&#39;short_names&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="s1">&#39;numbered&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-<span class="p">}</span>
-
-<span class="n">pop_sample</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span>
-    <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;pop_sample&quot;</span><span class="p">,</span>
-    <span class="n">runfmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{POP}</span><span class="s2">/</span><span class="si">{SM}</span><span class="s2">/</span><span class="si">{SM}</span><span class="s2">_</span><span class="si">{PU}</span><span class="s2">&quot;</span><span class="p">,</span>
-    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">pop_sample_run</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span>
-    <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;pop_sample_run&quot;</span><span class="p">,</span>
-    <span class="n">runfmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{POP}</span><span class="s2">/</span><span class="si">{SM}</span><span class="s2">/</span><span class="si">{PU}</span><span class="s2">/</span><span class="si">{SM}</span><span class="s2">_</span><span class="si">{PU}</span><span class="s2">&quot;</span><span class="p">,</span>
-    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">pop_sample_project_run</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span>
-    <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;pop_project_sample_run&quot;</span><span class="p">,</span>
-    <span class="n">runfmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{POP}</span><span class="s2">/</span><span class="si">{SM}</span><span class="s2">/</span><span class="si">{BATCH}</span><span class="s2">/</span><span class="si">{PU}</span><span class="s2">/</span><span class="si">{SM}</span><span class="s2">_</span><span class="si">{PU}</span><span class="s2">&quot;</span><span class="p">,</span>
-    <span class="n">batches</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;p1&quot;</span><span class="p">,</span> <span class="s2">&quot;p2&quot;</span><span class="p">,</span> <span class="s2">&quot;p1&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;p1&quot;</span><span class="p">,</span> <span class="s2">&quot;p2&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
-    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
-    <span class="s1">&#39;samples&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;CHS&quot;</span><span class="p">,</span> <span class="s2">&quot;PUR&quot;</span><span class="p">,</span> <span class="s2">&quot;YRI&quot;</span><span class="p">],</span>
-    <span class="s1">&#39;sample_aliases&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;CHS.pool&quot;</span><span class="p">,</span> <span class="s2">&quot;PUR.pool&quot;</span><span class="p">,</span> <span class="s2">&quot;YRI.pool&quot;</span><span class="p">],</span>
-    <span class="s1">&#39;populations&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;CHS&quot;</span><span class="p">,</span> <span class="s2">&quot;PUR&quot;</span><span class="p">,</span> <span class="s2">&quot;YRI&quot;</span><span class="p">],</span>
-    <span class="s1">&#39;platform_units&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;010101_AAABBB11XX&#39;</span><span class="p">,</span>
-                       <span class="s1">&#39;020202_AAABBB22XX&#39;</span><span class="p">,</span>
-                       <span class="s1">&#39;010101_AAABBB11XX&#39;</span><span class="p">],</span>
-    <span class="s1">&#39;paired_end&#39;</span><span class="p">:</span> <span class="p">[</span><span class="kc">True</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span>
-<span class="p">})</span>
-
-<span class="n">pool_pop_sample</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span>
-    <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;pool_pop_sample&quot;</span><span class="p">,</span>
-    <span class="n">runfmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{POP}</span><span class="s2">/</span><span class="si">{SM}</span><span class="s2">/</span><span class="si">{SM}</span><span class="s2">_</span><span class="si">{PU}</span><span class="s2">&quot;</span><span class="p">,</span>
-    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">pool_pop_sample_run</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span>
-    <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;pool_pop_sample_run&quot;</span><span class="p">,</span>
-    <span class="n">runfmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{POP}</span><span class="s2">/</span><span class="si">{SM}</span><span class="s2">/</span><span class="si">{PU}</span><span class="s2">/</span><span class="si">{SM}</span><span class="s2">_</span><span class="si">{PU}</span><span class="s2">&quot;</span><span class="p">,</span>
-    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-<span class="p">)</span>
-
+<span class="n">flat</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span><span class="n">sample</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;CHS.HG00512&#39;</span><span class="p">])</span>
 <span class="n">ref</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">reference_layout</span><span class="p">(</span><span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;ref&quot;</span><span class="p">)</span>
-<span class="n">scaffolds</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">reference_layout</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;scaffolds&quot;</span><span class="p">,</span> <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;scaffolds&quot;</span><span class="p">)</span>
+<span class="n">scaffolds</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">reference_layout</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;scaffolds&quot;</span><span class="p">,</span>
+                                       <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;scaffolds&quot;</span><span class="p">)</span>
 </pre></div>
 
            </div>
@@ -329,7 +299,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.6.0',
+            VERSION:'0.6.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

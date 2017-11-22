@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Usage &mdash; pytest-ngsfixtures 0.6.0 documentation</title>
+  <title>Usage &mdash; pytest-ngsfixtures 0.6.1 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="pytest-ngsfixtures 0.6.0 documentation" href="index.html"/>
+    <link rel="top" title="pytest-ngsfixtures 0.6.1 documentation" href="index.html"/>
         <link rel="next" title="&lt;no title&gt;" href="authors.html"/>
         <link rel="prev" title="Developer guide" href="contributing.html"/> 
 
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.6.0
+                0.6.1
               </div>
             
           
@@ -94,6 +94,10 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Developer guide</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#next-generation-sequencing-fixtures">Next-generation sequencing fixtures</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#parametrized-fixtures">Parametrized fixtures</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#fixture-factories">Fixture factories</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#layout-fixture-factories">Layout fixture factories</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#file-fixture-factories">File fixture factories</a></li>
@@ -113,6 +117,10 @@
 <li class="toctree-l2"><a class="reference internal" href="#plugin-options">Plugin options</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#x-ngs-size">-X, –ngs-size</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#l-ngs-layout">-L, –ngs-layout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ngs-runfmt">–ngs-runfmt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ngs-pool">–ngs-pool</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ngs-copy">–ngs-copy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ngs-ref">–ngs-ref</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#f-ngs-show-fixture">-F, –ngs-show-fixture</a></li>
 </ul>
 </li>
@@ -184,46 +192,83 @@
             
   <div class="section" id="usage">
 <h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="fixture-factories">
-<h2>Fixture factories<a class="headerlink" href="#fixture-factories" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="layout-fixture-factories">
-<h3>Layout fixture factories<a class="headerlink" href="#layout-fixture-factories" title="Permalink to this headline">¶</a></h3>
-<p>The plugin contains two fixture factories that generate sample layouts
-(<a class="reference internal" href="pytest_ngsfixtures.html#pytest_ngsfixtures.factories.sample_layout" title="pytest_ngsfixtures.factories.sample_layout"><code class="xref py py-func docutils literal"><span class="pre">sample_layout()</span></code></a>) and
+<div class="section" id="next-generation-sequencing-fixtures">
+<h2>Next-generation sequencing fixtures<a class="headerlink" href="#next-generation-sequencing-fixtures" title="Permalink to this headline">¶</a></h2>
+<p>One of the main purposes of <a class="reference internal" href="pytest_ngsfixtures.html#module-pytest_ngsfixtures" title="pytest_ngsfixtures"><code class="xref py py-mod docutils literal"><span class="pre">pytest_ngsfixtures</span></code></a> is to provide
+predefined test fixtures that can be used to test applications, such
+as workflows. The predefined test fixtures consist of a test path
+(formally a <code class="xref py py-class docutils literal"><span class="pre">py._path.local.LocalPath</span></code> object) in which test
+files have been setup following some file organization setup,
+henceforth referred to as <em>test layout</em> or simply <em>layout</em>. Basicall,
+a layout is a set of links to (or copies of) the distributed data
+files, where the link organization and naming reflect typical file
+naming schemes of sequencing files delivered by sequence providers or
+as used in projects. Currently there are predefined test fixtures for
+sequence data and reference data, with the main purpose of being used
+for testing analysis workflows from scratch.</p>
+<p>The plugin contains two <a class="reference internal" href="#fixture-factories"><span class="std std-ref">Fixture factories</span></a> that generate sample
+layouts (<a class="reference internal" href="pytest_ngsfixtures.html#pytest_ngsfixtures.factories.sample_layout" title="pytest_ngsfixtures.factories.sample_layout"><code class="xref py py-func docutils literal"><span class="pre">sample_layout()</span></code></a>) and
 reference data
-(<a class="reference internal" href="pytest_ngsfixtures.html#pytest_ngsfixtures.factories.sample_layout" title="pytest_ngsfixtures.factories.sample_layout"><code class="xref py py-func docutils literal"><span class="pre">sample_layout()</span></code></a>). A layout
-is simply a set of links to the distributed data files, where the link
-organization and naming reflect typical file naming schemes of
-sequencing files delivered by sequence providers or as used in
-projects.</p>
-<p>There are nine predefined sample layouts:
-<code class="xref py py-data docutils literal"><span class="pre">flat</span></code>,
-<code class="xref py py-data docutils literal"><span class="pre">sample</span></code>,
+(<a class="reference internal" href="pytest_ngsfixtures.html#pytest_ngsfixtures.factories.reference_layout" title="pytest_ngsfixtures.factories.reference_layout"><code class="xref py py-func docutils literal"><span class="pre">reference_layout()</span></code></a>). There are
+two predefined reference layouts and nine predefined sample layouts.
+The reference layouts (<code class="xref py py-data docutils literal"><span class="pre">ref</span></code> and
+<code class="xref py py-data docutils literal"><span class="pre">scaffolds</span></code>) and one sample layout
+(<code class="xref py py-data docutils literal"><span class="pre">flat</span></code>) are defined at the plugin
+level and always loaded. The remaining eight sample are defined in the
+<code class="xref py py-mod docutils literal"><span class="pre">fixtures</span></code> module:</p>
+<p><code class="xref py py-data docutils literal"><span class="pre">sample</span></code>,
 <code class="xref py py-data docutils literal"><span class="pre">sample_run</span></code>,
 <code class="xref py py-data docutils literal"><span class="pre">sample_project_run</span></code>,
 <code class="xref py py-data docutils literal"><span class="pre">pop_sample</span></code>,
 <code class="xref py py-data docutils literal"><span class="pre">pop_sample_run</span></code>,
 <code class="xref py py-data docutils literal"><span class="pre">pop_sample_project_run</span></code>,
 <code class="xref py py-data docutils literal"><span class="pre">pool_pop_sample</span></code>,
-<code class="xref py py-data docutils literal"><span class="pre">pool_pop_sample_run</span></code>, and two
-reference layouts:
-<code class="xref py py-data docutils literal"><span class="pre">ref</span></code>,
-<code class="xref py py-data docutils literal"><span class="pre">scaffolds</span></code>.</p>
+<code class="xref py py-data docutils literal"><span class="pre">pool_pop_sample_run</span></code></p>
 <p>To use a fixture, simply depend on it in a test, e.g.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">test_foo</span><span class="p">(</span><span class="n">sample</span><span class="p">):</span>
-    <span class="c1"># Do something with sample</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># flat fixture is always loaded</span>
+<span class="k">def</span> <span class="nf">test_foo</span><span class="p">(</span><span class="n">flat</span><span class="p">):</span>
+    <span class="c1"># Do something with flat</span>
+
+<span class="c1"># sample is not automatically loaded</span>
+<span class="kn">from</span> <span class="nn">pytest_ngsfixtures.fixtures</span> <span class="kn">import</span> <span class="n">sample</span>
+
+<span class="c1"># ref fixture is always loaded</span>
+<span class="k">def</span> <span class="nf">test_bar</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">ref</span><span class="p">):</span>
+    <span class="c1"># Do something with sample and ref</span>
 </pre></div>
 </div>
+<div class="section" id="parametrized-fixtures">
+<h3>Parametrized fixtures<a class="headerlink" href="#parametrized-fixtures" title="Permalink to this headline">¶</a></h3>
+<p>There are also two parametrized fixtures,
+<a href="#id1"><span class="problematic" id="id2">:py:fun:`~pytest_ngsfixtures.fixture.psample`</span></a> and
+<a href="#id3"><span class="problematic" id="id4">:py:fun:`~pytest_ngsfixtures.fixture.pref`</span></a> that generate fixtures
+depending on values of plugin options (primarily
+<a class="reference internal" href="#plugin-option-runfmt"><span class="std std-ref">–ngs-runfmt</span></a>, <span class="xref std std-ref">plugin-option-layout</span>, and
+<a class="reference internal" href="#plugin-option-ref"><span class="std std-ref">–ngs-ref</span></a>). For instance, the following command would
+generate all combinations of provided layouts and run formats:</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>pytest --ngs-runfmt sample sample_run --ngs-layout individual pool
+</pre></div>
+</div>
+<p>provided of course there is a test that requires the
+<code class="xref py py-func docutils literal"><span class="pre">psample()</span></code> fixture.</p>
+</div>
+</div>
+<div class="section" id="fixture-factories">
+<span id="id5"></span><h2>Fixture factories<a class="headerlink" href="#fixture-factories" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="layout-fixture-factories">
+<h3>Layout fixture factories<a class="headerlink" href="#layout-fixture-factories" title="Permalink to this headline">¶</a></h3>
 <p>The predefined sample layouts cover some common cases. However,
-alternative layouts can be added by using the factory function:</p>
+alternative layouts can be added by using the
+<a class="reference internal" href="pytest_ngsfixtures.html#pytest_ngsfixtures.factories.sample_layout" title="pytest_ngsfixtures.factories.sample_layout"><code class="xref py py-func docutils literal"><span class="pre">sample_layout()</span></code></a> factory
+function:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pytest_ngsfixtures</span> <span class="kn">import</span> <span class="n">factories</span>
 
 <span class="n">custom_samples</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span>
     <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span>
-    <span class="n">samples</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;CHS.HG00512&quot;</span><span class="p">,</span> <span class="s2">&quot;YRI.NA19238&quot;</span><span class="p">],</span>
-    <span class="n">platform_units</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="s1">&#39;foobar&#39;</span><span class="p">],</span>
+    <span class="n">sample</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;CHS.HG00512&quot;</span><span class="p">,</span> <span class="s2">&quot;YRI.NA19238&quot;</span><span class="p">],</span>
+    <span class="n">platform_unit</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="s1">&#39;foobar&#39;</span><span class="p">],</span>
     <span class="n">paired_end</span><span class="o">=</span><span class="p">[</span><span class="bp">True</span><span class="p">,</span> <span class="bp">False</span><span class="p">],</span>
-    <span class="n">short_names</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+    <span class="n">short_name</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
     <span class="n">runfmt</span><span class="o">=</span><span class="s2">&quot;{SM}/{SM}_{PU}&quot;</span><span class="p">,</span>
     <span class="n">numbered</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
     <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;function&quot;</span><span class="p">,</span>
@@ -250,6 +295,11 @@ running a test that depends on the sample fixture:</p>
 <span class="go">INFO:pytest_ngsfixtures.factories:/tmp/pytest-of-user/pytest-1/sample0/sampleinfo.csv</span>
 </pre></div>
 </div>
+<p>Note that the
+<a class="reference internal" href="pytest_ngsfixtures.html#pytest_ngsfixtures.factories.reference_layout" title="pytest_ngsfixtures.factories.reference_layout"><code class="xref py py-func docutils literal"><span class="pre">reference_layout()</span></code></a> only
+provides a choice between two reference data fixtures. The <cite>ref</cite>
+treats the reference as one chromosome, whereas the <cite>scaffolds</cite>
+fixture partitions the reference into several scaffolds.</p>
 </div>
 <div class="section" id="file-fixture-factories">
 <h3>File fixture factories<a class="headerlink" href="#file-fixture-factories" title="Permalink to this headline">¶</a></h3>
@@ -479,12 +529,12 @@ is a <a class="reference external" href="https://docs.python.org/3/library/strin
 format arguments relate to the function parameters as follows:</p>
 <p>SM</p>
 <blockquote>
-<div>samples - list of sample names (one or several of CHS.HG00512,
+<div>sample - list of sample names (one or several of CHS.HG00512,
 CHS.HG00513, PUR.HG00731, PUR.HG00733, YRI.NA19238, and
 YRI.NA19239.)</div></blockquote>
 <p>PU</p>
 <blockquote>
-<div>platform_units - platform unit names, e.g. flowcell name.</div></blockquote>
+<div>platform_unit - platform unit names, e.g. flowcell name.</div></blockquote>
 <p>BATCH</p>
 <blockquote>
 <div>batches - batch (project) name, e.g. if a sequencing center run
@@ -495,9 +545,9 @@ several rounds of sequencing of a sample</div></blockquote>
 <p><a class="reference internal" href="pytest_ngsfixtures.html#pytest_ngsfixtures.factories.sample_layout" title="pytest_ngsfixtures.factories.sample_layout"><code class="xref py py-func docutils literal"><span class="pre">sample_layout()</span></code></a> generates
 output file names by iterating over the parameters and formatting
 names according to runfmt. For instance, if
-<code class="docutils literal"><span class="pre">runfmt=&quot;{SM}/{SM}_{PU}&quot;</span></code>, values in <code class="docutils literal"><span class="pre">samples</span></code> and
-<code class="docutils literal"><span class="pre">platform_units</span></code> will be used to produce the final file names. In
-this case, <code class="docutils literal"><span class="pre">samples</span></code> and <code class="docutils literal"><span class="pre">platform_units</span></code> must be of equal length.</p>
+<code class="docutils literal"><span class="pre">runfmt=&quot;{SM}/{SM}_{PU}&quot;</span></code>, values in <code class="docutils literal"><span class="pre">sample</span></code> and
+<code class="docutils literal"><span class="pre">platform_unit</span></code> will be used to produce the final file names. In
+this case, <code class="docutils literal"><span class="pre">sample</span></code> and <code class="docutils literal"><span class="pre">platform_unit</span></code> must be of equal length.</p>
 <p>See the predefined fixtures in <a class="reference internal" href="pytest_ngsfixtures.html#module-pytest_ngsfixtures.plugin" title="pytest_ngsfixtures.plugin"><code class="xref py py-mod docutils literal"><span class="pre">pytest_ngsfixtures.plugin</span></code></a> and
 the tests for examples.</p>
 </div>
@@ -522,7 +572,7 @@ layouts to use (see next section).</p>
 </div>
 </div>
 <div class="section" id="plugin-options">
-<span id="id1"></span><h2>Plugin options<a class="headerlink" href="#plugin-options" title="Permalink to this headline">¶</a></h2>
+<span id="id6"></span><h2>Plugin options<a class="headerlink" href="#plugin-options" title="Permalink to this headline">¶</a></h2>
 <p>The plugin defines three options that can be used to select and show
 predefined fixtures.</p>
 <div class="section" id="x-ngs-size">
@@ -544,13 +594,46 @@ sequences</li>
 </div>
 <div class="section" id="l-ngs-layout">
 <span id="plugin-option-l"></span><h3>-L, –ngs-layout<a class="headerlink" href="#l-ngs-layout" title="Permalink to this headline">¶</a></h3>
-<p>Select one of the predefined sample layouts. Note that this option
-only affects tests that actually depend on the layouts in some
-parametrized way. See <code class="docutils literal"><span class="pre">pytest_ngsfixtures.plugin</span></code> for the setup
-of the predefined sample layouts. Example:</p>
-<div class="highlight-shell"><div class="highlight"><pre><span></span>pytest -L sample sample_data
+<p>Select one or more of the predefined sample layouts for parametrized
+fixtures. See documentation for
+<code class="xref py py-func docutils literal"><span class="pre">pytest_ngsfixtures.fixtures.psample()</span></code> for
+<code class="xref py py-func docutils literal"><span class="pre">pytest_ngsfixtures.fixtures.pref()</span></code>. Example usage:</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>pytest -L individual
 </pre></div>
 </div>
+<p>Here, the <code class="xref py py-func docutils literal"><span class="pre">psample()</span></code> fixture will
+return fixtures with the <cite>individual</cite> sample layout.</p>
+</div>
+<div class="section" id="ngs-runfmt">
+<span id="plugin-option-runfmt"></span><h3>–ngs-runfmt<a class="headerlink" href="#ngs-runfmt" title="Permalink to this headline">¶</a></h3>
+<p>Layout sequence files according to one or more formats determined by
+python miniformat strings. The format specifiers should be one of <cite>SM</cite>
+(sample), <cite>PU</cite> (platform unit), <cite>POP</cite> (population), <cite>BATCH</cite> (batch
+name). For instance, the following example would setup samples in the
+root test directory using sample and platform unit as unique
+identifier prefix:</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>pytest --ngs-runfmt <span class="s2">&quot;{SM}/{SM}_{PU}&quot;</span>
+</pre></div>
+</div>
+<p>There are also predefined aliases that can be used for convenience;
+see <code class="xref py py-data docutils literal"><span class="pre">pytest_ngsfixtures.config.sample_conf</span></code>. For instance,
+the following is equivalent to the option above:</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>pytest --ngs-runfmt sample
+</pre></div>
+</div>
+</div>
+<div class="section" id="ngs-pool">
+<span id="plugin-option-pool"></span><h3>–ngs-pool<a class="headerlink" href="#ngs-pool" title="Permalink to this headline">¶</a></h3>
+<p>Run tests on pooled data.</p>
+</div>
+<div class="section" id="ngs-copy">
+<span id="plugin-option-copy"></span><h3>–ngs-copy<a class="headerlink" href="#ngs-copy" title="Permalink to this headline">¶</a></h3>
+<p>Copy tests instead of symlinking. Only affects parametrized fixtures.</p>
+</div>
+<div class="section" id="ngs-ref">
+<span id="plugin-option-ref"></span><h3>–ngs-ref<a class="headerlink" href="#ngs-ref" title="Permalink to this headline">¶</a></h3>
+<p>Use ref reference layout instead of scaffolds. Only affects
+parametrized fixtures.</p>
 </div>
 <div class="section" id="f-ngs-show-fixture">
 <span id="plugin-option-f"></span><h3>-F, –ngs-show-fixture<a class="headerlink" href="#f-ngs-show-fixture" title="Permalink to this headline">¶</a></h3>
@@ -603,7 +686,7 @@ of the predefined sample layouts. Example:</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.6.0',
+            VERSION:'0.6.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
