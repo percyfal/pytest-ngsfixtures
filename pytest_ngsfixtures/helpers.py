@@ -19,7 +19,8 @@ def get_versions(subconfig, versions=None, version_keys=['_versions', '_conda_ve
         try:
             versions = set(subconfig["_versions"])
         except KeyError as e:
-            print("'_versions' key missing")
+            print("'_versions' key missing: ")
+            print(e)
             raise
     for k in version_keys:
         versions = versions.intersection(subconfig.get(k, versions))
@@ -28,7 +29,7 @@ def get_versions(subconfig, versions=None, version_keys=['_versions', '_conda_ve
 
 def make_targets(rules, config, application, **kw):
     TARGETS = []
-    versions = get_versions(config[application])
+    all_versions = get_versions(config[application])
     for r in rules:
         p = {}
         if not r.name.startswith(application.replace("-", "_")):
@@ -37,7 +38,7 @@ def make_targets(rules, config, application, **kw):
             if "{end}" in str(out):
                 p['end'] = config[application][r.name].get("_end", kw['end'])
             if "{version}" in str(out):
-                versions = get_versions(config[application][r.name], versions)
+                versions = get_versions(config[application][r.name], all_versions)
                 p['version'] = versions
             TMP = expand(out, **p)
             TARGETS = TARGETS + list(TMP)
