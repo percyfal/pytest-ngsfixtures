@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import pytest
-from pytest_ngsfixtures.file import FixtureFile, ReadFixtureFile, ReferenceFixtureFile, ApplicationFixtureFile, ApplicationOutputFixture, fixturefile_factory
+from pytest_ngsfixtures.file import FixtureFile, ReadFixtureFile, ReferenceFixtureFile, ApplicationOutputFixture, fixturefile_factory
 
 
 @pytest.fixture
@@ -71,18 +71,24 @@ def test_read_alias(tmpdir):
     assert r.basename == "s_foo_bar_2.fastq.gz"
 
 
-def test_populations():
+def test_populations(tmpdir):
     chs = ReadFixtureFile("CHS")
     pur = ReadFixtureFile("PUR")
     yri = ReadFixtureFile("YRI")
     assert chs.basename == "CHS_1.fastq.gz"
     assert pur.basename == "PUR_1.fastq.gz"
     assert yri.basename == "YRI_1.fastq.gz"
-    hg00731 = ReadFixtureFile("PUR.HG00731", runfmt="{SM}_{PU}")
-    hg00731a = ReadFixtureFile("PUR.HG00731.A", runfmt="{SM}_{PU}")
-    assert hg00731.src != hg00731.src.realpath()
-    assert hg00731.src.realpath().basename == "PUR.HG00731.A_1.fastq.gz"
-    assert hg00731.src.realpath() == hg00731a.src
+    hg00731 = ReadFixtureFile("PUR.HG00731",
+                              path=tmpdir.join("s1.fastq.gz"),
+                              runfmt="{SM}_{PU}", setup=True)
+    hg00731a = ReadFixtureFile("PUR.HG00731.A",
+                               path=tmpdir.join("s2.fastq.gz"),
+                               runfmt="{SM}_{PU}", setup=True)
+    assert hg00731.islink()
+    if "TRAVIS" not in os.environ:
+        assert hg00731.src.realpath().basename == "PUR.HG00731.A_1.fastq.gz"
+        assert hg00731.src.realpath() == hg00731a.src
+        assert hg00731.src != hg00731.src.realpath()
 
 
 def test_ref(tmpdir):

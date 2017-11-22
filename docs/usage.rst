@@ -1,44 +1,88 @@
 Usage
 =====
 
+Next-generation sequencing fixtures
+-----------------------------------
+
+One of the main purposes of :py:mod:`pytest_ngsfixtures` is to provide
+predefined test fixtures that can be used to test applications, such
+as workflows. The predefined test fixtures consist of a test path
+(formally a :py:class:`py._path.local.LocalPath` object) in which test
+files have been setup following some file organization setup,
+henceforth referred to as *test layout* or simply *layout*. Basicall,
+a layout is a set of links to (or copies of) the distributed data
+files, where the link organization and naming reflect typical file
+naming schemes of sequencing files delivered by sequence providers or
+as used in projects. Currently there are predefined test fixtures for
+sequence data and reference data, with the main purpose of being used
+for testing analysis workflows from scratch.
+
+The plugin contains two :ref:`fixture-factories` that generate sample
+layouts (:py:func:`~pytest_ngsfixtures.factories.sample_layout`) and
+reference data
+(:py:func:`~pytest_ngsfixtures.factories.reference_layout`). There are
+two predefined reference layouts and nine predefined sample layouts.
+The reference layouts (:py:data:`~pytest_ngsfixtures.plugin.ref` and
+:py:data:`~pytest_ngsfixtures.plugin.scaffolds`) and one sample layout
+(:py:data:`~pytest_ngsfixtures.plugin.flat`) are defined at the plugin
+level and always loaded. The remaining eight sample are defined in the
+:py:mod:`~pytest_ngsfixtures.fixtures` module:
+
+:py:data:`~pytest_ngsfixtures.fixture.sample`,
+:py:data:`~pytest_ngsfixtures.fixture.sample_run`,
+:py:data:`~pytest_ngsfixtures.fixture.sample_project_run`,
+:py:data:`~pytest_ngsfixtures.fixture.pop_sample`,
+:py:data:`~pytest_ngsfixtures.fixture.pop_sample_run`,
+:py:data:`~pytest_ngsfixtures.fixture.pop_sample_project_run`,
+:py:data:`~pytest_ngsfixtures.fixture.pool_pop_sample`,
+:py:data:`~pytest_ngsfixtures.fixture.pool_pop_sample_run`
+
+To use a fixture, simply depend on it in a test, e.g.:
+
+.. code-block:: python
+
+   # flat fixture is always loaded
+   def test_foo(flat):
+       # Do something with flat
+
+   # sample is not automatically loaded
+   from pytest_ngsfixtures.fixtures import sample
+
+   # ref fixture is always loaded
+   def test_bar(sample, ref):
+       # Do something with sample and ref
+
+
+Parametrized fixtures
++++++++++++++++++++++
+
+There are also two parametrized fixtures,
+:py:fun:`~pytest_ngsfixtures.fixture.psample` and
+:py:fun:`~pytest_ngsfixtures.fixture.pref` that generate fixtures
+depending on values of plugin options (primarily
+:ref:`plugin-option-runfmt`, :ref:`plugin-option-layout`, and
+:ref:`plugin-option-ref`). For instance, the following command would
+generate all combinations of provided layouts and run formats:
+
+.. code-block:: shell
+
+   pytest --ngs-runfmt sample sample_run --ngs-layout individual pool
+
+provided of course there is a test that requires the
+:py:func:`~pytest_ngsfixtures.fixtures.psample` fixture.
+
+.. _fixture-factories:
+
 Fixture factories
 ------------------
 
 Layout fixture factories
 +++++++++++++++++++++++++
 
-The plugin contains two fixture factories that generate sample layouts
-(:py:func:`~pytest_ngsfixtures.factories.sample_layout`) and
-reference data
-(:py:func:`~pytest_ngsfixtures.factories.sample_layout`). A layout
-is simply a set of links to the distributed data files, where the link
-organization and naming reflect typical file naming schemes of
-sequencing files delivered by sequence providers or as used in
-projects.
-
-There are nine predefined sample layouts:
-:py:data:`~pytest_ngsfixtures.plugin.flat`,
-:py:data:`~pytest_ngsfixtures.plugin.sample`,
-:py:data:`~pytest_ngsfixtures.plugin.sample_run`,
-:py:data:`~pytest_ngsfixtures.plugin.sample_project_run`,
-:py:data:`~pytest_ngsfixtures.plugin.pop_sample`,
-:py:data:`~pytest_ngsfixtures.plugin.pop_sample_run`,
-:py:data:`~pytest_ngsfixtures.plugin.pop_sample_project_run`,
-:py:data:`~pytest_ngsfixtures.plugin.pool_pop_sample`,
-:py:data:`~pytest_ngsfixtures.plugin.pool_pop_sample_run`, and two
-reference layouts:
-:py:data:`~pytest_ngsfixtures.plugin.ref`,
-:py:data:`~pytest_ngsfixtures.plugin.scaffolds`.
-    
-To use a fixture, simply depend on it in a test, e.g.:
-
-.. code-block:: python
-
-   def test_foo(sample):
-       # Do something with sample
-
 The predefined sample layouts cover some common cases. However,
-alternative layouts can be added by using the factory function:
+alternative layouts can be added by using the
+:py:func:`~pytest_ngsfixtures.factories.sample_layout` factory
+function:
 
 .. code-block:: python
 
@@ -46,10 +90,10 @@ alternative layouts can be added by using the factory function:
 
    custom_samples = factories.sample_layout(
        dirname="foo",
-       samples=["CHS.HG00512", "YRI.NA19238"],
-       platform_units=['bar', 'foobar'],
+       sample=["CHS.HG00512", "YRI.NA19238"],
+       platform_unit=['bar', 'foobar'],
        paired_end=[True, False],
-       short_names=False,
+       short_name=False,
        runfmt="{SM}/{SM}_{PU}",
        numbered=False,
        scope="function",
@@ -77,6 +121,11 @@ running a test that depends on the sample fixture:
    INFO:pytest_ngsfixtures.factories:/tmp/pytest-of-user/pytest-1/sample0/s2/s2_010101_AAABBB11XX_2.fastq.gz
    INFO:pytest_ngsfixtures.factories:/tmp/pytest-of-user/pytest-1/sample0/sampleinfo.csv
 
+Note that the
+:py:func:`~pytest_ngsfixtures.factories.reference_layout` only
+provides a choice between two reference data fixtures. The `ref`
+treats the reference as one chromosome, whereas the `scaffolds`
+fixture partitions the reference into several scaffolds.
 
 File fixture factories
 +++++++++++++++++++++++
@@ -150,7 +199,7 @@ fixture factory.
 
    def test_bamset(bamset):
        # Do something with bamset
-       
+
 
 Fixture setup wrappers
 ----------------------
@@ -247,7 +296,7 @@ the existence of the (inferred) source file:
    >>> type(p)
    <class 'pytest_ngsfixtures.file.ReferenceFixtureFile'>
 
-       
+
 Files
 -----
 
@@ -291,7 +340,7 @@ tiny/
 
 yuge/
 
-  Yuge sequence files. All sequence files can be setup as test fixtures with the 
+  Yuge sequence files. All sequence files can be setup as test fixtures with the
   :py:class:`~pytest_ngsfixtures.file.ReadFixtureFile` class.
 
 
@@ -342,13 +391,13 @@ format arguments relate to the function parameters as follows:
 
 SM
 
-  samples - list of sample names (one or several of CHS.HG00512,
+  sample - list of sample names (one or several of CHS.HG00512,
   CHS.HG00513, PUR.HG00731, PUR.HG00733, YRI.NA19238, and
   YRI.NA19239.)
 
 PU
 
-  platform_units - platform unit names, e.g. flowcell name.
+  platform_unit - platform unit names, e.g. flowcell name.
 
 BATCH
 
@@ -362,9 +411,9 @@ POP
 :py:func:`~pytest_ngsfixtures.factories.sample_layout` generates
 output file names by iterating over the parameters and formatting
 names according to runfmt. For instance, if
-``runfmt="{SM}/{SM}_{PU}"``, values in ``samples`` and
-``platform_units`` will be used to produce the final file names. In
-this case, ``samples`` and ``platform_units`` must be of equal length.
+``runfmt="{SM}/{SM}_{PU}"``, values in ``sample`` and
+``platform_unit`` will be used to produce the final file names. In
+this case, ``sample`` and ``platform_unit`` must be of equal length.
 
 See the predefined fixtures in :py:mod:`pytest_ngsfixtures.plugin` and
 the tests for examples.
@@ -423,17 +472,69 @@ Example:
 -L, --ngs-layout
 +++++++++++++++++
 
-Select one of the predefined sample layouts. Note that this option
-only affects tests that actually depend on the layouts in some
-parametrized way. See ``pytest_ngsfixtures.plugin`` for the setup
-of the predefined sample layouts. Example:
+Select one or more of the predefined sample layouts for parametrized
+fixtures. See documentation for
+:py:func:`pytest_ngsfixtures.fixtures.psample` for
+:py:func:`pytest_ngsfixtures.fixtures.pref`. Example usage:
 
 .. code-block:: shell
 
-   pytest -L sample sample_data
+   pytest -L individual
+
+Here, the :py:func:`~pytest_ngsfixtures.fixtures.psample` fixture will
+return fixtures with the `individual` sample layout.
+
+.. _plugin-option-runfmt:
+
+--ngs-runfmt
++++++++++++++++++
+
+Layout sequence files according to one or more formats determined by
+python miniformat strings. The format specifiers should be one of `SM`
+(sample), `PU` (platform unit), `POP` (population), `BATCH` (batch
+name). For instance, the following example would setup samples in the
+root test directory using sample and platform unit as unique
+identifier prefix:
+
+.. code-block:: shell
+
+   pytest --ngs-runfmt "{SM}/{SM}_{PU}"
+
+There are also predefined aliases that can be used for convenience;
+see :py:data:`pytest_ngsfixtures.config.sample_conf`. For instance,
+the following is equivalent to the option above:
+
+.. code-block:: shell
+
+   pytest --ngs-runfmt sample
+
+
+.. _plugin-option-pool:
+
+--ngs-pool
++++++++++++++++++
+
+Run tests on pooled data.
+
+.. _plugin-option-copy:
+
+--ngs-copy
++++++++++++++++++
+
+Copy tests instead of symlinking. Only affects parametrized fixtures.
+
+.. _plugin-option-ref:
+
+--ngs-ref
++++++++++++++++++
+
+Use ref reference layout instead of scaffolds. Only affects
+parametrized fixtures.
+
+
 
 .. _plugin-option-F:
-   
+
 -F, --ngs-show-fixture
 +++++++++++++++++++++++
 

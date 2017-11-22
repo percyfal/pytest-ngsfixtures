@@ -1,6 +1,19 @@
-=======
 History
 =======
+
+0.6.1 (2017-11-22)
+------------------
+
+Added some fixes that turned out to be necessary for optional performance.
+
+* Add fixture that parametrizes over input parameters (#37)
+* Fix bug that returned wrong number of snakemake targets in application output generation (#36)
+* Add travis builds (#35)
+* Fix reference layout error for python 3.5 (#34)
+* Update option defaults (#32)
+* Expose fewer predefined fixtures via plugin (#31)
+* Unify parameter names (#33)
+
 
 0.6.0 (2017-11-21)
 ------------------

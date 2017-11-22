@@ -23,6 +23,10 @@ test_requirements = [
     'pytest>=3.0.0',
 ]
 
+extras_require = {
+    'tests': test_requirements,
+}
+
 package_data = []
 
 scripts = [
@@ -77,6 +81,6 @@ setup(
     install_requires=requirements,
     setup_requires=['pytest-runner'],
     tests_require=test_requirements,
-    entry_points = {'pytest11':['pytest_ngsfixtures = pytest_ngsfixtures.plugin']},
+    entry_points={'pytest11': ['pytest_ngsfixtures = pytest_ngsfixtures.plugin']},
     scripts = scripts,
 )

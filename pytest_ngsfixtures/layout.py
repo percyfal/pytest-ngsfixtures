@@ -69,8 +69,8 @@ def generate_sample_layouts(layout="short",
     return [dict(zip(keys, p)) for p in combinator(*[config[k] for k in keys])]
 
 
-def setup_sample_layout(path, layout=None, copy=False, sample_prefix="s",
-                        runfmt="{SM}/{SM}_{PU}", short_names=True,
+def setup_sample_layout(path, layout=None, copy=False, prefix="s",
+                        runfmt="{SM}/{SM}_{PU}", short_name=True,
                         **kwargs):
     """Setup sample layout.
 
@@ -79,15 +79,15 @@ def setup_sample_layout(path, layout=None, copy=False, sample_prefix="s",
       path (py._path.local.LocalPath): :py:class:`~py._path.local.LocalPath` path where test files will be setup
       layout (str): predefined layout name
       copy (bool): copy test files instead of symlinking (required for dockerized tests)
-      sample_prefix (str): sample prefix for short names
+      prefix (str): sample prefix for short names
       kwargs (dict): arguments that are passed on to :py:func:`~pytest_ngsfixtures.layout.generate_sample_layouts`
     """
     ReadFixtureFile.reset()
     output = []
     layout_list = generate_sample_layouts(layout=layout, **kwargs)
     for l in layout_list:
-        l.update({'short_name': short_names,
-                  'prefix': sample_prefix})
+        l.update({'short_name': short_name,
+                  'prefix': prefix})
         r1 = ReadFixtureFile(runfmt=runfmt, path=path, copy=copy, **l)
         r1.setup()
         output.append(r1)
@@ -124,8 +124,8 @@ def setup_reference_layout(path, label="ref", copy=False, **kwargs):
     flist = ref_dict[label] + ref_dict['_always']
     for dst in flist:
         if dst.basename in ["ref.chrom.sizes", "scaffolds.chrom.sizes"]:
-            r = ReferenceFixtureFile(path.join("chrom.sizes"), src=dst)
+            r = ReferenceFixtureFile(path.join("chrom.sizes"), src=dst, copy=copy, **kwargs)
         else:
-            r = ReferenceFixtureFile(path.join(py.path.local(dst).basename))
+            r = ReferenceFixtureFile(path.join(py.path.local(dst).basename), copy=copy, **kwargs)
         r.setup()
     return path

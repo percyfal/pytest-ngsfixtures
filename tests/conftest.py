@@ -3,6 +3,7 @@ import os
 import pytest
 from pytest_ngsfixtures import DATA_DIR, factories
 from pytest_ngsfixtures.os import localpath
+from pytest_ngsfixtures.fixtures import *
 
 pytest_plugins = 'pytester'
 
@@ -25,6 +26,7 @@ PURHG00733 = localpath(os.path.join("applications", "pe",
 # File fixtures
 @pytest.fixture(scope="function", autouse=False)
 def bamfile():
+    """Bamfile fixture"""
     return PURHG00731
 
 
@@ -48,6 +50,7 @@ _PURFILES = [PURHG00731.relto(DATA_DIR), PURHG00733.relto(DATA_DIR)]
 
 @pytest.fixture(scope="function", autouse=False)
 def PURFILES():
+    """List of bam files"""
     return [PURHG00731, PURHG00733]
 
 
@@ -59,6 +62,7 @@ _dstfiles = ["foo.fastq.gz", "bar.fastq.gz"]
 
 @pytest.fixture(scope="function", autouse=False)
 def dstfiles():
+    """Destination file names"""
     return _dstfiles
 
 
