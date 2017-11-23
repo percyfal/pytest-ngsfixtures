@@ -16,7 +16,6 @@ with open('HISTORY.rst') as history_file:
 requirements = [
     'pytest>=3.0.0',
     'pyyaml',
-    'snakemake',
 ]
 
 test_requirements = [
