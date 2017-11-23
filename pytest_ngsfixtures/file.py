@@ -246,6 +246,7 @@ class ReadFixtureFile(FixtureFile):
             else:
                 pass
         kwargs['src'] = self.data_dir.join(self._size, "{}{}".format(self.sample, self.fastq_suffix))
+        kwargs['alias'] = alias
         super(ReadFixtureFile, self).__init__(path=path, **kwargs)
         if self.alias is not None:
             self.strpath = str(self.path.join(self.fastq))
@@ -280,7 +281,7 @@ class ReadFixtureFile(FixtureFile):
 
     @property
     def SM(self):
-        return self._sample
+        return self.id
 
     @property
     def read(self):
