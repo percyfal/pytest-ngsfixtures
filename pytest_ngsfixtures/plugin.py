@@ -84,6 +84,7 @@ def pytest_addoption(parser):
 
 def pytest_configure(config):
     config.option.ngs_runfmt_alias = config.option.ngs_runfmt
+    config.option.ngs_layout = list(set(config.option.ngs_layout))
     runfmt = []
     if config.option.ngs_runfmt:
         for rf in config.option.ngs_runfmt:
@@ -93,8 +94,8 @@ def pytest_configure(config):
             runfmt.append(runfmt_alias[rf])
         config.option.ngs_runfmt = runfmt
     if config.option.ngs_pool:
-        config.option.ngs_layout = "pool"
-    if config.option.ngs_layout == "pool":
+        config.option.ngs_layout.append("pool")
+    if "pool" in config.option.ngs_layout:
         config.option.ngs_pool = True
     return config
 
