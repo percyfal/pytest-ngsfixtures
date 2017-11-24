@@ -32,8 +32,8 @@ sample_conf = Config(
                       ["PUR"] * 7 +
                       ["YRI"] * 3),
     SAMPLE_LAYOUTS=("short", "individual", "pool"),
-    RUNFMT=("{SM}", "{SM}/{SM}_{PU}", "{SM}/{PU}/{SM}_{PU}", "{SM}/{BATCH}/{PU}/{BATCH}_{PU}",
-            "{POP}/{SM}/{SM}_{PU}", "{POP}/{SM}/{PU}/{SM}_{PU}", "{POP}/{SM}/{BATCH}/{PU}/{BATCH}_{PU}"),
+    RUNFMT=("{SM}", "{SM}/{SM}_{PU}", "{SM}/{PU}/{SM}_{PU}", "{SM}/{BATCH}/{PU}/{SM}_{PU}",
+            "{POP}/{SM}/{SM}_{PU}", "{POP}/{SM}/{PU}/{SM}_{PU}", "{POP}/{SM}/{BATCH}/{PU}/{SM}_{PU}"),
     RUNFMT_ALIAS=("flat", "sample", "sample_run", "sample_project_run", "pop_sample",
                   "pop_sample_run", "pop_sample_project_run")
 )

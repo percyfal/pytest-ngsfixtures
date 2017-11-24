@@ -11,6 +11,7 @@ Bugfix and minor feature release.
 * Defer setting alias to FixtureFile (#42)
 * ReadFixtureFile.SM now returns id (#39)
 * Options ngs_layout and ngs_runfmt are now lists (#41)
+* Update project layout configuration (#40)
   
 0.6.1 (2017-11-22)
 ------------------
