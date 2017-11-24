@@ -12,6 +12,7 @@ Bugfix and minor feature release.
 * ReadFixtureFile.SM now returns id (#39)
 * Options ngs_layout and ngs_runfmt are now lists (#41)
 * Update project layout configuration (#40)
+* Add function to return runfmt and alias as tuple (#43)
   
 0.6.1 (2017-11-22)
 ------------------
