@@ -57,8 +57,8 @@ Parametrized fixtures
 +++++++++++++++++++++
 
 There are also two parametrized fixtures,
-:py:fun:`~pytest_ngsfixtures.fixture.psample` and
-:py:fun:`~pytest_ngsfixtures.fixture.pref` that generate fixtures
+:py:func:`~pytest_ngsfixtures.fixture.psample` and
+:py:func:`~pytest_ngsfixtures.fixture.pref` that generate fixtures
 depending on values of plugin options (primarily
 :ref:`plugin-option-runfmt`, :ref:`plugin-option-layout`, and
 :ref:`plugin-option-ref`). For instance, the following command would

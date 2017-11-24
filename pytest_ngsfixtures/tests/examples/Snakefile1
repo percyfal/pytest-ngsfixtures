@@ -1,0 +1,11 @@
+# -*- snakemake -*-
+
+rule all:
+    input: ["results.txt"]
+
+
+rule results:
+    input: ["s1_1.fastq.gz", "s1_2.fastq.gz"]
+    output: "results.txt"
+    shell: "echo {input} > {output}"
+           
