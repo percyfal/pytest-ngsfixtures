@@ -39,7 +39,21 @@ sample_conf = Config(
 )
 
 
-runfmt_alias = {k: v for k, v in zip(sample_conf.RUNFMT_ALIAS, sample_conf.RUNFMT)}
+def runfmt_alias(alias=None, runfmt=None):
+    """Get alias and runformat tuple"""
+    if alias is not None:
+        try:
+            i = sample_conf.RUNFMT_ALIAS.index(alias)
+            runfmt = sample_conf.RUNFMT[i]
+        except:
+            pass
+    elif runfmt is not None:
+        try:
+            i = sample_conf.RUNFMT.index(runfmt)
+            alias = sample_conf.RUNFMT_ALIAS[i]
+        except:
+            pass
+    return alias, runfmt
 
 
 def application_config(application=None):

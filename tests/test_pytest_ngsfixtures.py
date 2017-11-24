@@ -31,7 +31,7 @@ def test_sample_run(sample_run):
 def test_sample_project_run(sample_project_run):
     l = [x for x in sorted(sample_project_run.visit()) if str(x).endswith(".gz")]
     assert len(l) == 6
-    assert str(l[0]).endswith("sample_project_run0/s1/p1/010101_AAABBB11XX/p1_010101_AAABBB11XX_1.fastq.gz")
+    assert str(l[0]).endswith("sample_project_run0/s1/p1/010101_AAABBB11XX/s1_010101_AAABBB11XX_1.fastq.gz")
     assert len([x for x in sample_project_run.listdir() if x.isdir()]) == 2
 
 
@@ -52,7 +52,7 @@ def test_pop_sample_run(pop_sample_run):
 def test_pop_sample_project_run(pop_sample_project_run):
     l = [x for x in sorted(pop_sample_project_run.visit()) if str(x).endswith(".gz")]
     assert len(l) == 14
-    assert str(l[0]).endswith("pop_project_sample_run0/CHS/CHS.HG00512/p1/010101_AAABBB11XX/p1_010101_AAABBB11XX_1.fastq.gz")
+    assert str(l[0]).endswith("pop_project_sample_run0/CHS/CHS.HG00512/p1/010101_AAABBB11XX/CHS.HG00512_010101_AAABBB11XX_1.fastq.gz")
     assert len([x for x in pop_sample_project_run.join("PUR").listdir() if x.isdir()]) == 2
 
 

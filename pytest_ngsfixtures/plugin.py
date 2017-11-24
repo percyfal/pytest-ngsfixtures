@@ -91,7 +91,7 @@ def pytest_configure(config):
             if re.search("[{}]", rf) is None:
                 assert rf in sample_conf.RUNFMT_ALIAS, "if run format is given as string, must be one of {}".format(", ".join(sample_conf.RUNFMT_ALIAS))
 
-            runfmt.append(runfmt_alias[rf])
+            runfmt.append(runfmt_alias(rf)[1])
         config.option.ngs_runfmt = runfmt
     if config.option.ngs_pool:
         config.option.ngs_layout.append("pool")
