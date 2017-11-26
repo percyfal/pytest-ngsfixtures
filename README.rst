@@ -21,7 +21,8 @@ and tools. There are sequencing fixtures for some common sample
 layouts, but it's easy to generate additional sample fixture layouts
 using fixture factories.
 
-See the `pytest-ngsfixtures documentation`_ for more information.
+See the `pytest-ngsfixtures documentation`_ for more information and
+usage.
 
 * Free software: GNU General Public License v3
 
