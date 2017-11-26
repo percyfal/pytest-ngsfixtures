@@ -85,17 +85,17 @@ def setup_sample_layout(path, layout=None, copy=False, prefix="s",
     ReadFixtureFile.reset()
     output = []
     layout_list = generate_sample_layouts(layout=layout, **kwargs)
+    setup = kwargs.get("setup", True)
     for l in layout_list:
         l.update({'short_name': short_name,
-                  'prefix': prefix})
+                  'prefix': prefix,
+                  'setup': setup})
         r1 = ReadFixtureFile(runfmt=runfmt, path=path, copy=copy, **l)
-        r1.setup()
         output.append(r1)
         if l.get("paired_end", True):
             l['alias'] = r1.id
             r2 = ReadFixtureFile(runfmt=runfmt, path=path, copy=copy,
                                  read=2, **l)
-            r2.setup()
             output.append(r2)
     if kwargs.get("sampleinfo", False):
         info = [",".join(output[0].sampleinfo_keys)]

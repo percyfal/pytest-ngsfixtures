@@ -15,6 +15,7 @@ Bugfix and minor feature release.
 * Add function to return runfmt and alias as tuple (#43)
 * Read 1 and 2 have same id when alias required (#45)
 * Census is not increased for read 2 (#44)
+* Add option to only setup sampleinfo (#47)
   
 0.6.1 (2017-11-22)
 ------------------
