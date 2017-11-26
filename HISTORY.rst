@@ -14,6 +14,7 @@ Bugfix and minor feature release.
 * Update project layout configuration (#40)
 * Add function to return runfmt and alias as tuple (#43)
 * Read 1 and 2 have same id when alias required (#45)
+* Census is not increased for read 2 (#44)
   
 0.6.1 (2017-11-22)
 ------------------
