@@ -221,9 +221,10 @@ class ReadFixtureFile(FixtureFile):
         cls.census += 1
         return obj
 
-    def __init__(self, sample="CHS.HG00512", size="tiny",
-                 read=1, batch=None, runfmt="{SM}", population=None,
-                 platform_unit=None, *args, **kwargs):
+    def __init__(self, sample="CHS.HG00512", size="tiny", read=1,
+                 batch=None, runfmt="{SM}", population=None,
+                 platform_unit=None, *args,
+                 **kwargs):
         self.sample = sample
         self.read = read
         self._size = size
