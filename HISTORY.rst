@@ -13,6 +13,7 @@ Bugfix and minor feature release.
 * Options ngs_layout and ngs_runfmt are now lists (#41)
 * Update project layout configuration (#40)
 * Add function to return runfmt and alias as tuple (#43)
+* Read 1 and 2 have same id when alias required (#45)
   
 0.6.1 (2017-11-22)
 ------------------

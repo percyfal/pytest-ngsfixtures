@@ -92,6 +92,7 @@ def setup_sample_layout(path, layout=None, copy=False, prefix="s",
         r1.setup()
         output.append(r1)
         if l.get("paired_end", True):
+            l['alias'] = r1.id
             r2 = ReadFixtureFile(runfmt=runfmt, path=path, copy=copy,
                                  read=2, **l)
             r2.setup()
