@@ -104,6 +104,7 @@ def test_container_shell_read(container, foo):
 @pytest.mark.docker
 def test_image_shell(image, foo, image_args):
     ret = shell("ls {}".format(foo.dirname), image=image,
+                name="pytest_ngsfixtures_test_image_shell",
                 **image_args)
     touch = foo.join("test_image_shell.touch")
     shell("touch {}".format(touch), image=image, **image_args)
@@ -114,6 +115,7 @@ def test_image_shell(image, foo, image_args):
 @pytest.mark.docker
 def test_image_shell_read(image, foo, image_args):
     ret = shell("ls " + str(foo.join("foo.txt")), read=True,
+                name="pytest_ngsfixtures_test_image_shell_read",
                 image=image, **image_args)
     assert isinstance(ret, str)
     # Something is aloof with the encoding here; there are hidden
@@ -125,6 +127,7 @@ def test_image_shell_read(image, foo, image_args):
 @pytest.mark.docker
 def test_image_shell_iterable(image, foo, image_args):
     ret = shell("ls " + str(foo), iterable=True, image=image,
+                name="pytest_ngsfixtures_test_image_shell_iterable",
                 **image_args)
     assert isinstance(ret, types.GeneratorType)
     # assert sorted(list(ret)) == ["", "bar.txt", "foo.txt"]
@@ -134,7 +137,9 @@ def test_image_shell_iterable(image, foo, image_args):
 def test_image_shell_iterable_detach(image, foo, image_args):
     touch = foo.join("test_image_shell_iterable_detach.touch")
     ret = shell("touch {}".format(touch), image=image, iterable=True,
-                detach=True, **image_args)
+                detach=True,
+                name="pytest_ngsfixtures_test_image_shell_iterable_detach",
+                **image_args)
     assert isinstance(ret, types.GeneratorType)
     assert list(ret) == []
     assert touch.exists()
@@ -144,7 +149,7 @@ def test_image_shell_iterable_detach(image, foo, image_args):
 @pytest.mark.docker
 def test_image_shell_async(image, foo, image_args):
     touch = foo.join("test_image_shell_async.touch")
-    ret = shell("touch {}".format(touch), image=image,
-                detach=True, **image_args)
+    ret = shell("touch {}".format(touch), image=image, detach=True,
+                name="pytest_ngsfixtures_test_image_shell_async", **image_args)
     assert isinstance(ret, Container)
     assert touch.exists()
