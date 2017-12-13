@@ -47,14 +47,20 @@ def pytest_runtest_setup(item):
 @pytest.fixture(scope="session")
 def image(request):
     def rm():
-        # try:
-        #     logger.info("Removing containers  {}".format(container.name))
-        #     container.remove(force=True)
-        # except:
-        #     raise
-        # finally:
-        #     pass
-        pass
+        try:
+            client = docker.from_env()
+            containers = client.containers.list(filters={'status': 'exited',
+                                                         'ancestor': 'busybox'})
+            for c in containers:
+                if not c.name.startswith("pytest_ngsfixtures"):
+                    continue
+                logger.info("Removing container  {}".format(c.name))
+                c.remove(force=True)
+                logger.info("Removed container  {}".format(c.name))
+        except:
+            raise
+        finally:
+            pass
 
     request.addfinalizer(rm)
     client = docker.from_env()
