@@ -1,11 +1,92 @@
 # -*- coding: utf-8 -*-
 import os
 import pytest
+import docker
+from docker.types import Mount
 from pytest_ngsfixtures import DATA_DIR, factories
 from pytest_ngsfixtures.os import localpath
 from pytest_ngsfixtures.fixtures import *
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 pytest_plugins = 'pytester'
+
+
+def pytest_namespace():
+    d = {
+        'uid': os.getuid(),
+        'gid': os.getgid(),
+    }
+    return d
+
+
+def pytest_configure(config):
+    config.addinivalue_line("markers",
+                            "docker: mark test as dependent on docker")
+    return config
+
+
+def pytest_runtest_setup(item):
+    dockermark = item.get_marker("docker")
+    if dockermark is not None:
+        try:
+            client = docker.from_env()
+            client.images.get("busybox")
+        except ConnectionError:
+            pytest.skip("docker executable not found; docker tests will be skipped")
+        except docker.errors.ImageNotFound:
+            logger.info("docker image 'busybox' not found; pulling to run tests")
+            client.images.pull("busybox")
+        except:
+            raise
+
+
+@pytest.mark.docker
+@pytest.fixture(scope="session")
+def image(request):
+    def rm():
+        # try:
+        #     logger.info("Removing containers  {}".format(container.name))
+        #     container.remove(force=True)
+        # except:
+        #     raise
+        # finally:
+        #     pass
+        pass
+
+    request.addfinalizer(rm)
+    client = docker.from_env()
+    try:
+        busybox = client.images.get("busybox")
+    except:
+        raise
+    return busybox
+
+
+@pytest.mark.docker
+@pytest.fixture(scope="session")
+def container(request):
+    def rm():
+        try:
+            logger.info("Removing container {}".format(container.name))
+            container.remove(force=True)
+        except:
+            raise
+        finally:
+            pass
+
+    request.addfinalizer(rm)
+    client = docker.from_env()
+    try:
+        busybox = client.images.get("busybox")
+    except:
+        raise
+    container = client.containers.create(busybox, tty=True,
+                                         user="{}:{}".format(pytest.uid, pytest.gid),
+                                         volumes={'/tmp': {'bind': '/tmp', 'mode': 'rw'}})
+    return container
 
 
 @pytest.fixture(scope="module", autouse=False)
