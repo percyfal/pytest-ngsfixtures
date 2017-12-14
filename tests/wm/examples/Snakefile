@@ -1,0 +1,19 @@
+rule all:
+    input: ["foo.txt"] + expand("bar{i}.txt", i=range(0, 3))
+
+
+rule foo:
+    output: "foo.txt"
+    shell:
+        "echo foo > {output}"
+
+
+rule bar:
+    output: "bar{i}.txt"
+    shell:
+        "echo bar {wildcards.i} > {output}"
+        
+
+rule barlist:
+    input: expand("bar{i}.txt", i=range(0,3))
+        
