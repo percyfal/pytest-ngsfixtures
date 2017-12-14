@@ -412,7 +412,8 @@ class ApplicationFixtureFile(FixtureFile):
     def __init__(self, path, end="pe", *args, **kwargs):
         if isinstance(path, str):
             path = py.path.local(path)
-        kwargs['src'] = self._data_dir.join(end, path.basename)
+        if not kwargs['src'].exists():
+            kwargs['src'] = self._data_dir.join(end, path.basename)
         super(ApplicationFixtureFile, self).__init__(path=path, *args, **kwargs)
 
 
