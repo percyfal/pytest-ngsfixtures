@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
+import py
 import pytest
 import docker
-from docker.types import Mount
 from pytest_ngsfixtures import DATA_DIR, factories
 from pytest_ngsfixtures.os import localpath
 from pytest_ngsfixtures.fixtures import *
@@ -18,6 +18,7 @@ def pytest_namespace():
     d = {
         'uid': os.getuid(),
         'gid': os.getgid(),
+        'rootdir': py.path.local(os.path.abspath(os.path.dirname(__file__))),
     }
     return d
 
