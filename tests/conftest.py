@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
+import sys
 import py
+import re
 import pytest
 import docker
+import subprocess as sp
 from pytest_ngsfixtures import DATA_DIR, factories
 from pytest_ngsfixtures.os import localpath
 from pytest_ngsfixtures.fixtures import *
@@ -12,6 +15,19 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 pytest_plugins = 'pytester'
+
+
+PYTHON_VERSION = "py{}{}".format(sys.version_info.major,
+                                 sys.version_info.minor)
+try:
+    SNAKEMAKE_VERSION = sp.check_output(
+        ["snakemake", "--version"]).decode().strip()
+except:
+    logger.error("couldn't get snakemake version")
+    raise
+
+SNAKEMAKE_BASETAG = "{}--{}".format(SNAKEMAKE_VERSION, PYTHON_VERSION)
+SNAKEMAKE_IMAGE = "quay.io/biocontainers/snakemake:{}_0".format(SNAKEMAKE_BASETAG)
 
 
 def pytest_namespace():
@@ -26,6 +42,10 @@ def pytest_namespace():
 def pytest_configure(config):
     config.addinivalue_line("markers",
                             "docker: mark test as dependent on docker")
+    config.addinivalue_line("markers",
+                            "busybox: mark test as dependent on busybox image")
+    config.addinivalue_line("markers",
+                            "snakemake: mark test as dependent on snakemake image")
     return config
 
 
@@ -34,66 +54,105 @@ def pytest_runtest_setup(item):
     if dockermark is not None:
         try:
             client = docker.from_env()
-            client.images.get("busybox")
+            client.images.list()
         except ConnectionError:
             pytest.skip("docker executable not found; docker tests will be skipped")
-        except docker.errors.ImageNotFound:
-            logger.info("docker image 'busybox' not found; pulling to run tests")
-            client.images.pull("busybox")
         except:
             raise
+    busyboxmark = item.get_marker("busybox")
+    if busyboxmark is not None:
+        get_image("busybox")
+    snakemakemark = item.get_marker("snakemake")
+    if snakemakemark is not None:
+        get_image(SNAKEMAKE_IMAGE)
 
 
-@pytest.mark.docker
-@pytest.fixture(scope="session")
-def image(request):
-    def rm():
-        try:
-            client = docker.from_env()
-            containers = client.containers.list(filters={'status': 'exited',
-                                                         'ancestor': 'busybox'})
-            for c in containers:
-                if not c.name.startswith("pytest_ngsfixtures"):
-                    continue
-                logger.info("Removing container  {}".format(c.name))
-                c.remove(force=True)
-                logger.info("Removed container  {}".format(c.name))
-        except:
-            raise
-        finally:
-            pass
-
-    request.addfinalizer(rm)
-    client = docker.from_env()
+def get_image(image):
     try:
-        busybox = client.images.get("busybox")
+        client = docker.from_env()
+        image = client.images.get(image)
+    except docker.errors.ImageNotFound:
+        logger.info("docker image '{}' not found; pulling to run tests".format(image))
+        client.images.pull(image)
+        image = client.images.get(image)
     except:
         raise
-    return busybox
+    return image
 
 
-@pytest.mark.docker
-@pytest.fixture(scope="session")
-def container(request):
-    def rm():
+def image_factory(name):
+    @pytest.mark.docker
+    @pytest.fixture(scope="session")
+    def image_fixture(request):
+        def rm():
+            try:
+                client = docker.from_env()
+                containers = client.containers.list(filters={'status': 'exited',
+                                                             'ancestor': name})
+                for c in containers:
+                    if not c.name.startswith("pytest_ngsfixtures"):
+                        continue
+                    logger.info("Removing container  {}".format(c.name))
+                    c.remove(force=True)
+                    logger.info("Removed container  {}".format(c.name))
+            except:
+                raise
+            finally:
+                pass
+
+        request.addfinalizer(rm)
+        client = docker.from_env()
         try:
-            logger.info("Removing container {}".format(container.name))
-            container.remove(force=True)
+            image = client.images.get(name)
         except:
             raise
-        finally:
-            pass
+        return image
+    return image_fixture
 
-    request.addfinalizer(rm)
-    client = docker.from_env()
-    try:
-        busybox = client.images.get("busybox")
-    except:
-        raise
-    container = client.containers.create(busybox, tty=True,
-                                         user="{}:{}".format(pytest.uid, pytest.gid),
-                                         volumes={'/tmp': {'bind': '/tmp', 'mode': 'rw'}})
-    return container
+
+busybox_image = image_factory("busybox")
+snakemake_image = image_factory(SNAKEMAKE_IMAGE)
+
+
+def container_factory(name):
+    @pytest.mark.docker
+    @pytest.fixture(scope="session")
+    def container_fixture(request):
+        def rm():
+            try:
+                logger.info("Removing container {}".format(container.name))
+                container.remove(force=True)
+            except:
+                raise
+            finally:
+                pass
+
+        request.addfinalizer(rm)
+        client = docker.from_env()
+        try:
+            image = client.images.get(name)
+        except:
+            raise
+        logger.info("creating container from image {}".format(image))
+        container = client.containers.create(image, tty=True,
+                                             user="{}:{}".format(pytest.uid, pytest.gid),
+                                             volumes={'/tmp': {'bind': '/tmp', 'mode': 'rw'}},
+                                             working_dir="/tmp")
+        return container
+    return container_fixture
+
+busybox_container = container_factory("busybox")
+snakemake_container = container_factory(SNAKEMAKE_IMAGE)
+
+
+@pytest.fixture(scope="module")
+def image_args():
+    d = {
+        'user': "{}:{}".format(pytest.uid, pytest.gid),
+        'volumes': {'/tmp': {'bind': '/tmp', 'mode': 'rw'}},
+        'tty': True,
+    }
+    return d
 
 
 @pytest.fixture(scope="module", autouse=False)
