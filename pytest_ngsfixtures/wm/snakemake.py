@@ -5,6 +5,7 @@ import py
 import logging
 from pytest_ngsfixtures.os import safe_mktemp
 from pytest_ngsfixtures.file import setup_filetype
+from pytest_ngsfixtures.shell import shell
 
 
 logging.basicConfig(level=logging.INFO)
@@ -42,8 +43,6 @@ def snakefile_factory(snakefile, **kwargs):
         p = safe_mktemp(tmpdir_factory, "snakefile", **kwargs)
         p = p.join("Snakefile")
         p = setup_filetype(path=p, src=sf, **kwargs)
-        print(p)
-        print(p.readlines())
         if request.config.option.ngs_show_fixture:
             logger.info("-------------------------")
             logger.info("Snakefile fixture content")
@@ -53,5 +52,14 @@ def snakefile_factory(snakefile, **kwargs):
     return snakefile_fixture
 
 
-def run():
-    pass
+def run(Snakefile, target="all", options=[], bash=False,
+        working_dir=None, **kwargs):
+    cmd_args = ["snakemake", "-s", str(Snakefile), target] + options
+
+    if working_dir:
+        cmd_args = ["cd", working_dir, "&&"] + cmd_args
+    cmd = " ".join(cmd_args)
+    if bash:
+        cmd = "/bin/bash -c '{}'".format(cmd)
+    logger.info(cmd)
+    shell(cmd, **kwargs)
