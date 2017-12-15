@@ -18,16 +18,6 @@ def foo(tmpdir_factory):
     return p
 
 
-@pytest.fixture(scope="module")
-def image_args():
-    d = {
-        'user': "{}:{}".format(pytest.uid, pytest.gid),
-        'volumes': {'/tmp': {'bind': '/tmp', 'mode': 'rw'}},
-        'tty': True,
-    }
-    return d
-
-
 # should return none, but still execute
 def test_shell(foo):
     ret = shell("ls " + str(foo))
@@ -54,28 +44,31 @@ def test_shell_async(foo):
 
 
 @pytest.mark.docker
-def test_container_shell(container, foo):
-    container.start()
-    ret = shell("ls {}".format(foo.dirname), container=container)
-    touch = foo.join("test_container_shell.touch")
-    shell("touch {}".format(touch), container=container)
+@pytest.mark.busybox
+def test_container_shell(busybox_container, foo):
+    busybox_container.start()
+    ret = shell("ls {}".format(foo.dirname), container=busybox_container)
+    touch = foo.join("test_busybox_shell.touch")
+    shell("touch {}".format(touch), container=busybox_container)
     assert touch.exists()
     assert ret is None
 
 
 @pytest.mark.docker
-def test_container_shell_iterable(container, foo):
-    container.start()
-    ret = shell("ls " + str(foo), iterable=True, container=container)
+@pytest.mark.busybox
+def test_container_shell_iterable(busybox_container, foo):
+    busybox_container.start()
+    ret = shell("ls " + str(foo), iterable=True, container=busybox_container)
     assert isinstance(ret, types.GeneratorType)
     assert "bar.txt" in list(ret)
 
 
 @pytest.mark.docker
-def test_container_shell_iterable_detach(container, foo):
-    container.start()
-    touch = foo.join("test_container_shell_iterable_detach.touch")
-    ret = shell("touch {}".format(touch), container=container, iterable=True,
+@pytest.mark.busybox
+def test_container_shell_iterable_detach(busybox_container, foo):
+    busybox_container.start()
+    touch = foo.join("test_busybox_shell_iterable_detach.touch")
+    ret = shell("touch {}".format(touch), container=busybox_container, iterable=True,
                 detach=True)
     assert isinstance(ret, types.GeneratorType)
     assert list(ret) == []
@@ -83,40 +76,42 @@ def test_container_shell_iterable_detach(container, foo):
 
 
 @pytest.mark.docker
-def test_container_shell_async(container, foo):
-    container.start()
-    touch = foo.join("test_container_shell_async.touch")
-    ret = shell("touch {}".format(touch), container=container,
+@pytest.mark.busybox
+def test_container_shell_async(busybox_container, foo):
+    busybox_container.start()
+    touch = foo.join("test_busybox_shell_async.touch")
+    ret = shell("touch {}".format(touch), container=busybox_container,
                 detach=True)
     assert isinstance(ret, str)
     assert touch.exists()
 
 
 @pytest.mark.docker
-def test_container_shell_read(container, foo):
-    container.start()
+@pytest.mark.busybox
+def test_container_shell_read(busybox_container, foo):
+    busybox_container.start()
     ret = shell("ls " + str(foo.join("foo.txt")), read=True,
-                container=container)
+                container=busybox_container)
     assert ret.rstrip() == str(foo.join("foo.txt"))
 
 
 # Image tests
 @pytest.mark.docker
-def test_image_shell(image, foo, image_args):
-    ret = shell("ls {}".format(foo.dirname), image=image,
-                name="pytest_ngsfixtures_test_image_shell",
+def test_busybox_image_shell(busybox_image, foo, image_args):
+    ret = shell("ls {}".format(foo.dirname), image=busybox_image,
+                name="pytest_ngsfixtures_test_busybox_image_shell",
                 **image_args)
-    touch = foo.join("test_image_shell.touch")
-    shell("touch {}".format(touch), image=image, **image_args)
+    touch = foo.join("test_busybox_image_shell.touch")
+    shell("touch {}".format(touch), image=busybox_image, **image_args)
     assert touch.exists()
     assert ret is None
 
 
 @pytest.mark.docker
-def test_image_shell_read(image, foo, image_args):
+def test_busybox_image_shell_read(busybox_image, foo, image_args):
     ret = shell("ls " + str(foo.join("foo.txt")), read=True,
-                name="pytest_ngsfixtures_test_image_shell_read",
-                image=image, **image_args)
+                name="pytest_ngsfixtures_test_busybox_image_shell_read",
+                image=busybox_image, **image_args)
     assert isinstance(ret, str)
     # Something is aloof with the encoding here; there are hidden
     # hexadecimal characters in ret that won't go away in the decoding
@@ -125,20 +120,20 @@ def test_image_shell_read(image, foo, image_args):
 
 
 @pytest.mark.docker
-def test_image_shell_iterable(image, foo, image_args):
-    ret = shell("ls " + str(foo), iterable=True, image=image,
-                name="pytest_ngsfixtures_test_image_shell_iterable",
+def test_busybox_image_shell_iterable(busybox_image, foo, image_args):
+    ret = shell("ls " + str(foo), iterable=True, image=busybox_image,
+                name="pytest_ngsfixtures_test_busybox_image_shell_iterable",
                 **image_args)
     assert isinstance(ret, types.GeneratorType)
     # assert sorted(list(ret)) == ["", "bar.txt", "foo.txt"]
 
 
 @pytest.mark.docker
-def test_image_shell_iterable_detach(image, foo, image_args):
-    touch = foo.join("test_image_shell_iterable_detach.touch")
-    ret = shell("touch {}".format(touch), image=image, iterable=True,
+def test_busybox_image_shell_iterable_detach(busybox_image, foo, image_args):
+    touch = foo.join("test_busybox_image_shell_iterable_detach.touch")
+    ret = shell("touch {}".format(touch), image=busybox_image, iterable=True,
                 detach=True,
-                name="pytest_ngsfixtures_test_image_shell_iterable_detach",
+                name="pytest_ngsfixtures_test_busybox_image_shell_iterable_detach",
                 **image_args)
     assert isinstance(ret, types.GeneratorType)
     assert list(ret) == []
@@ -147,9 +142,9 @@ def test_image_shell_iterable_detach(image, foo, image_args):
 
 # Detaching client.containers.run returns a container
 @pytest.mark.docker
-def test_image_shell_async(image, foo, image_args):
-    touch = foo.join("test_image_shell_async.touch")
-    ret = shell("touch {}".format(touch), image=image, detach=True,
-                name="pytest_ngsfixtures_test_image_shell_async", **image_args)
+def test_busybox_image_shell_async(busybox_image, foo, image_args):
+    touch = foo.join("test_busybox_image_shell_async.touch")
+    ret = shell("touch {}".format(touch), image=busybox_image, detach=True,
+                name="pytest_ngsfixtures_test_busybox_image_shell_async", **image_args)
     assert isinstance(ret, Container)
     assert touch.exists()
