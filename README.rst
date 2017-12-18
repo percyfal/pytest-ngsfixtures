@@ -4,7 +4,7 @@ pytest-ngsfixtures
 .. image:: https://anaconda.org/percyfal/pytest-ngsfixtures/badges/version.svg
 	   :target: https://anaconda.org/percyfal/pytest-ngsfixtures
 .. image:: https://badge.fury.io/py/pytest-ngsfixtures.svg
-	   :target: https://badge.fury.io/py/pytest-ngsfixtures		    
+	   :target: https://badge.fury.io/py/pytest-ngsfixtures
 .. image:: https://travis-ci.org/percyfal/pytest-ngsfixtures.svg?branch=master
 	   :target: https://travis-ci.org/percyfal/pytest-ngsfixtures
 
@@ -42,6 +42,22 @@ Installation
 
    $ conda install -c percyfal pytest-ngsfixtures
    $ pip install pytest-ngsfixtures
+
+
+Usage
+=====
+
+.. code-block:: python
+
+   from pytest_ngsfixtures.fixtures import sample
+   from pytest_ngsfixtures.wm import snakemake
+
+   Snakefile = snakemake.snakefile_factory("/path/to/Snakefile")
+
+   def test_workflow(Snakefile, sample):
+       snakemake.run(Snakefile, target="s1.bam")
+       assert sample.join("s1.bam").exist()
+
 
 
 Credits
