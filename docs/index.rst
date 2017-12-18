@@ -31,8 +31,9 @@ Contents
    :maxdepth: 2
 
    installation
-   contributing
    usage
+   workflow
+   contributing
    authors
    history
    modules
