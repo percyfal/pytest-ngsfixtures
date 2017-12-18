@@ -7,7 +7,7 @@ package:
 source:
   path: ../../pytest-ngsfixtures
 build:
-  number: 1
+  number: 0
   skip: False
   script: $PYTHON setup.py install --single-version-externally-managed --record record.txt
 requirements:
@@ -27,6 +27,7 @@ test:
     # tests
     - pytest
     - pytest-runner
+    - docker-py
 
   imports:
     - pytest_ngsfixtures
