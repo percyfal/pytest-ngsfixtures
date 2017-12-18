@@ -1,6 +1,11 @@
 Usage
 =====
 
+This section gives examples of general usage. For a tutorial on
+setting up workflow tests, jump to the :ref:`tutorial` section. The
+:ref:`modindex` contains more code examples related to each module and
+function.
+
 Next-generation sequencing fixtures
 -----------------------------------
 
@@ -9,7 +14,7 @@ predefined test fixtures that can be used to test applications, such
 as workflows. The predefined test fixtures consist of a test path
 (formally a :py:class:`py._path.local.LocalPath` object) in which test
 files have been setup following some file organization setup,
-henceforth referred to as *test layout* or simply *layout*. Basicall,
+henceforth referred to as *test layout* or simply *layout*. Basically,
 a layout is a set of links to (or copies of) the distributed data
 files, where the link organization and naming reflect typical file
 naming schemes of sequencing files delivered by sequence providers or
@@ -25,7 +30,7 @@ two predefined reference layouts and nine predefined sample layouts.
 The reference layouts (:py:data:`~pytest_ngsfixtures.plugin.ref` and
 :py:data:`~pytest_ngsfixtures.plugin.scaffolds`) and one sample layout
 (:py:data:`~pytest_ngsfixtures.plugin.flat`) are defined at the plugin
-level and always loaded. The remaining eight sample are defined in the
+level and always loaded. The remaining eight sample layouts are defined in the
 :py:mod:`~pytest_ngsfixtures.fixtures` module:
 
 :py:data:`~pytest_ngsfixtures.fixture.sample`,
@@ -102,10 +107,10 @@ function:
    def test_custom(custom_samples):
        # do something with custom_samples
 
-The plugin option :ref:`plugin-option-F` (see :ref:`plugin-options`
-below) shows the fixture layout. For instance, using this option with
-the sample layout would generate the following information upon
-running a test that depends on the sample fixture:
+The plugin option :ref:`plugin-option-fixture` (see
+:ref:`plugin-options` below) shows the fixture layout. For instance,
+using this option with the sample layout would generate the following
+information upon running a test that depends on the sample fixture:
 
 .. code-block:: console
 
@@ -437,7 +442,7 @@ example shows how to parametrize over the predefined layouts:
 Here, we define an indirect fixture that calls one of the predefined
 layout fixtures by use of the ``request.getfuncargvalue`` function. In
 addition, the parametrization is done over the plugin option
-:ref:`plugin-option-L`, which enables selecting from the command line what
+:ref:`plugin-option-layout`, which enables selecting from the command line what
 layouts to use (see next section).
 
 .. _plugin-options:
@@ -467,7 +472,7 @@ Example:
 
    pytest -X small
 
-.. _plugin-option-L:
+.. _plugin-option-layout:
 
 -L, --ngs-layout
 +++++++++++++++++
@@ -533,7 +538,7 @@ parametrized fixtures.
 
 
 
-.. _plugin-option-F:
+.. _plugin-option-fixture:
 
 -F, --ngs-show-fixture
 +++++++++++++++++++++++
