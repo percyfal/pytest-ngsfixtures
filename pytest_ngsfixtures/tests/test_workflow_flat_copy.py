@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
-from os.path import join, abspath, dirname
 from pytest_ngsfixtures.wm import snakemake
 from pytest_ngsfixtures import factories
 
 flatc = factories.sample_layout(sample=["CHS.HG00512"],
-                                copy=True)
+                                dirname="flat_copy",
+                                numbered=True, copy=True)
 
 Snakefile = snakemake.snakefile_factory(
-    abspath(join(dirname(__file__), "Snakefile")),
     copy=True, numbered=True)
 
 

@@ -7,7 +7,7 @@ from pytest_ngsfixtures.wm import snakemake
 
 
 Snakefile = snakemake.snakefile_factory(
-    pytest.rootdir.join(os.path.join("wm", "examples", "Snakefile")),
+    pytest.testdir.join(os.path.join("wm", "examples", "Snakefile")),
     copy=True, numbered=True)
 
 

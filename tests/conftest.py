@@ -34,7 +34,7 @@ def pytest_namespace():
     d = {
         'uid': os.getuid(),
         'gid': os.getgid(),
-        'rootdir': py.path.local(os.path.abspath(os.path.dirname(__file__))),
+        'testdir': py.path.local(os.path.abspath(os.path.dirname(__file__))),
     }
     return d
 
