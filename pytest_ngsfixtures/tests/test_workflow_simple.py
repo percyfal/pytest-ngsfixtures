@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-from os.path import join, abspath, dirname
 from pytest_ngsfixtures.wm import snakemake
 
 Snakefile = snakemake.snakefile_factory(
-    snakefile=abspath(join(dirname(__file__), "Snakefile")),
     copy=True, numbered=True)
 
 

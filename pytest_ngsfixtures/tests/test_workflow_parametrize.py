@@ -2,8 +2,6 @@
 import os
 import docker
 import pytest
-import time
-from os.path import join, abspath, dirname
 from pytest_ngsfixtures.wm import snakemake
 from pytest_ngsfixtures import factories
 
@@ -19,6 +17,7 @@ snakemake_image = "quay.io/biocontainers/snakemake:4.3.1--py36_0"
 def container(request):
     def rm():
         try:
+            print("Removing container ", container.name)
             container.remove(force=True)
         except:
             raise
@@ -44,15 +43,13 @@ def container(request):
 
 
 Snakefile = snakemake.snakefile_factory(
-    abspath(join(dirname(__file__), "Snakefile")),
     copy=True, numbered=True)
 
 
 @pytest.mark.parametrize("container", ["local", "docker"], indirect=["container"])
 def test_workflow(Snakefile, flat_copy, container):
     if container is not None:
-        container.start()
-        time.sleep(10)
+        container.start()  
     for r in snakemake.run(Snakefile,
                            options=["-d", str(flat_copy), "-s",
                                     str(Snakefile)], container=container,
