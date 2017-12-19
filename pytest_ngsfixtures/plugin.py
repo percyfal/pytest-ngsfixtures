@@ -84,22 +84,25 @@ def pytest_addoption(parser):
 
 def pytest_configure(config):
     config.option.ngs_runfmt_alias = config.option.ngs_runfmt
+    config.option.ngs_layout = list(set(config.option.ngs_layout))
     runfmt = []
     if config.option.ngs_runfmt:
         for rf in config.option.ngs_runfmt:
             if re.search("[{}]", rf) is None:
                 assert rf in sample_conf.RUNFMT_ALIAS, "if run format is given as string, must be one of {}".format(", ".join(sample_conf.RUNFMT_ALIAS))
 
-            runfmt.append(runfmt_alias[rf])
+            runfmt.append(runfmt_alias(rf)[1])
         config.option.ngs_runfmt = runfmt
     if config.option.ngs_pool:
-        config.option.ngs_layout = "pool"
-    if config.option.ngs_layout == "pool":
+        config.option.ngs_layout.append("pool")
+    if "pool" in config.option.ngs_layout:
         config.option.ngs_pool = True
     return config
 
 
-flat = factories.sample_layout(sample=['CHS.HG00512'])
+flat = factories.sample_layout(sample=['CHS.HG00512'],
+                               scope="function", numbered=True,
+                               dirname="flat")
 ref = factories.reference_layout(dirname="ref")
 scaffolds = factories.reference_layout(label="scaffolds",
                                        dirname="scaffolds")

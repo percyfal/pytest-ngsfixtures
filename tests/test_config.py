@@ -106,3 +106,24 @@ def test_flattened_application_fixture_metadata_qualimap():
             assert any("insert" in y for y in x[4].values())
         else:
             assert not any("insert" in y for y in x[4].values())
+
+
+def test_runfmt_alias():
+    a, r = config.runfmt_alias("sample_run")
+    assert a == "sample_run"
+    assert r == "{SM}/{PU}/{SM}_{PU}"
+    a, r = config.runfmt_alias("pop_sample_project_run", runfmt="foo")
+    assert a == "pop_sample_project_run"
+    assert r == "{POP}/{SM}/{BATCH}/{PU}/{SM}_{PU}"
+    a, r = config.runfmt_alias(runfmt="{SM}/{PU}/{SM}_{PU}")
+    assert a == "sample_run"
+    assert r == "{SM}/{PU}/{SM}_{PU}"
+    a, r = config.runfmt_alias(runfmt="{POP}/{SM}/{BATCH}/{PU}/{SM}_{PU}")
+    assert a == "pop_sample_project_run"
+    assert r == "{POP}/{SM}/{BATCH}/{PU}/{SM}_{PU}"
+    a, r = config.runfmt_alias("foo")
+    assert a == "foo"
+    assert r is None
+    a, r = config.runfmt_alias(runfmt="foo")
+    assert a is None
+    assert r == "foo"

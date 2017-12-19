@@ -32,14 +32,28 @@ sample_conf = Config(
                       ["PUR"] * 7 +
                       ["YRI"] * 3),
     SAMPLE_LAYOUTS=("short", "individual", "pool"),
-    RUNFMT=("{SM}", "{SM}/{SM}_{PU}", "{SM}/{PU}/{SM}_{PU}", "{SM}/{BATCH}/{PU}/{BATCH}_{PU}",
-            "{POP}/{SM}/{SM}_{PU}", "{POP}/{SM}/{PU}/{SM}_{PU}", "{POP}/{SM}/{BATCH}/{PU}/{BATCH}_{PU}"),
+    RUNFMT=("{SM}", "{SM}/{SM}_{PU}", "{SM}/{PU}/{SM}_{PU}", "{SM}/{BATCH}/{PU}/{SM}_{PU}",
+            "{POP}/{SM}/{SM}_{PU}", "{POP}/{SM}/{PU}/{SM}_{PU}", "{POP}/{SM}/{BATCH}/{PU}/{SM}_{PU}"),
     RUNFMT_ALIAS=("flat", "sample", "sample_run", "sample_project_run", "pop_sample",
                   "pop_sample_run", "pop_sample_project_run")
 )
 
 
-runfmt_alias = {k: v for k, v in zip(sample_conf.RUNFMT_ALIAS, sample_conf.RUNFMT)}
+def runfmt_alias(alias=None, runfmt=None):
+    """Get alias and runformat tuple"""
+    if alias is not None:
+        try:
+            i = sample_conf.RUNFMT_ALIAS.index(alias)
+            runfmt = sample_conf.RUNFMT[i]
+        except:
+            pass
+    elif runfmt is not None:
+        try:
+            i = sample_conf.RUNFMT.index(runfmt)
+            alias = sample_conf.RUNFMT_ALIAS[i]
+        except:
+            pass
+    return alias, runfmt
 
 
 def application_config(application=None):

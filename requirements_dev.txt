@@ -3,10 +3,10 @@ bumpversion
 wheel
 watchdog
 flake8
-tox
 coverage
 Sphinx
 snakemake
+docker-py
 
 pytest
 pytest-runner

@@ -64,6 +64,15 @@ def test_read_sampleinfo(tmpdir):
     assert r.sampleinfo == "CHS,010101_AAABBB11XX,CHS.HG00512,CHS/010101_AAABBB11XX/CHS.HG00512_010101_AAABBB11XX_1.fastq.gz"
 
 
+def test_read_sampleinfo_alias(tmpdir):
+    r = ReadFixtureFile("PUR.HG00733.A", path=tmpdir,
+                        runfmt="{POP}/{PU}/{SM}_{PU}",
+                        alias="PUR.HG00733",
+                        platform_unit="010101_AAABBB11XX",
+                        sampleinfo=True)
+    assert r.sampleinfo == "PUR,010101_AAABBB11XX,PUR.HG00733,PUR/010101_AAABBB11XX/PUR.HG00733_010101_AAABBB11XX_1.fastq.gz"
+
+
 def test_read_alias(tmpdir):
     r = ReadFixtureFile("CHS.HG00512", path=tmpdir, alias="s",
                         platform_unit="foo_bar", runfmt="{SM}_{PU}",

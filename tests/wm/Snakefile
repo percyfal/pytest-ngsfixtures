@@ -1,0 +1,8 @@
+rule all:
+    input: ["foo.txt"]
+
+
+rule foo:
+    output: "foo.txt"
+    shell:
+        "echo foo > {output}"
