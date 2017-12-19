@@ -1,10 +1,14 @@
 History
 =======
 
-0.6.2 (2017-11-23)
+0.6.2 (2017-12-19)
 ------------------
 
-Bugfix and minor feature release.
+Add shell wrappers and wrappers for easily setting up workflow tests.
+
+Add tutorial.
+
+Bugfixes.
 
 * Update pypi badge
 * Remove tox.ini
@@ -16,6 +20,8 @@ Bugfix and minor feature release.
 * Read 1 and 2 have same id when alias required (#45)
 * Census is not increased for read 2 (#44)
 * Add option to only setup sampleinfo (#47)
+* Add tutorial (#46)
+* Add working snakemake tests (#8)
   
 0.6.1 (2017-11-22)
 ------------------
