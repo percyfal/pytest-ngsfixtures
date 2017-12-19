@@ -59,7 +59,6 @@ class shell:
         if kwargs.get("detach", False):
             async = kwargs.pop("detach")
 
-
         if conda_env_list:
             if not conda_root:
                 conda_root = get_conda_root()
@@ -142,7 +141,6 @@ class shell:
             return proc
         elif isinstance(proc, bytes):
             return proc.decode()
-
 
     @staticmethod
     def iter_stdout(proc, cmd):

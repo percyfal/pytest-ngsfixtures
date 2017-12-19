@@ -49,7 +49,7 @@ Snakefile = snakemake.snakefile_factory(
 @pytest.mark.parametrize("container", ["local", "docker"], indirect=["container"])
 def test_workflow(Snakefile, flat_copy, container):
     if container is not None:
-        container.start()  
+        container.start()
     for r in snakemake.run(Snakefile,
                            options=["-d", str(flat_copy), "-s",
                                     str(Snakefile)], container=container,
