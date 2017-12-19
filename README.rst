@@ -33,6 +33,7 @@ Features
 - predefined sample layouts
 - factories for generating new sample layouts
 - result files from a variety of bioinformatics applications and tools
+- wrappers for quickly setting up workflow tests
 
 
 Installation
