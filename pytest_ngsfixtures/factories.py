@@ -83,7 +83,7 @@ def sample_layout(
     if len(alias) > 0:
         assert len(alias) == len(sample), "length of alias ({}) and samples ({}) must be equal".format(len(alias), len(sample))
 
-    @pytest.fixture(autouse=False)
+    @pytest.fixture(autouse=kwargs.get("autouse", False), scope=kwargs.get("scope", "session"))
     def sample_layout_fixture(request, tmpdir_factory):
         """Sample layout fixture. Setup sequence input files according to a
         specified sample organization"""
