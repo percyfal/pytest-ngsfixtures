@@ -38,10 +38,10 @@ def package_path(path, filters=()):
     if not os.path.exists(path):
         raise RuntimeError("packaging non-existent path: %s" % path)
     elif os.path.isfile(path):
-        package_data.append(relpath(path, 'bioodo'))
+        package_data.append(relpath(path, 'pytest_ngsfixtures'))
     else:
         for path, dirs, files in os.walk(path):
-            path = relpath(path, 'bioodo')
+            path = relpath(path, 'pytest_ngsfixtures')
             for f in files:
                 if not filters or f.endswith(filters):
                     package_data.append(join(path, f))
@@ -59,6 +59,7 @@ setup(
     url='https://github.com/percyfal/pytest-ngsfixtures',
     packages=[
         'pytest_ngsfixtures',
+        'pytest_ngsfixtures.wm',
         'pytest_ngsfixtures.tests',
     ],
     package_data={'pytest_ngsfixtures/data': package_data},
