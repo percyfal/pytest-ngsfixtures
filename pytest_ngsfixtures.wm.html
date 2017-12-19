@@ -1,0 +1,314 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pytest_ngsfixtures.wm package &mdash; pytest-ngsfixtures 0.6.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="pytest-ngsfixtures 0.6.2 documentation" href="index.html"/>
+        <link rel="up" title="pytest_ngsfixtures package" href="pytest_ngsfixtures.html"/>
+        <link rel="prev" title="pytest_ngsfixtures package" href="pytest_ngsfixtures.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pytest-ngsfixtures
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.6.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="workflow.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Developer guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">pytest_ngsfixtures</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="pytest_ngsfixtures.html">pytest_ngsfixtures package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="pytest_ngsfixtures.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">pytest_ngsfixtures.wm package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pytest_ngsfixtures.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pytest_ngsfixtures.html#module-pytest_ngsfixtures.applications">pytest_ngsfixtures.applications module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pytest_ngsfixtures.html#module-pytest_ngsfixtures.config">pytest_ngsfixtures.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pytest_ngsfixtures.html#module-pytest_ngsfixtures.exceptions">pytest_ngsfixtures.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pytest_ngsfixtures.html#module-pytest_ngsfixtures.factories">pytest_ngsfixtures.factories module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pytest_ngsfixtures.html#module-pytest_ngsfixtures.file">pytest_ngsfixtures.file module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pytest_ngsfixtures.html#module-pytest_ngsfixtures.filetypes">pytest_ngsfixtures.filetypes module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pytest_ngsfixtures.html#module-pytest_ngsfixtures.fixtures">pytest_ngsfixtures.fixtures module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pytest_ngsfixtures.html#module-pytest_ngsfixtures.helpers">pytest_ngsfixtures.helpers module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pytest_ngsfixtures.html#module-pytest_ngsfixtures.layout">pytest_ngsfixtures.layout module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pytest_ngsfixtures.html#module-pytest_ngsfixtures.os">pytest_ngsfixtures.os module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pytest_ngsfixtures.html#module-pytest_ngsfixtures.plugin">pytest_ngsfixtures.plugin module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pytest_ngsfixtures.html#module-pytest_ngsfixtures.repo">pytest_ngsfixtures.repo module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pytest_ngsfixtures.html#module-pytest_ngsfixtures.shell">pytest_ngsfixtures.shell module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pytest_ngsfixtures.html#module-pytest_ngsfixtures.utils">pytest_ngsfixtures.utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pytest_ngsfixtures.html#module-pytest_ngsfixtures">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pytest-ngsfixtures</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="modules.html">pytest_ngsfixtures</a> &raquo;</li>
+        
+          <li><a href="pytest_ngsfixtures.html">pytest_ngsfixtures package</a> &raquo;</li>
+        
+      <li>pytest_ngsfixtures.wm package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/pytest_ngsfixtures.wm.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="pytest-ngsfixtures-wm-package">
+<h1>pytest_ngsfixtures.wm package<a class="headerlink" href="#pytest-ngsfixtures-wm-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-pytest_ngsfixtures.wm.snakemake">
+<span id="pytest-ngsfixtures-wm-snakemake-module"></span><h2>pytest_ngsfixtures.wm.snakemake module<a class="headerlink" href="#module-pytest_ngsfixtures.wm.snakemake" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="pytest_ngsfixtures.wm.snakemake.run">
+<code class="descclassname">pytest_ngsfixtures.wm.snakemake.</code><code class="descname">run</code><span class="sig-paren">(</span><em>snakefile</em>, <em>target='all'</em>, <em>options=[]</em>, <em>bash=False</em>, <em>working_dir=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/wm/snakemake.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.wm.snakemake.run" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.wm.snakemake.snakefile_factory">
+<code class="descclassname">pytest_ngsfixtures.wm.snakemake.</code><code class="descname">snakefile_factory</code><span class="sig-paren">(</span><em>snakefile=None</em>, <em>testdir=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/wm/snakemake.html#snakefile_factory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.wm.snakemake.snakefile_factory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fixture factory for snakefile.</p>
+<p>If no snakefile is given, the factory will assume that there is a
+Snakefile in the same directory as the calling test file.</p>
+<p class="rubric">Example</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pytest_ngsfixtures.wm</span> <span class="kn">import</span> <span class="n">snakemake</span>
+<span class="n">snakefile</span> <span class="o">=</span> <span class="n">snakemake</span><span class="o">.</span><span class="n">snakefile_factory</span><span class="p">(</span><span class="s2">&quot;/path/to/Snakfile&quot;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">test_workflow</span><span class="p">(</span><span class="n">snakefile</span><span class="p">,</span> <span class="n">flat</span><span class="p">):</span>
+    <span class="n">snakemake</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">snakefile</span><span class="p">)</span>
+
+<span class="c1"># Assumes there is a Snakefile in the test directory</span>
+<span class="n">snakefile2</span> <span class="o">=</span> <span class="n">snakemake</span><span class="o">.</span><span class="n">snakefile_factory</span><span class="p">()</span>
+
+<span class="c1"># Make specific target output.txt</span>
+<span class="k">def</span> <span class="nf">test_workflow</span><span class="p">(</span><span class="n">snakefile2</span><span class="p">,</span> <span class="n">flat</span><span class="p">):</span>
+    <span class="n">snakemake</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">snakefile2</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">flat</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;output.txt&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>snakefile</strong> (<em>str</em><em>, </em><em>py._path.local.LocalPath</em>) – snakefile path</li>
+<li><strong>testdir</strong> (<em>str</em><em>, </em><em>py._path.local.LocalPath</em>) – output directory</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pytest_ngsfixtures.wm">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pytest_ngsfixtures.wm" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="pytest_ngsfixtures.html" class="btn btn-neutral" title="pytest_ngsfixtures package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Per Unneberg.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.6.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

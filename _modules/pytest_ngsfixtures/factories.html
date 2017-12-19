@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pytest_ngsfixtures.factories &mdash; pytest-ngsfixtures 0.6.1 documentation</title>
+  <title>pytest_ngsfixtures.factories &mdash; pytest-ngsfixtures 0.6.2 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="pytest-ngsfixtures 0.6.1 documentation" href="../../index.html"/>
+    <link rel="top" title="pytest-ngsfixtures 0.6.2 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.6.1
+                0.6.2
               </div>
             
           
@@ -91,8 +91,9 @@
             
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Developer guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../workflow.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Developer guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html">pytest_ngsfixtures</a></li>
 </ul>
 
@@ -243,7 +244,7 @@
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="p">),</span> <span class="s2">&quot;length of alias (</span><span class="si">{}</span><span class="s2">) and samples (</span><span class="si">{}</span><span class="s2">) must be equal&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">alias</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="p">))</span>
 
-    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">autouse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">autouse</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;autouse&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="n">scope</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;scope&quot;</span><span class="p">,</span> <span class="s2">&quot;session&quot;</span><span class="p">))</span>
     <span class="k">def</span> <span class="nf">sample_layout_fixture</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">tmpdir_factory</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sample layout fixture. Setup sequence input files according to a</span>
 <span class="sd">        specified sample organization&quot;&quot;&quot;</span>
@@ -496,7 +497,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.6.1',
+            VERSION:'0.6.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
