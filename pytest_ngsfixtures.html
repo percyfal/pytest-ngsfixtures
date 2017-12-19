@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pytest_ngsfixtures package &mdash; pytest-ngsfixtures 0.6.1 documentation</title>
+  <title>pytest_ngsfixtures package &mdash; pytest-ngsfixtures 0.6.2 documentation</title>
   
 
   
@@ -35,8 +35,9 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="pytest-ngsfixtures 0.6.1 documentation" href="index.html"/>
+    <link rel="top" title="pytest-ngsfixtures 0.6.2 documentation" href="index.html"/>
         <link rel="up" title="pytest_ngsfixtures" href="modules.html"/>
+        <link rel="next" title="pytest_ngsfixtures.wm package" href="pytest_ngsfixtures.wm.html"/>
         <link rel="prev" title="pytest_ngsfixtures" href="modules.html"/> 
 
   
@@ -66,7 +67,7 @@
             
             
               <div class="version">
-                0.6.1
+                0.6.2
               </div>
             
           
@@ -92,10 +93,15 @@
             
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html">Developer guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="workflow.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Developer guide</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">pytest_ngsfixtures</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">pytest_ngsfixtures package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pytest_ngsfixtures.wm.html">pytest_ngsfixtures.wm package</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.applications">pytest_ngsfixtures.applications module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.config">pytest_ngsfixtures.config module</a></li>
@@ -103,6 +109,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.factories">pytest_ngsfixtures.factories module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.file">pytest_ngsfixtures.file module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.filetypes">pytest_ngsfixtures.filetypes module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.fixtures">pytest_ngsfixtures.fixtures module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.helpers">pytest_ngsfixtures.helpers module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.layout">pytest_ngsfixtures.layout module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#layout">layout</a></li>
@@ -111,6 +118,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.os">pytest_ngsfixtures.os module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.plugin">pytest_ngsfixtures.plugin module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.repo">pytest_ngsfixtures.repo module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.shell">pytest_ngsfixtures.shell module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures.utils">pytest_ngsfixtures.utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pytest_ngsfixtures">Module contents</a></li>
 </ul>
@@ -184,6 +192,19 @@
             
   <div class="section" id="pytest-ngsfixtures-package">
 <h1>pytest_ngsfixtures package<a class="headerlink" href="#pytest-ngsfixtures-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pytest_ngsfixtures.wm.html">pytest_ngsfixtures.wm package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pytest_ngsfixtures.wm.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pytest_ngsfixtures.wm.html#module-pytest_ngsfixtures.wm.snakemake">pytest_ngsfixtures.wm.snakemake module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pytest_ngsfixtures.wm.html#module-pytest_ngsfixtures.wm">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
@@ -402,6 +423,12 @@ from keyword to <em>formatted</em> output file name.</p>
 <span class="go">qualimap/2.2.2/se/genome_results.txt</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.config.runfmt_alias">
+<code class="descclassname">pytest_ngsfixtures.config.</code><code class="descname">runfmt_alias</code><span class="sig-paren">(</span><em>alias=None</em>, <em>runfmt=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/config.html#runfmt_alias"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.config.runfmt_alias" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get alias and runformat tuple</p>
 </dd></dl>
 
 </div>
@@ -815,7 +842,7 @@ look for input files</p>
 
 <dl class="class">
 <dt id="pytest_ngsfixtures.file.ReadFixtureFile">
-<em class="property">class </em><code class="descclassname">pytest_ngsfixtures.file.</code><code class="descname">ReadFixtureFile</code><span class="sig-paren">(</span><em>sample='CHS.HG00512'</em>, <em>path=None</em>, <em>size='tiny'</em>, <em>alias=None</em>, <em>short_name=False</em>, <em>read=1</em>, <em>batch=None</em>, <em>prefix='s'</em>, <em>runfmt='{SM}'</em>, <em>population=None</em>, <em>platform_unit=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/file.html#ReadFixtureFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.file.ReadFixtureFile" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pytest_ngsfixtures.file.</code><code class="descname">ReadFixtureFile</code><span class="sig-paren">(</span><em>sample='CHS.HG00512'</em>, <em>size='tiny'</em>, <em>read=1</em>, <em>batch=None</em>, <em>runfmt='{SM}'</em>, <em>population=None</em>, <em>platform_unit=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/file.html#ReadFixtureFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.file.ReadFixtureFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pytest_ngsfixtures.file.FixtureFile" title="pytest_ngsfixtures.file.FixtureFile"><code class="xref py py-class docutils literal"><span class="pre">pytest_ngsfixtures.file.FixtureFile</span></code></a></p>
 <p>Class that represents read test files.</p>
 <p>The class constructor sets a census attribute that keeps track of
@@ -826,23 +853,29 @@ joined with the size.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>sample</strong> (<em>str</em>) – sample name</li>
-<li><strong>path</strong> (str, <code class="xref py py-class docutils literal"><span class="pre">py._path.local.LocalPath</span></code>) – test output path</li>
 <li><strong>size</strong> (<em>str</em>) – sequence file size</li>
-<li><strong>alias</strong> (<em>str</em>) – alias output name</li>
-<li><strong>short_name</strong> (<em>bool</em>) – use short output names, prefixed by prefix and numbered by class census</li>
 <li><strong>read</strong> (<em>int</em>) – read number (1 or 2)</li>
 <li><strong>batch</strong> (<em>str</em>) – batch name</li>
-<li><strong>prefix</strong> (<em>str</em>) – short name prefix</li>
 <li><strong>runfmt</strong> (<em>str</em>) – python miniformat string that represents formatted fastq output file. Can contain keys SM, PU, POP, BATCH.</li>
 <li><strong>population</strong> (<em>str</em>) – population name</li>
 <li><strong>platform_unit</strong> (<em>str</em>) – platform_unit name</li>
 </ul>
 </td>
 </tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first last simple">
+<li><strong>path</strong> (str, <code class="xref py py-class docutils literal"><span class="pre">py._path.local.LocalPath</span></code>) – test output path</li>
+<li><strong>alias</strong> (<em>str</em>) – alias output name</li>
+<li><strong>short_name</strong> (<em>bool</em>) – use short output names, prefixed by prefix and numbered by class census</li>
+<li><strong>prefix</strong> (<em>str</em>) – short name prefix</li>
+</ul>
+</td>
+</tr>
 </tbody>
 </table>
+<p>For full list of keyword arguments, see <a class="reference internal" href="#pytest_ngsfixtures.file.FixtureFile" title="pytest_ngsfixtures.file.FixtureFile"><code class="xref py py-class docutils literal"><span class="pre">FixtureFile</span></code></a>.</p>
 <dl class="attribute">
 <dt id="pytest_ngsfixtures.file.ReadFixtureFile.BATCH">
 <code class="descname">BATCH</code><a class="headerlink" href="#pytest_ngsfixtures.file.ReadFixtureFile.BATCH" title="Permalink to this definition">¶</a></dt>
@@ -861,11 +894,6 @@ joined with the size.</p>
 <dl class="attribute">
 <dt id="pytest_ngsfixtures.file.ReadFixtureFile.SM">
 <code class="descname">SM</code><a class="headerlink" href="#pytest_ngsfixtures.file.ReadFixtureFile.SM" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="pytest_ngsfixtures.file.ReadFixtureFile.alias">
-<code class="descname">alias</code><a class="headerlink" href="#pytest_ngsfixtures.file.ReadFixtureFile.alias" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -1108,6 +1136,21 @@ sets are partitioned by corresponding keys.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-pytest_ngsfixtures.fixtures">
+<span id="pytest-ngsfixtures-fixtures-module"></span><h2>pytest_ngsfixtures.fixtures module<a class="headerlink" href="#module-pytest_ngsfixtures.fixtures" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="pytest_ngsfixtures.fixtures.pref">
+<code class="descclassname">pytest_ngsfixtures.fixtures.</code><code class="descname">pref</code><span class="sig-paren">(</span><em>request</em>, <em>tmpdir_factory</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/fixtures.html#pref"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.fixtures.pref" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parametrized reference fixture</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytest_ngsfixtures.fixtures.psample">
+<code class="descclassname">pytest_ngsfixtures.fixtures.</code><code class="descname">psample</code><span class="sig-paren">(</span><em>request</em>, <em>tmpdir_factory</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/fixtures.html#psample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.fixtures.psample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parametrized sample fixture</p>
+</dd></dl>
+
+</div>
 <div class="section" id="module-pytest_ngsfixtures.helpers">
 <span id="pytest-ngsfixtures-helpers-module"></span><h2>pytest_ngsfixtures.helpers module<a class="headerlink" href="#module-pytest_ngsfixtures.helpers" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
@@ -1332,6 +1375,42 @@ LocalPath objects are always absolute paths.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-pytest_ngsfixtures.shell">
+<span id="pytest-ngsfixtures-shell-module"></span><h2>pytest_ngsfixtures.shell module<a class="headerlink" href="#module-pytest_ngsfixtures.shell" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="pytest_ngsfixtures.shell.get_conda_root">
+<code class="descclassname">pytest_ngsfixtures.shell.</code><code class="descname">get_conda_root</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/shell.html#get_conda_root"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.shell.get_conda_root" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="pytest_ngsfixtures.shell.shell">
+<em class="property">class </em><code class="descclassname">pytest_ngsfixtures.shell.</code><code class="descname">shell</code><a class="reference internal" href="_modules/pytest_ngsfixtures/shell.html#shell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.shell.shell" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Class wrapper for shell commands.</p>
+<p>Based on snakemake shell implementation by Johannes Köster.</p>
+<dl class="classmethod">
+<dt id="pytest_ngsfixtures.shell.shell.executable">
+<em class="property">classmethod </em><code class="descname">executable</code><span class="sig-paren">(</span><em>cmd</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/shell.html#shell.executable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.shell.shell.executable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="pytest_ngsfixtures.shell.shell.iter_stdout">
+<em class="property">static </em><code class="descname">iter_stdout</code><span class="sig-paren">(</span><em>proc</em>, <em>cmd</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/shell.html#shell.iter_stdout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.shell.shell.iter_stdout" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="pytest_ngsfixtures.shell.shell.read_stdout">
+<em class="property">static </em><code class="descname">read_stdout</code><span class="sig-paren">(</span><em>proc</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/shell.html#shell.read_stdout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.shell.shell.read_stdout" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="pytest_ngsfixtures.shell.shell.stdout">
+<em class="property">static </em><code class="descname">stdout</code><span class="sig-paren">(</span><em>proc</em>, <em>cmd</em>, <em>ret=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/shell.html#shell.stdout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.shell.shell.stdout" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="module-pytest_ngsfixtures.utils">
 <span id="pytest-ngsfixtures-utils-module"></span><h2>pytest_ngsfixtures.utils module<a class="headerlink" href="#module-pytest_ngsfixtures.utils" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
@@ -1354,6 +1433,8 @@ LocalPath objects are always absolute paths.</p>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="pytest_ngsfixtures.wm.html" class="btn btn-neutral float-right" title="pytest_ngsfixtures.wm package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="modules.html" class="btn btn-neutral" title="pytest_ngsfixtures" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -1387,7 +1468,7 @@ LocalPath objects are always absolute paths.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.6.1',
+            VERSION:'0.6.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

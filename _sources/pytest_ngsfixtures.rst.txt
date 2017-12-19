@@ -1,6 +1,13 @@
 pytest\_ngsfixtures package
 ===========================
 
+Subpackages
+-----------
+
+.. toctree::
+
+    pytest_ngsfixtures.wm
+
 Submodules
 ----------
 
@@ -52,6 +59,14 @@ pytest\_ngsfixtures\.filetypes module
     :undoc-members:
     :show-inheritance:
 
+pytest\_ngsfixtures\.fixtures module
+------------------------------------
+
+.. automodule:: pytest_ngsfixtures.fixtures
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 pytest\_ngsfixtures\.helpers module
 -----------------------------------
 
@@ -88,6 +103,14 @@ pytest\_ngsfixtures\.repo module
 --------------------------------
 
 .. automodule:: pytest_ngsfixtures.repo
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pytest\_ngsfixtures\.shell module
+---------------------------------
+
+.. automodule:: pytest_ngsfixtures.shell
     :members:
     :undoc-members:
     :show-inheritance:

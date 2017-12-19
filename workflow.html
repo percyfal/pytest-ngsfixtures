@@ -1,0 +1,452 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Tutorial &mdash; pytest-ngsfixtures 0.6.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="pytest-ngsfixtures 0.6.2 documentation" href="index.html"/>
+        <link rel="next" title="Developer guide" href="contributing.html"/>
+        <link rel="prev" title="Usage" href="usage.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pytest-ngsfixtures
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.6.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#snakemake-workflow">Snakemake workflow</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#setting-up-a-workflow-with-a-predefined-sample-layout">Setting up a workflow with a predefined sample layout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setting-up-a-workflow-with-a-custom-sample-layout">Setting up a workflow with a custom sample layout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setting-up-a-docker-container-fixture">Setting up a docker container fixture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#parametrized-tests-on-running-environment">Parametrized tests on running environment</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Developer guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">pytest_ngsfixtures</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pytest-ngsfixtures</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Tutorial</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/workflow.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="tutorial">
+<span id="id1"></span><h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
+<p>In this section we present examples of setting up tests for workflow
+managers. The examples start out from a simple setting adding
+complexity with each subsection. The tests and example workflow files
+can be found in the tests directory that ships with the package
+distribution.</p>
+<div class="section" id="snakemake-workflow">
+<h2>Snakemake workflow<a class="headerlink" href="#snakemake-workflow" title="Permalink to this headline">¶</a></h2>
+<p>This section describes how to setup tests of a snakemake workflow. In
+order to use the test fixtures with the <a class="reference external" href="http://snakemake.readthedocs.io/en/stable/">snakemake workflow manager</a>, we need to setup a
+Snakefile and a test file.</p>
+<p>The Snakefile defines rules that declare what to do with the input
+data. In a real-life scenario, we would run various bioinformatics
+applications to transform the input into some meaningful output. Here,
+we perform operations using basic shell commands, but the same
+principle applies to a bioinformatics workflow. The Snakefile in this
+example looks as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># -*- snakemake -*-</span>
+
+<span class="n">rule</span> <span class="nb">all</span><span class="p">:</span>
+    <span class="nb">input</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;results.txt&quot;</span><span class="p">]</span>
+
+
+<span class="n">rule</span> <span class="n">results</span><span class="p">:</span>
+    <span class="nb">input</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;s1_1.fastq.gz&quot;</span><span class="p">,</span> <span class="s2">&quot;s1_2.fastq.gz&quot;</span><span class="p">]</span>
+    <span class="n">output</span><span class="p">:</span> <span class="s2">&quot;results.txt&quot;</span>
+    <span class="n">shell</span><span class="p">:</span> <span class="s2">&quot;echo {input} &gt; {output}&quot;</span>
+           
+</pre></div>
+</div>
+<div class="section" id="setting-up-a-workflow-with-a-predefined-sample-layout">
+<h3>Setting up a workflow with a predefined sample layout<a class="headerlink" href="#setting-up-a-workflow-with-a-predefined-sample-layout" title="Permalink to this headline">¶</a></h3>
+<p>The test file (here <cite>test_workflow_simple.py</cite>) defines a test that
+depends on the <code class="xref py py-data docutils literal"><span class="pre">flat</span></code>
+pytest_ngsfixtures fixture:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">from</span> <span class="nn">pytest_ngsfixtures.wm</span> <span class="kn">import</span> <span class="n">snakemake</span>
+
+<span class="n">Snakefile</span> <span class="o">=</span> <span class="n">snakemake</span><span class="o">.</span><span class="n">snakefile_factory</span><span class="p">(</span>
+    <span class="n">copy</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">numbered</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">test_workflow</span><span class="p">(</span><span class="n">Snakefile</span><span class="p">,</span> <span class="n">flat</span><span class="p">):</span>
+    <span class="n">snakemake</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">Snakefile</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;-d&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">flat</span><span class="p">)])</span>
+    <span class="k">assert</span> <span class="n">flat</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;results.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Here, the Snakefile fixture is defined via the
+<code class="xref py py-func docutils literal"><span class="pre">snakefile_factory()</span></code>. By
+default, the factory will assume there is a Snakefile in the test
+directory. If not, the full path to the Snakefile has to be passed
+with the <cite>snakefile</cite> argument. The <code class="xref py py-func docutils literal"><span class="pre">test_workflow()</span></code> function
+requires the two fixtures Snakefile and flat, and the workflow is run
+with the <code class="xref py py-func docutils literal"><span class="pre">run()</span></code> wrapper.
+Finally, we assert that the test has run to completion by asserting
+the existence of the output file <cite>results.txt</cite>. Now, the tests can be
+run with the command</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>pytest -v -s test_workflow1.py
+</pre></div>
+</div>
+</div>
+<div class="section" id="setting-up-a-workflow-with-a-custom-sample-layout">
+<h3>Setting up a workflow with a custom sample layout<a class="headerlink" href="#setting-up-a-workflow-with-a-custom-sample-layout" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="xref py py-data docutils literal"><span class="pre">flat</span></code> fixture is a predefined
+fixture that sets up test files via symlinks. However, as will become
+clear in the next section, sometimes it is desirable to copy the files
+to the test directory.</p>
+<p>We here use the <a class="reference internal" href="pytest_ngsfixtures.html#pytest_ngsfixtures.factories.sample_layout" title="pytest_ngsfixtures.factories.sample_layout"><code class="xref py py-func docutils literal"><span class="pre">sample_layout()</span></code></a>
+function to setup a modified version of the
+<code class="xref py py-data docutils literal"><span class="pre">flat</span></code> fixture that copies the
+test files (<cite>test_workflow_flat_copy.py</cite>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">from</span> <span class="nn">pytest_ngsfixtures.wm</span> <span class="kn">import</span> <span class="n">snakemake</span>
+<span class="kn">from</span> <span class="nn">pytest_ngsfixtures</span> <span class="kn">import</span> <span class="n">factories</span>
+
+<span class="n">flatc</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span><span class="n">sample</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;CHS.HG00512&quot;</span><span class="p">],</span>
+                                <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;flat_copy&quot;</span><span class="p">,</span>
+                                <span class="n">numbered</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="n">Snakefile</span> <span class="o">=</span> <span class="n">snakemake</span><span class="o">.</span><span class="n">snakefile_factory</span><span class="p">(</span>
+    <span class="n">copy</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">numbered</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">test_workflow</span><span class="p">(</span><span class="n">Snakefile</span><span class="p">,</span> <span class="n">flatc</span><span class="p">):</span>
+    <span class="n">snakemake</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">Snakefile</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;-d&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">flatc</span><span class="p">),</span> <span class="s2">&quot;-s&quot;</span><span class="p">,</span>
+                                      <span class="nb">str</span><span class="p">(</span><span class="n">Snakefile</span><span class="p">)])</span>
+    <span class="k">assert</span> <span class="n">flatc</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;results.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="setting-up-a-docker-container-fixture">
+<h3>Setting up a docker container fixture<a class="headerlink" href="#setting-up-a-docker-container-fixture" title="Permalink to this headline">¶</a></h3>
+<p>The previous section would have been unnecessary if only local tests
+were run, but copying test files is necessary for container-based
+tests. In the following test script (<cite>test_workflow_docker.py</cite>), we
+add a lot of new functionality.</p>
+<p>First, we import the <code class="xref py py-mod docutils literal"><span class="pre">docker</span></code> module to interact with docker,
+along with <code class="xref py py-mod docutils literal"><span class="pre">os</span></code> and <code class="xref py py-mod docutils literal"><span class="pre">pytest</span></code>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">docker</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
+</pre></div>
+</div>
+<p>Then, we add a <cite>container</cite> fixture that sets up a container based on
+the snakemake docker image
+<a class="reference external" href="https://quay.io/repository/biocontainers/snakemake?tag=latest&amp;tab=tags">quay.io/biocontainers/snakemake:4.3.1–py36_0</a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">snakemake_image</span> <span class="o">=</span> <span class="s2">&quot;quay.io/biocontainers/snakemake:4.3.1--py36_0&quot;</span>
+
+
+<span class="nd">@pytest.fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;session&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">container</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">rm</span><span class="p">():</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Removing container &quot;</span><span class="p">,</span> <span class="n">container</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">container</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="n">request</span><span class="o">.</span><span class="n">addfinalizer</span><span class="p">(</span><span class="n">rm</span><span class="p">)</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">docker</span><span class="o">.</span><span class="n">from_env</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">snakemake_image</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">docker</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">ImageNotFound</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;docker image {} not found; pulling&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">snakemake_image</span><span class="p">))</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">pull</span><span class="p">(</span><span class="n">snakemake_image</span><span class="p">)</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">snakemake_image</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span>
+    <span class="n">container</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">containers</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">tty</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                                         <span class="n">user</span><span class="o">=</span><span class="s2">&quot;{}:{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getuid</span><span class="p">(),</span> <span class="n">os</span><span class="o">.</span><span class="n">getgid</span><span class="p">()),</span>
+                                         <span class="n">volumes</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;/tmp&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;bind&#39;</span><span class="p">:</span> <span class="s1">&#39;/tmp&#39;</span><span class="p">,</span> <span class="s1">&#39;mode&#39;</span><span class="p">:</span> <span class="s1">&#39;rw&#39;</span><span class="p">}},</span>
+                                         <span class="n">working_dir</span><span class="o">=</span><span class="s2">&quot;/tmp&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">container</span>
+</pre></div>
+</div>
+<p>Finally, we add the <cite>container</cite> fixture to the test function call:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">test_workflow</span><span class="p">(</span><span class="n">Snakefile</span><span class="p">,</span> <span class="n">flat_copy</span><span class="p">,</span> <span class="n">container</span><span class="p">):</span>
+    <span class="n">container</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">snakemake</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">Snakefile</span><span class="p">,</span>
+                           <span class="n">options</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;-d&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">flat_copy</span><span class="p">),</span> <span class="s2">&quot;-s&quot;</span><span class="p">,</span>
+                                    <span class="nb">str</span><span class="p">(</span><span class="n">Snakefile</span><span class="p">)],</span> <span class="n">container</span><span class="o">=</span><span class="n">container</span><span class="p">,</span>
+                           <span class="n">read</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">iterable</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">flat_copy</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;results.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="parametrized-tests-on-running-environment">
+<h3>Parametrized tests on running environment<a class="headerlink" href="#parametrized-tests-on-running-environment" title="Permalink to this headline">¶</a></h3>
+<p>We have now written tests for local execution and execution in a
+container. By parametrizing the tests, we can combine the two cases in
+one test function. To do this we modify the test function as follows
+(see <cite>test_workflow_parametrize.py</cite>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="nd">@pytest.mark.parametrize</span><span class="p">(</span><span class="s2">&quot;container&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;local&quot;</span><span class="p">,</span> <span class="s2">&quot;docker&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;container&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_workflow</span><span class="p">(</span><span class="n">Snakefile</span><span class="p">,</span> <span class="n">flat_copy</span><span class="p">,</span> <span class="n">container</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">container</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">container</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">snakemake</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">Snakefile</span><span class="p">,</span>
+                           <span class="n">options</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;-d&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">flat_copy</span><span class="p">),</span> <span class="s2">&quot;-s&quot;</span><span class="p">,</span>
+                                    <span class="nb">str</span><span class="p">(</span><span class="n">Snakefile</span><span class="p">)],</span> <span class="n">container</span><span class="o">=</span><span class="n">container</span><span class="p">,</span>
+                           <span class="n">read</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">iterable</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">flat_copy</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;results.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The parametrization is done indirectly via the <cite>container</cite> fixture. We
+modify this fixture to return <cite>None</cite> if the request parameter equals
+<cite>local</cite>, and if the parameter equals <cite>docker</cite> we return the container:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="nd">@pytest.fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;function&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">container</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">rm</span><span class="p">():</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Removing container &quot;</span><span class="p">,</span> <span class="n">container</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">container</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">param</span> <span class="o">==</span> <span class="s2">&quot;local&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">None</span>
+    <span class="n">request</span><span class="o">.</span><span class="n">addfinalizer</span><span class="p">(</span><span class="n">rm</span><span class="p">)</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">docker</span><span class="o">.</span><span class="n">from_env</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">snakemake_image</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">docker</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">ImageNotFound</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;docker image {} not found; pulling&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">snakemake_image</span><span class="p">))</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">pull</span><span class="p">(</span><span class="n">snakemake_image</span><span class="p">)</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">snakemake_image</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span>
+    <span class="n">container</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">containers</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">tty</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                                         <span class="n">user</span><span class="o">=</span><span class="s2">&quot;{}:{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getuid</span><span class="p">(),</span> <span class="n">os</span><span class="o">.</span><span class="n">getgid</span><span class="p">()),</span>
+                                         <span class="n">volumes</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;/tmp&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;bind&#39;</span><span class="p">:</span> <span class="s1">&#39;/tmp&#39;</span><span class="p">,</span> <span class="s1">&#39;mode&#39;</span><span class="p">:</span> <span class="s1">&#39;rw&#39;</span><span class="p">}},</span>
+                                         <span class="n">working_dir</span><span class="o">=</span><span class="s2">&quot;/tmp&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">container</span>
+</pre></div>
+</div>
+<p>Now, running</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>pytest -v -s tests/test_workflow_parametrize.py
+</pre></div>
+</div>
+<p>will execute two tests, one for the local environment, one in the
+docker container.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="contributing.html" class="btn btn-neutral float-right" title="Developer guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="usage.html" class="btn btn-neutral" title="Usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Per Unneberg.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.6.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

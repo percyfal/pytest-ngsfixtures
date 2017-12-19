@@ -1,0 +1,324 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pytest_ngsfixtures.fixtures &mdash; pytest-ngsfixtures 0.6.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="pytest-ngsfixtures 0.6.2 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pytest-ngsfixtures
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.6.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../workflow.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Developer guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">pytest_ngsfixtures</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pytest-ngsfixtures</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>pytest_ngsfixtures.fixtures</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pytest_ngsfixtures.fixtures</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">from</span> <span class="nn">pytest_ngsfixtures.os</span> <span class="k">import</span> <span class="n">safe_mktemp</span>
+<span class="kn">from</span> <span class="nn">pytest_ngsfixtures.layout</span> <span class="k">import</span> <span class="n">setup_sample_layout</span><span class="p">,</span> <span class="n">setup_reference_layout</span>
+<span class="kn">from</span> <span class="nn">pytest_ngsfixtures.config</span> <span class="k">import</span> <span class="n">sample_conf</span><span class="p">,</span> <span class="n">runfmt_alias</span>
+<span class="kn">from</span> <span class="nn">pytest_ngsfixtures</span> <span class="k">import</span> <span class="n">factories</span>
+
+
+<div class="viewcode-block" id="psample"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.fixtures.psample">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;function&quot;</span><span class="p">,</span> <span class="n">autouse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">params</span><span class="o">=</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">sample_conf</span><span class="o">.</span><span class="n">RUNFMT_ALIAS</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">7</span><span class="p">],</span> <span class="n">sample_conf</span><span class="o">.</span><span class="n">SAMPLE_LAYOUTS</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]))</span>
+<span class="k">def</span> <span class="nf">psample</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">tmpdir_factory</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parametrized sample fixture&quot;&quot;&quot;</span>
+    <span class="n">fmt</span><span class="p">,</span> <span class="n">layout</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">param</span>
+    <span class="k">if</span> <span class="n">fmt</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_runfmt_alias</span><span class="p">:</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="s2">&quot;skipping </span><span class="si">{}</span><span class="s2"> as not in options&quot;</span><span class="p">)</span>
+    <span class="n">dirname</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="n">layout</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">layout</span> <span class="o">==</span> <span class="s2">&quot;pool&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">fmt</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;project_run&quot;</span><span class="p">):</span>
+            <span class="n">pytest</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="s2">&quot;pool layout can not be run in project run mode&quot;</span><span class="p">)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">safe_mktemp</span><span class="p">(</span><span class="n">tmpdir_factory</span><span class="p">,</span> <span class="n">dirname</span><span class="p">)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">setup_sample_layout</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">,</span>
+                               <span class="n">copy</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_copy</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">path</span></div>
+
+
+<div class="viewcode-block" id="pref"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.fixtures.pref">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;function&quot;</span><span class="p">,</span> <span class="n">autouse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">pref</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">tmpdir_factory</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parametrized reference fixture&quot;&quot;&quot;</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;scaffolds&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_ref</span><span class="p">:</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;ref&quot;</span>
+    <span class="n">dirname</span> <span class="o">=</span> <span class="n">label</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">safe_mktemp</span><span class="p">(</span><span class="n">tmpdir_factory</span><span class="p">,</span> <span class="n">dirname</span><span class="p">)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">setup_reference_layout</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span>
+                                  <span class="n">copy</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_copy</span><span class="p">,</span>
+                                  <span class="n">setup</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">path</span></div>
+
+
+<span class="n">sample</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span>
+    <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;short&quot;</span><span class="p">,</span>
+    <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span>
+    <span class="n">runfmt</span><span class="o">=</span><span class="n">runfmt_alias</span><span class="p">(</span><span class="s2">&quot;sample&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">numbered</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">sample_run</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span>
+    <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;short&quot;</span><span class="p">,</span>
+    <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;sample_run&quot;</span><span class="p">,</span>
+    <span class="n">runfmt</span><span class="o">=</span><span class="n">runfmt_alias</span><span class="p">(</span><span class="s2">&quot;sample_run&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">numbered</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="n">sample_project_run</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span>
+    <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;short&quot;</span><span class="p">,</span>
+    <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;sample_project_run&quot;</span><span class="p">,</span>
+    <span class="n">runfmt</span><span class="o">=</span><span class="n">runfmt_alias</span><span class="p">(</span><span class="s2">&quot;sample_project_run&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">batches</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;p1&quot;</span><span class="p">,</span> <span class="s2">&quot;p2&quot;</span><span class="p">,</span> <span class="s2">&quot;p1&quot;</span><span class="p">],</span>
+    <span class="n">numbered</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="n">pop_sample</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span>
+    <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;individual&quot;</span><span class="p">,</span>
+    <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;pop_sample&quot;</span><span class="p">,</span>
+    <span class="n">runfmt</span><span class="o">=</span><span class="n">runfmt_alias</span><span class="p">(</span><span class="s2">&quot;pop_sample&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">numbered</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">pop_sample_run</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span>
+    <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;individual&quot;</span><span class="p">,</span>
+    <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;pop_sample_run&quot;</span><span class="p">,</span>
+    <span class="n">runfmt</span><span class="o">=</span><span class="n">runfmt_alias</span><span class="p">(</span><span class="s2">&quot;pop_sample_run&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">numbered</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">pop_sample_project_run</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span>
+    <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;individual&quot;</span><span class="p">,</span>
+    <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;pop_project_sample_run&quot;</span><span class="p">,</span>
+    <span class="n">runfmt</span><span class="o">=</span><span class="n">runfmt_alias</span><span class="p">(</span><span class="s2">&quot;pop_sample_project_run&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">batches</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;p1&quot;</span><span class="p">,</span> <span class="s2">&quot;p2&quot;</span><span class="p">,</span> <span class="s2">&quot;p1&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;p1&quot;</span><span class="p">,</span> <span class="s2">&quot;p2&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">numbered</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">pool_pop_sample</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span>
+    <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;pool&quot;</span><span class="p">,</span>
+    <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;pool_pop_sample&quot;</span><span class="p">,</span>
+    <span class="n">runfmt</span><span class="o">=</span><span class="n">runfmt_alias</span><span class="p">(</span><span class="s2">&quot;pop_sample&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">numbered</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">pool_pop_sample_run</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span>
+    <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;pool&quot;</span><span class="p">,</span>
+    <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;pool_pop_sample_run&quot;</span><span class="p">,</span>
+    <span class="n">runfmt</span><span class="o">=</span><span class="n">runfmt_alias</span><span class="p">(</span><span class="s2">&quot;pop_sample_run&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">numbered</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Per Unneberg.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.6.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
