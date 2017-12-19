@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import os
 import py
 import pytest
 from pytest_ngsfixtures.wm import snakemake
