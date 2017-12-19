@@ -1,6 +1,28 @@
 History
 =======
 
+0.6.2 (2017-12-19)
+------------------
+
+Add shell wrappers and wrappers for easily setting up workflow tests.
+
+Add tutorial.
+
+Bugfixes.
+
+* Update pypi badge
+* Remove tox.ini
+* Defer setting alias to FixtureFile (#42)
+* ReadFixtureFile.SM now returns id (#39)
+* Options ngs_layout and ngs_runfmt are now lists (#41)
+* Update project layout configuration (#40)
+* Add function to return runfmt and alias as tuple (#43)
+* Read 1 and 2 have same id when alias required (#45)
+* Census is not increased for read 2 (#44)
+* Add option to only setup sampleinfo (#47)
+* Add tutorial (#46)
+* Add working snakemake tests (#8)
+  
 0.6.1 (2017-11-22)
 ------------------
 

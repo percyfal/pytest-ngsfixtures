@@ -3,11 +3,12 @@ pytest-ngsfixtures
 
 .. image:: https://anaconda.org/percyfal/pytest-ngsfixtures/badges/version.svg
 	   :target: https://anaconda.org/percyfal/pytest-ngsfixtures
-.. image:: https://img.shields.io/pypi/dm/pytest-ngsfixtures.svg
-	   :target: https://pypi.python.org/pypi/pytest-ngsfixtures
+.. image:: https://badge.fury.io/py/pytest-ngsfixtures.svg
+	   :target: https://badge.fury.io/py/pytest-ngsfixtures
 .. image:: https://travis-ci.org/percyfal/pytest-ngsfixtures.svg?branch=master
 	   :target: https://travis-ci.org/percyfal/pytest-ngsfixtures
-		
+
+
 About
 =====
 
@@ -20,7 +21,8 @@ and tools. There are sequencing fixtures for some common sample
 layouts, but it's easy to generate additional sample fixture layouts
 using fixture factories.
 
-See the `pytest-ngsfixtures documentation`_ for more information.
+See the `pytest-ngsfixtures documentation`_ for more information and
+usage.
 
 * Free software: GNU General Public License v3
 
@@ -31,6 +33,7 @@ Features
 - predefined sample layouts
 - factories for generating new sample layouts
 - result files from a variety of bioinformatics applications and tools
+- wrappers for quickly setting up workflow tests
 
 
 Installation
@@ -40,6 +43,22 @@ Installation
 
    $ conda install -c percyfal pytest-ngsfixtures
    $ pip install pytest-ngsfixtures
+
+
+Usage
+=====
+
+.. code-block:: python
+
+   from pytest_ngsfixtures.fixtures import sample
+   from pytest_ngsfixtures.wm import snakemake
+
+   Snakefile = snakemake.snakefile_factory("/path/to/Snakefile")
+
+   def test_workflow(Snakefile, sample):
+       snakemake.run(Snakefile, target="s1.bam")
+       assert sample.join("s1.bam").exist()
+
 
 
 Credits

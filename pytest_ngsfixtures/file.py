@@ -192,17 +192,20 @@ class ReadFixtureFile(FixtureFile):
 
     Args:
       sample (str): sample name
-      path (str, :py:class:`py._path.local.LocalPath`): test output path
       size (str): sequence file size
-      alias (str): alias output name
-      short_name (bool): use short output names, prefixed by prefix and numbered by class census
       read (int): read number (1 or 2)
       batch (str): batch name
-      prefix (str): short name prefix
       runfmt (str): python miniformat string that represents formatted fastq output file. Can contain keys SM, PU, POP, BATCH.
       population (str): population name
       platform_unit (str): platform_unit name
 
+    Keyword Args:
+      path (str, :py:class:`py._path.local.LocalPath`): test output path
+      alias (str): alias output name
+      short_name (bool): use short output names, prefixed by prefix and numbered by class census
+      prefix (str): short name prefix
+
+    For full list of keyword arguments, see :py:class:`~pytest_ngsfixtures.file.FixtureFile`.
     """
     census = 0
     _samples = sample_conf.SAMPLES
@@ -218,22 +221,24 @@ class ReadFixtureFile(FixtureFile):
         cls.census += 1
         return obj
 
-    def __init__(self, sample="CHS.HG00512", path=None, size="tiny",
-                 alias=None, short_name=False, read=1, batch=None,
-                 prefix="s", runfmt="{SM}", population=None,
-                 platform_unit=None, *args, **kwargs):
+    def __init__(self, sample="CHS.HG00512", size="tiny", read=1,
+                 batch=None, runfmt="{SM}", population=None,
+                 platform_unit=None, *args,
+                 **kwargs):
         self.sample = sample
-        self._size = size
         self.read = read
-        self._short = short_name
-        self._prefix = prefix
-        self.alias = alias
+        self._size = size
+        setup = kwargs.get("setup", False)
+        kwargs['src'] = self.data_dir.join(self._size, "{}{}".format(self.sample, self.fastq_suffix))
+        kwargs['setup'] = False
+        super(ReadFixtureFile, self).__init__(**kwargs)
         self._index = self._samples.index(sample)
         self._population = population if population else self._populations[self._index]
         self._platform_unit = platform_unit if platform_unit else self._platform_units[self._index]
         self._batch = batch
         self._runfmt = runfmt
-
+        # Reset path now that all info is in place
+        path = kwargs.get("path", None)
         if path is None:
             path = self.runfmt.format(**dict(self)) + self.fastq_suffix
         else:
@@ -245,10 +250,9 @@ class ReadFixtureFile(FixtureFile):
                     path = path.join(self.fastq)
             else:
                 pass
-        kwargs['src'] = self.data_dir.join(self._size, "{}{}".format(self.sample, self.fastq_suffix))
-        super(ReadFixtureFile, self).__init__(path=path, **kwargs)
-        if self.alias is not None:
-            self.strpath = str(self.path.join(self.fastq))
+        self.strpath = str(path)
+        if setup:
+            self.setup()
 
     @property
     def id(self):
@@ -258,29 +262,18 @@ class ReadFixtureFile(FixtureFile):
     def sample(self):
         return self._sample
 
-    @property
-    def alias(self):
-        return self._alias
-
-    @alias.setter
-    def alias(self, alias):
-        if self.short and alias is None:
-            self._alias = self.full_prefix
-        else:
-            self._alias = alias
-
     @sample.setter
     def sample(self, sample):
         assert sample in self._samples, "sample has to be one of {}".format(", ".join(self._samples))
         self._sample = sample
 
     @property
-    def full_prefix(self):
-        return "{}{}".format(self.prefix, self.census)
+    def SM(self):
+        return self.id
 
     @property
-    def SM(self):
-        return self._sample
+    def full_prefix(self):
+        return "{}{}".format(self.prefix, self.census)
 
     @property
     def read(self):
@@ -419,7 +412,11 @@ class ApplicationFixtureFile(FixtureFile):
     def __init__(self, path, end="pe", *args, **kwargs):
         if isinstance(path, str):
             path = py.path.local(path)
-        kwargs['src'] = self._data_dir.join(end, path.basename)
+        try:
+            if not kwargs['src'].exists():
+                kwargs['src'] = self._data_dir.join(end, path.basename)
+        except:
+            kwargs['src'] = self._data_dir.join(end, path.basename)
         super(ApplicationFixtureFile, self).__init__(path=path, *args, **kwargs)
 
 
@@ -427,7 +424,7 @@ class ApplicationOutputFixture(FixtureFileSet):
     """Class that represents application outputs.
 
     The class constructor sets the data directory to the applications
-    data file directory. 
+    data file directory.
 
     Args:
       application (str): application name
@@ -452,7 +449,7 @@ class ApplicationOutputFixture(FixtureFileSet):
         output = list(get_application_fixture_output(application, command, version, end).values())
         super(ApplicationOutputFixture, self).__init__(src=src, path=path, output=output,
                                                        *args, **kwargs)
-        
+
 
 def fixturefile_factory(path=None, setup=False, **kwargs):
     """Factory function to auto-generate a FixtureFile.

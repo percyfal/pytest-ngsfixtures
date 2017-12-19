@@ -1,0 +1,10 @@
+version: '3'
+services:
+  alpine:
+    image: "alpine"
+    deploy:
+    tty: true
+  busybox:
+    image: "busybox"
+    deploy:
+    tty: true
