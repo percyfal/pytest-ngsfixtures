@@ -47,6 +47,7 @@ def snakefile_factory(snakefile=None, testdir=None, **kwargs):
     if snakefile is None:
         s = inspect.stack()[1]
         snakefile = py.path.local(os.path.dirname(s.filename)).join("Snakefile")
+
     @pytest.fixture(scope=kwargs.get("scope", "function"),
                     autouse=kwargs.get("autouse", False))
     def snakefile_fixture(request, tmpdir_factory, pytestconfig):

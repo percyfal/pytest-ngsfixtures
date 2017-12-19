@@ -424,7 +424,7 @@ class ApplicationOutputFixture(FixtureFileSet):
     """Class that represents application outputs.
 
     The class constructor sets the data directory to the applications
-    data file directory. 
+    data file directory.
 
     Args:
       application (str): application name
@@ -449,7 +449,7 @@ class ApplicationOutputFixture(FixtureFileSet):
         output = list(get_application_fixture_output(application, command, version, end).values())
         super(ApplicationOutputFixture, self).__init__(src=src, path=path, output=output,
                                                        *args, **kwargs)
-        
+
 
 def fixturefile_factory(path=None, setup=False, **kwargs):
     """Factory function to auto-generate a FixtureFile.

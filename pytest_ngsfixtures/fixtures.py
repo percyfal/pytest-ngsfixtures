@@ -37,6 +37,7 @@ def pref(request, tmpdir_factory):
                                   setup=True, ignore_errors=True)
     return path
 
+
 sample = factories.sample_layout(
     layout="short",
     dirname="sample",

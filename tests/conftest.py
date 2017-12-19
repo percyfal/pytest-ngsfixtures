@@ -2,7 +2,6 @@
 import os
 import sys
 import py
-import re
 import pytest
 import docker
 import subprocess as sp
@@ -140,6 +139,7 @@ def container_factory(name):
                                              working_dir="/tmp")
         return container
     return container_fixture
+
 
 busybox_container = container_factory("busybox")
 snakemake_container = container_factory(SNAKEMAKE_IMAGE)
