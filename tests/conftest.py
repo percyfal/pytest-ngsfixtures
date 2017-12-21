@@ -149,7 +149,7 @@ def image_args():
     d = {
         'user': "{}:{}".format(pytest.uid, pytest.gid),
         'volumes': {'/tmp': {'bind': '/tmp', 'mode': 'rw'}},
-        'tty': True,
+        'tty': False,
     }
     return d
 

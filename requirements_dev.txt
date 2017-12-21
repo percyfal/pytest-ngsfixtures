@@ -5,8 +5,8 @@ watchdog
 flake8
 coverage
 Sphinx
-snakemake
-docker
+snakemake>=4.3.1
+docker>=2.7.0
 
 pytest
 pytest-runner
