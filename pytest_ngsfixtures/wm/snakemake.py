@@ -8,6 +8,7 @@ import logging
 from pytest_ngsfixtures.os import safe_mktemp
 from pytest_ngsfixtures.file import setup_filetype
 from pytest_ngsfixtures.shell import shell
+from pytest_ngsfixtures.wm.utils import save_command
 
 
 logging.basicConfig(level=logging.INFO)
@@ -71,14 +72,42 @@ def snakefile_factory(snakefile=None, testdir=None, **kwargs):
     return snakefile_fixture
 
 
-def run(snakefile, target="all", options=[], bash=False,
-        working_dir=None, **kwargs):
+def run(snakefile, target="all", options=[],
+        working_dir=None, save=False, **kwargs):
+    """Run snakemake on snakefile.
+
+    Wraps snakefile in a command string and pass the string to shell
+    wrapper.
+
+    Examples:
+
+      .. code-block:: python
+
+         from pytest_ngsfixtures.wm import snakemake
+
+         for r in snakemake.run("/path/to/Snakefile", target="test.bam",
+                                options=["--ri -k"], iterable=True):
+             print(r)
+
+    Args:
+      snakefile (str, py._path.local.LocalPath): snakefile full path name
+      target (str): snakemake target to run
+      options (list): options to pass to snakemake
+      working_dir (str): working directory. This is a temporary fix for issue https://bitbucket.org/snakemake/snakemake/issues/727/snakemake-writes-snakemake-to-cwd
+      save (bool): save shell script with command
+
+    Kwargs:
+      See :py:mod:`pytest_ngsfixtures.shell.shell` documentation.
+
+    Returns:
+      Results from :py:mod:`~pytest_ngsfixtures.shell.shell`.
+
+    """
     cmd_args = ["snakemake", "-s", str(snakefile), target] + options
 
     if working_dir:
         cmd_args = ["cd", working_dir, "&&"] + cmd_args
     cmd = " ".join(cmd_args)
-    if bash:
-        cmd = "/bin/bash -c '{}'".format(cmd)
-    logger.info(cmd)
+    if save:
+        save_command(cmd, outfile=os.path.join(os.path.dirname(str(snakefile)), "command.sh"))
     return shell(cmd, **kwargs)
