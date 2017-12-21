@@ -97,7 +97,6 @@ def pytest_configure(config):
         config.option.ngs_layout.append("pool")
     if "pool" in config.option.ngs_layout:
         config.option.ngs_pool = True
-    return config
 
 
 flat = factories.sample_layout(sample=['CHS.HG00512'],

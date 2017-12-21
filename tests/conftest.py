@@ -12,6 +12,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+logging.getLogger("urllib3").setLevel(logging.INFO)
+logging.getLogger("requests").setLevel(logging.INFO)
+logging.getLogger("docker").setLevel(logging.INFO)
 
 pytest_plugins = 'pytester'
 
@@ -27,6 +30,7 @@ except:
 
 SNAKEMAKE_BASETAG = "{}--{}".format(SNAKEMAKE_VERSION, PYTHON_VERSION)
 SNAKEMAKE_IMAGE = "quay.io/biocontainers/snakemake:{}_0".format(SNAKEMAKE_BASETAG)
+BUSYBOX_IMAGE = "busybox:latest"
 
 
 def pytest_namespace():
@@ -45,7 +49,6 @@ def pytest_configure(config):
                             "busybox: mark test as dependent on busybox image")
     config.addinivalue_line("markers",
                             "snakemake: mark test as dependent on snakemake image")
-    return config
 
 
 def pytest_runtest_setup(item):
@@ -60,7 +63,7 @@ def pytest_runtest_setup(item):
             raise
     busyboxmark = item.get_marker("busybox")
     if busyboxmark is not None:
-        get_image("busybox")
+        get_image(BUSYBOX_IMAGE)
     snakemakemark = item.get_marker("snakemake")
     if snakemakemark is not None:
         get_image(SNAKEMAKE_IMAGE)
@@ -70,6 +73,7 @@ def get_image(image):
     try:
         client = docker.from_env()
         image = client.images.get(image)
+        logger.info("retrieved local image '{}'".format(image))
     except docker.errors.ImageNotFound:
         logger.info("docker image '{}' not found; pulling to run tests".format(image))
         client.images.pull(image)
@@ -108,7 +112,7 @@ def image_factory(name):
     return image_fixture
 
 
-busybox_image = image_factory("busybox")
+busybox_image = image_factory(BUSYBOX_IMAGE)
 snakemake_image = image_factory(SNAKEMAKE_IMAGE)
 
 
@@ -140,7 +144,7 @@ def container_factory(name):
     return container_fixture
 
 
-busybox_container = container_factory("busybox")
+busybox_container = container_factory(BUSYBOX_IMAGE)
 snakemake_container = container_factory(SNAKEMAKE_IMAGE)
 
 
