@@ -18,7 +18,7 @@ def test_local_wf(Snakefile):
 @pytest.mark.snakemake
 def test_container_wf(Snakefile, snakemake_container):
     snakemake_container.start()
-    snakemake.run(Snakefile.basename, container=snakemake_container, bash=True,
+    snakemake.run(Snakefile.basename, container=snakemake_container,
                   working_dir=Snakefile.dirname)
     files = [x.basename for x in py.path.local(Snakefile.dirname).listdir()]
     assert "foo.txt" in files
@@ -27,7 +27,7 @@ def test_container_wf(Snakefile, snakemake_container):
 @pytest.mark.snakemake
 def test_image_wf(Snakefile, snakemake_image, image_args):
     snakemake.run(Snakefile, options=["-d", str(Snakefile.dirname)],
-                  image=snakemake_image, bash=True,
+                  image=snakemake_image,
                   working_dir=Snakefile.dirname, **image_args)
     files = [x.basename for x in py.path.local(Snakefile.dirname).listdir()]
     assert "foo.txt" in files

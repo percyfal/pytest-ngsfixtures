@@ -91,9 +91,8 @@ def image_factory(name):
                 for c in containers:
                     if not c.name.startswith("pytest_ngsfixtures"):
                         continue
-                    logger.info("Removing container  {}".format(c.name))
                     c.remove(force=True)
-                    logger.info("Removed container  {}".format(c.name))
+                    logger.info("Removed container {} ({})".format(c.name, c.short_id))
             except:
                 raise
             finally:
@@ -119,8 +118,8 @@ def container_factory(name):
     def container_fixture(request):
         def rm():
             try:
-                logger.info("Removing container {}".format(container.name))
                 container.remove(force=True)
+                logger.info("Removed container {} ({})".format(container.name, container.short_id))
             except:
                 raise
             finally:
@@ -132,11 +131,11 @@ def container_factory(name):
             image = client.images.get(name)
         except:
             raise
-        logger.info("creating container from image {}".format(image))
         container = client.containers.create(image, tty=True,
                                              user="{}:{}".format(pytest.uid, pytest.gid),
                                              volumes={'/tmp': {'bind': '/tmp', 'mode': 'rw'}},
                                              working_dir="/tmp")
+        logger.info("created container {} from image {}".format(container.short_id, image))
         return container
     return container_fixture
 
