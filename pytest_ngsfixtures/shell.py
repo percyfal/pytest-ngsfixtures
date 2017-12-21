@@ -82,11 +82,14 @@ class shell:
             logger.info("Activating conda environment {}.".format(conda_env))
 
         cmd = "{} {} {} {}".format(
-            env_prefix,
-            cls._process_prefix,
+            kwargs.pop("process_prefix", cls._process_prefix),
             path,
+            env_prefix,
             cmd.rstrip())
 
+        if container or image:
+            if cls._process_args["executable"]:
+                cmd = "{} -c '{}'".format(cls._process_args["executable"], cmd)
         if container:
             try:
                 proc = container.exec_run(cmd, stream=iterable,
@@ -108,7 +111,7 @@ class shell:
                             shell=True,
                             stdout=stdout,
                             stderr=stderr,
-                            close_fds=close_fds, **kwargs)
+                            close_fds=close_fds, **cls._process_args)
 
         if iterable:
             return cls.iter_stdout(proc, cmd)
