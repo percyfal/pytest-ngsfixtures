@@ -10,6 +10,13 @@ python:
   - "3.5"
   - "3.6"
 
+services:
+  - docker
+
+before_install:
+  - docker pull busybox
+  - docker pull quay.io/biocontainers/snakemake:4.3.1--py36_0
+
 install:
   - pip install coveralls
   - pip install -r requirements_dev.txt
