@@ -104,9 +104,6 @@ def run(snakefile, target="all", options=[],
 
     """
     cmd_args = ["snakemake", "-s", str(snakefile), target] + options
-
-    if working_dir:
-        cmd_args = ["cd", working_dir, "&&"] + cmd_args
     cmd = " ".join(cmd_args)
     if save:
         save_command(cmd, outfile=os.path.join(os.path.dirname(str(snakefile)), "command.sh"))
