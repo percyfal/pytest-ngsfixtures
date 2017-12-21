@@ -6,7 +6,7 @@ flake8
 coverage
 Sphinx
 snakemake
-docker-py
+docker
 
 pytest
 pytest-runner
