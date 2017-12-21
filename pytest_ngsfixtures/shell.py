@@ -13,8 +13,7 @@ import logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-PIPE = sp.PIPE
-STDOUT = sp.STDOUT
+STDOUT = sys.stdout
 
 
 def get_conda_root():
@@ -30,15 +29,52 @@ def get_conda_root():
 class shell:
     """Class wrapper for shell commands.
 
-    Based on snakemake shell implementation by Johannes Köster.
-    """
+    Wrapper for running shell commands. The wrapper accepts arguments
+    for seamlessly running in docker/singularity containers.
 
+    Based on snakemake shell implementation by Johannes Köster.
+
+    Args:
+      cmd (str): command string
+      container (Container): docker/singularity container instance
+      conda_env (str): conda environment to activate
+      conda_env_list (list): additional conda environment paths to add
+                             to PATH. Note: only the conda environment
+                             names need be provided as the conda root
+                             is inferred from the current conda
+                             environment
+      conda_root (str): conda root path. Use in case automatically
+                        inferring the root fails
+      image (Image): docker/singularity image to run in
+      iterable (bool): return output as iterable
+      read (bool): read and return output
+      async (bool): run asynchronously
+      path_list (list): prefix command with additional paths
+      stdout (_io.TextIOWrapper, int): stdout file object
+      stderr (int): stderr special value
+      stream (bool): stream containerized run; alias to iterable
+      detach (bool): detach containerized run; alias to async
+      process_prefix (str): temporarily override class process prefix. In
+                            containerized settings, using 'source
+                            activate' together with the automatically
+                            generated class process prefix 'set -euo
+                            pipefail' may fail
+
+    Returns:
+      stdout if read is set, an iterable if iterable is set, a process (either :py:mod:`subprocess.Popen` or :py:mod:`docker.models.containers.Container`) if async is set, None otherwise
+    """
+    _process_args = {}
     _process_prefix = ""
 
     @classmethod
     def executable(cls, cmd):
         if os.path.split(cmd)[-1] == "bash":
             cls._process_prefix = "set -euo pipefail;"
+        cls._process_args["executable"] = cmd
+
+    @classmethod
+    def prefix(cls, prefix):
+        cls._process_prefix = prefix
 
     def __new__(cls, cmd,
                 container=None,
