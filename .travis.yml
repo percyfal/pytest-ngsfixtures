@@ -9,15 +9,11 @@ python:
   - "3.5"
   - "3.6"
 
-# scripts/travis-setup.sh
 install:
-  # - pip install .
   - pip install coveralls
   - pip install -r requirements_dev.txt
   - python setup.py install
 
-
-# command to run tests, e.g. python setup.py test
 script: pytest -v -s
 
 after_success:
