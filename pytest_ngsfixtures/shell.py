@@ -49,11 +49,14 @@ class shell:
                 iterable=False,
                 read=False,
                 async=False,
+                path_list=[],
                 **kwargs):
-        stdout = kwargs.pop("stdout", PIPE)
+
+        stdout = sp.PIPE if iterable or async or read else kwargs.pop("stdout", STDOUT)
         stderr = kwargs.pop("stderr", STDOUT)
+
         close_fds = sys.platform != 'win32'
-        path = ""
+        plist = path_list
         if kwargs.get("stream", False):
             iterable = kwargs.pop("stream")
         if kwargs.get("detach", False):
@@ -62,13 +65,14 @@ class shell:
         if conda_env_list:
             if not conda_root:
                 conda_root = get_conda_root()
-            plist = []
             for env in conda_env_list:
                 p = os.path.join(conda_root, "envs", env, "bin")
                 plist.append(p)
-            if plist:
-                plist.append("$PATH")
-            path = "PATH=\"{}\"".format(":".join(plist))
+        if plist:
+            plist.append("$PATH")
+            path = "PATH=\"{}\";".format(":".join(plist))
+        else:
+            path = ""
 
         env_prefix = ""
 
