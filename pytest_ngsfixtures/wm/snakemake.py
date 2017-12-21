@@ -72,8 +72,8 @@ def snakefile_factory(snakefile=None, testdir=None, **kwargs):
     return snakefile_fixture
 
 
-def run(snakefile, target="all", options=[],
-        working_dir=None, save=False, **kwargs):
+def run(snakefile, target="all",
+        save=False, **kwargs):
     """Run snakemake on snakefile.
 
     Wraps snakefile in a command string and pass the string to shell
@@ -93,7 +93,6 @@ def run(snakefile, target="all", options=[],
       snakefile (str, py._path.local.LocalPath): snakefile full path name
       target (str): snakemake target to run
       options (list): options to pass to snakemake
-      working_dir (str): working directory. This is a temporary fix for issue https://bitbucket.org/snakemake/snakemake/issues/727/snakemake-writes-snakemake-to-cwd
       save (bool): save shell script with command
 
     Kwargs:
@@ -103,6 +102,9 @@ def run(snakefile, target="all", options=[],
       Results from :py:mod:`~pytest_ngsfixtures.shell.shell`.
 
     """
+    options = kwargs.pop("options", [])
+    if not {"--directory", "-d"}.intersection(options):
+        options += ["-d", py.path.local(snakefile).dirname]
     cmd_args = ["snakemake", "-s", str(snakefile), target] + options
     cmd = " ".join(cmd_args)
     if save:
