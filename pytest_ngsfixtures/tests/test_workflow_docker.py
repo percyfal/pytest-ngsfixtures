@@ -10,8 +10,6 @@ flat_copy = factories.sample_layout(sample=["CHS.HG00512"],
                                     dirname="flat_copy",
                                     numbered=True, copy=True)
 
-snakemake_image = "quay.io/biocontainers/snakemake:4.3.1--py36_0"
-
 
 @pytest.fixture(scope="session")
 def container(request):
@@ -26,11 +24,11 @@ def container(request):
     request.addfinalizer(rm)
     client = docker.from_env()
     try:
-        image = client.images.get(snakemake_image)
+        image = client.images.get(pytest.snakemake_image)
     except docker.error.ImageNotFound:
-        print("docker image {} not found; pulling".format(snakemake_image))
-        client.images.pull(snakemake_image)
-        image = client.images.get(snakemake_image)
+        print("docker image {} not found; pulling".format(pytest.snakemake_image))
+        client.images.pull(pytest.snakemake_image)
+        image = client.images.get(pytest.snakemake_image)
     except:
         raise
     container = client.containers.create(image, tty=True,
