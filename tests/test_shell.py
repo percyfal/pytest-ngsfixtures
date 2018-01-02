@@ -42,9 +42,19 @@ def test_shell_async(foo):
     assert isinstance(ret, sp.Popen)
 
 
+
+@pytest.fixture(scope="function")
+def shell_config(request):
+    def reset():
+        shell.executable("/bin/bash")
+    request.addfinalizer(reset)
+    shell.prefix("set -eo pipefail; ")
+    shell.executable("/bin/sh")
+
+
 @pytest.mark.docker
 @pytest.mark.busybox
-def test_container_shell(busybox_container, foo):
+def test_container_shell(busybox_container, foo, shell_config):
     busybox_container.start()
     ret = shell("ls {}".format(foo.dirname), container=busybox_container)
     touch = foo.join("test_busybox_shell.touch")
@@ -55,7 +65,7 @@ def test_container_shell(busybox_container, foo):
 
 @pytest.mark.docker
 @pytest.mark.busybox
-def test_container_shell_iterable(busybox_container, foo):
+def test_container_shell_iterable(busybox_container, foo, shell_config):
     busybox_container.start()
     ret = shell("ls " + str(foo), iterable=True, container=busybox_container)
     assert isinstance(ret, types.GeneratorType)
@@ -64,7 +74,7 @@ def test_container_shell_iterable(busybox_container, foo):
 
 @pytest.mark.docker
 @pytest.mark.busybox
-def test_container_shell_iterable_detach(busybox_container, foo):
+def test_container_shell_iterable_detach(busybox_container, foo, shell_config):
     busybox_container.start()
     touch = foo.join("test_busybox_shell_iterable_detach.touch")
     ret = shell("touch {}".format(touch), container=busybox_container, iterable=True,
@@ -76,7 +86,7 @@ def test_container_shell_iterable_detach(busybox_container, foo):
 
 @pytest.mark.docker
 @pytest.mark.busybox
-def test_container_shell_async(busybox_container, foo):
+def test_container_shell_async(busybox_container, foo, shell_config):
     busybox_container.start()
     touch = foo.join("test_busybox_shell_async.touch")
     ret = shell("touch {}".format(touch), container=busybox_container,
@@ -87,7 +97,7 @@ def test_container_shell_async(busybox_container, foo):
 
 @pytest.mark.docker
 @pytest.mark.busybox
-def test_container_shell_read(busybox_container, foo):
+def test_container_shell_read(busybox_container, foo, shell_config):
     busybox_container.start()
     ret = shell("ls " + str(foo.join("foo.txt")), read=True,
                 container=busybox_container)
@@ -96,18 +106,20 @@ def test_container_shell_read(busybox_container, foo):
 
 # Image tests
 @pytest.mark.docker
-def test_busybox_image_shell(busybox_image, foo, image_args):
+def test_busybox_image_shell(busybox_image, foo, image_args, shell_config):
     ret = shell("ls {}".format(foo.dirname), image=busybox_image,
                 name="pytest_ngsfixtures_test_busybox_image_shell",
                 **image_args)
     touch = foo.join("test_busybox_image_shell.touch")
-    shell("touch {}".format(touch), image=busybox_image, **image_args)
+    shell("touch {}".format(touch), image=busybox_image,
+          name="pytest_ngsfixtures_test_busybox_image_shell2",
+          **image_args)
     assert touch.exists()
     assert ret is None
 
 
 @pytest.mark.docker
-def test_busybox_image_shell_read(busybox_image, foo, image_args):
+def test_busybox_image_shell_read(busybox_image, foo, image_args, shell_config):
     ret = shell("ls " + str(foo.join("foo.txt")), read=True,
                 name="pytest_ngsfixtures_test_busybox_image_shell_read",
                 image=busybox_image, **image_args)
@@ -119,7 +131,7 @@ def test_busybox_image_shell_read(busybox_image, foo, image_args):
 
 
 @pytest.mark.docker
-def test_busybox_image_shell_iterable(busybox_image, foo, image_args):
+def test_busybox_image_shell_iterable(busybox_image, foo, image_args, shell_config):
     ret = shell("ls " + str(foo), iterable=True, image=busybox_image,
                 name="pytest_ngsfixtures_test_busybox_image_shell_iterable",
                 **image_args)
@@ -128,7 +140,7 @@ def test_busybox_image_shell_iterable(busybox_image, foo, image_args):
 
 
 @pytest.mark.docker
-def test_busybox_image_shell_iterable_detach(busybox_image, foo, image_args):
+def test_busybox_image_shell_iterable_detach(busybox_image, foo, image_args, shell_config):
     touch = foo.join("test_busybox_image_shell_iterable_detach.touch")
     ret = shell("touch {}".format(touch), image=busybox_image, iterable=True,
                 detach=True,
@@ -141,9 +153,20 @@ def test_busybox_image_shell_iterable_detach(busybox_image, foo, image_args):
 
 # Detaching client.containers.run returns a container
 @pytest.mark.docker
-def test_busybox_image_shell_async(busybox_image, foo, image_args):
+def test_busybox_image_shell_async(busybox_image, foo, image_args, shell_config):
     touch = foo.join("test_busybox_image_shell_async.touch")
     ret = shell("touch {}".format(touch), image=busybox_image, detach=True,
                 name="pytest_ngsfixtures_test_busybox_image_shell_async", **image_args)
     assert isinstance(ret, Container)
     assert touch.exists()
+
+
+@pytest.mark.docker
+@pytest.mark.busybox
+def test_container_shell_path(busybox_container, foo, shell_config):
+    busybox_container.start()
+    touch = foo.join("test_container_shell_path.touch")
+    shell("echo $PATH > {}".format(touch),
+          path_list=["/foo", "/bar"],
+          container=busybox_container)
+    assert touch.readlines()[0].startswith("/foo:/bar")
