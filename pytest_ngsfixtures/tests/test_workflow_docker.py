@@ -10,7 +10,7 @@ flat_copy = factories.sample_layout(sample=["CHS.HG00512"],
                                     dirname="flat_copy",
                                     numbered=True, copy=True)
 
-snakemake_image = "quay.io/biocontainers/snakemake:4.3.1--py36_0"
+snakemake_image = "quay.io/biocontainers/snakemake:4.4.0--py36_0"
 
 
 @pytest.fixture(scope="session")
