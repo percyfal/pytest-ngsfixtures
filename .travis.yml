@@ -1,7 +1,8 @@
 # Config file for automatic testing at travis-ci.org
 # This file will be regenerated if you run travis_pypi_setup.py
 
-sudo: false
+sudo: required
+dist: trusty
 
 language: python
 
@@ -9,16 +10,21 @@ python:
   - "3.5"
   - "3.6"
 
-# scripts/travis-setup.sh
+services:
+  - docker
+
+before_install:
+  - docker pull busybox
+  - docker pull quay.io/biocontainers/snakemake:4.4.0--py35_0
+  - docker pull quay.io/biocontainers/snakemake:4.4.0--py36_0
+
 install:
-  # - pip install .
   - pip install coveralls
   - pip install -r requirements_dev.txt
   - python setup.py install
 
-
-# command to run tests, e.g. python setup.py test
-script: pytest -v -s
+script:
+  - pytest -v -s
 
 after_success:
   coveralls

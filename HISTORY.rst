@@ -1,6 +1,14 @@
 History
 =======
 
+0.6.3 (2018-01-02)
+------------------
+
+* Remove obsolete working directory argument - requires snakemake >=
+  4.4.0
+* Install correct docker API (#50)
+* Allow modifying path in shell wrapper (#51)
+
 0.6.2 (2017-12-19)
 ------------------
 
@@ -22,7 +30,7 @@ Bugfixes.
 * Add option to only setup sampleinfo (#47)
 * Add tutorial (#46)
 * Add working snakemake tests (#8)
-  
+
 0.6.1 (2017-11-22)
 ------------------
 
