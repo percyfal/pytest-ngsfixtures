@@ -6,7 +6,7 @@ import argparse
 from pytest_ngsfixtures import factories, ROOT_DIR
 
 DATADIR = os.path.realpath(os.path.join(ROOT_DIR, "data", "{size}"))
-DOWNLOAD_SIZES = ["yuge"]
+DOWNLOAD_SIZES = ["small", "medium", "yuge"]
 
 if int(sys.version[0]) != 3:
     logger.error("python version 3 required to run")
@@ -17,7 +17,7 @@ parser.add_argument('-n', '--dry-run', action='store_true',
                     help="dry run", dest="dry_run")
 parser.add_argument('-f', '--force', action='store_true',
                     help="force download", dest="force")
-parser.add_argument('-s', '--size', action='store', default="yuge",
+parser.add_argument('-s', '--size', action='store', default="small",
                     help="size of dataset", choices=DOWNLOAD_SIZES,
                     dest="size")
 
