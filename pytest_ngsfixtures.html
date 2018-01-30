@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pytest_ngsfixtures package &mdash; pytest-ngsfixtures 0.6.2 documentation</title>
+  <title>pytest_ngsfixtures package &mdash; pytest-ngsfixtures 0.6.3 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="pytest-ngsfixtures 0.6.2 documentation" href="index.html"/>
+    <link rel="top" title="pytest-ngsfixtures 0.6.3 documentation" href="index.html"/>
         <link rel="up" title="pytest_ngsfixtures" href="modules.html"/>
         <link rel="next" title="pytest_ngsfixtures.wm package" href="pytest_ngsfixtures.wm.html"/>
         <link rel="prev" title="pytest_ngsfixtures" href="modules.html"/> 
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.6.2
+                0.6.3
               </div>
             
           
@@ -1387,7 +1387,46 @@ LocalPath objects are always absolute paths.</p>
 <em class="property">class </em><code class="descclassname">pytest_ngsfixtures.shell.</code><code class="descname">shell</code><a class="reference internal" href="_modules/pytest_ngsfixtures/shell.html#shell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.shell.shell" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>Class wrapper for shell commands.</p>
+<p>Wrapper for running shell commands. The wrapper accepts arguments
+for seamlessly running in docker/singularity containers.</p>
 <p>Based on snakemake shell implementation by Johannes Köster.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>cmd</strong> (<em>str</em>) – command string</li>
+<li><strong>container</strong> (<em>Container</em>) – docker/singularity container instance</li>
+<li><strong>conda_env</strong> (<em>str</em>) – conda environment to activate</li>
+<li><strong>conda_env_list</strong> (<em>list</em>) – additional conda environment paths to add
+to PATH. Note: only the conda environment
+names need be provided as the conda root
+is inferred from the current conda
+environment</li>
+<li><strong>conda_root</strong> (<em>str</em>) – conda root path. Use in case automatically
+inferring the root fails</li>
+<li><strong>image</strong> (<em>Image</em>) – docker/singularity image to run in</li>
+<li><strong>iterable</strong> (<em>bool</em>) – return output as iterable</li>
+<li><strong>read</strong> (<em>bool</em>) – read and return output</li>
+<li><strong>async</strong> (<em>bool</em>) – run asynchronously</li>
+<li><strong>path_list</strong> (<em>list</em>) – prefix command with additional paths</li>
+<li><strong>stdout</strong> (<em>_io.TextIOWrapper</em><em>, </em><em>int</em>) – stdout file object</li>
+<li><strong>stderr</strong> (<em>int</em>) – stderr special value</li>
+<li><strong>stream</strong> (<em>bool</em>) – stream containerized run; alias to iterable</li>
+<li><strong>detach</strong> (<em>bool</em>) – detach containerized run; alias to async</li>
+<li><strong>process_prefix</strong> (<em>str</em>) – temporarily override class process prefix. In
+containerized settings, using ‘source
+activate’ together with the automatically
+generated class process prefix ‘set -euo
+pipefail’ may fail</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">stdout if read is set, an iterable if iterable is set, a process (either <code class="xref py py-mod docutils literal"><span class="pre">subprocess.Popen</span></code> or <code class="xref py py-mod docutils literal"><span class="pre">docker.models.containers.Container</span></code>) if async is set, None otherwise</p>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="classmethod">
 <dt id="pytest_ngsfixtures.shell.shell.executable">
 <em class="property">classmethod </em><code class="descname">executable</code><span class="sig-paren">(</span><em>cmd</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/shell.html#shell.executable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.shell.shell.executable" title="Permalink to this definition">¶</a></dt>
@@ -1396,6 +1435,11 @@ LocalPath objects are always absolute paths.</p>
 <dl class="staticmethod">
 <dt id="pytest_ngsfixtures.shell.shell.iter_stdout">
 <em class="property">static </em><code class="descname">iter_stdout</code><span class="sig-paren">(</span><em>proc</em>, <em>cmd</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/shell.html#shell.iter_stdout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.shell.shell.iter_stdout" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="pytest_ngsfixtures.shell.shell.prefix">
+<em class="property">classmethod </em><code class="descname">prefix</code><span class="sig-paren">(</span><em>prefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytest_ngsfixtures/shell.html#shell.prefix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytest_ngsfixtures.shell.shell.prefix" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="staticmethod">
@@ -1468,7 +1512,7 @@ LocalPath objects are always absolute paths.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.6.2',
+            VERSION:'0.6.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

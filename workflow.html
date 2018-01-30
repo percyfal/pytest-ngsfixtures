@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Tutorial &mdash; pytest-ngsfixtures 0.6.2 documentation</title>
+  <title>Tutorial &mdash; pytest-ngsfixtures 0.6.3 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="pytest-ngsfixtures 0.6.2 documentation" href="index.html"/>
+    <link rel="top" title="pytest-ngsfixtures 0.6.3 documentation" href="index.html"/>
         <link rel="next" title="Developer guide" href="contributing.html"/>
         <link rel="prev" title="Usage" href="usage.html"/> 
 
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.6.2
+                0.6.3
               </div>
             
           
@@ -275,9 +275,7 @@ along with <code class="xref py py-mod docutils literal"><span class="pre">os</s
 <p>Then, we add a <cite>container</cite> fixture that sets up a container based on
 the snakemake docker image
 <a class="reference external" href="https://quay.io/repository/biocontainers/snakemake?tag=latest&amp;tab=tags">quay.io/biocontainers/snakemake:4.3.1–py36_0</a>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">snakemake_image</span> <span class="o">=</span> <span class="s2">&quot;quay.io/biocontainers/snakemake:4.3.1--py36_0&quot;</span>
-
-
+<div class="highlight-python"><div class="highlight"><pre><span></span>
 <span class="nd">@pytest.fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;session&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">container</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">rm</span><span class="p">():</span>
@@ -291,11 +289,11 @@ the snakemake docker image
     <span class="n">request</span><span class="o">.</span><span class="n">addfinalizer</span><span class="p">(</span><span class="n">rm</span><span class="p">)</span>
     <span class="n">client</span> <span class="o">=</span> <span class="n">docker</span><span class="o">.</span><span class="n">from_env</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">image</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">snakemake_image</span><span class="p">)</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pytest</span><span class="o">.</span><span class="n">snakemake_image</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">docker</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">ImageNotFound</span><span class="p">:</span>
-        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;docker image {} not found; pulling&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">snakemake_image</span><span class="p">))</span>
-        <span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">pull</span><span class="p">(</span><span class="n">snakemake_image</span><span class="p">)</span>
-        <span class="n">image</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">snakemake_image</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;docker image {} not found; pulling&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pytest</span><span class="o">.</span><span class="n">snakemake_image</span><span class="p">))</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">pull</span><span class="p">(</span><span class="n">pytest</span><span class="o">.</span><span class="n">snakemake_image</span><span class="p">)</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pytest</span><span class="o">.</span><span class="n">snakemake_image</span><span class="p">)</span>
     <span class="k">except</span><span class="p">:</span>
         <span class="k">raise</span>
     <span class="n">container</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">containers</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">tty</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
@@ -303,12 +301,12 @@ the snakemake docker image
                                          <span class="n">volumes</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;/tmp&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;bind&#39;</span><span class="p">:</span> <span class="s1">&#39;/tmp&#39;</span><span class="p">,</span> <span class="s1">&#39;mode&#39;</span><span class="p">:</span> <span class="s1">&#39;rw&#39;</span><span class="p">}},</span>
                                          <span class="n">working_dir</span><span class="o">=</span><span class="s2">&quot;/tmp&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">container</span>
+
+
 </pre></div>
 </div>
 <p>Finally, we add the <cite>container</cite> fixture to the test function call:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">test_workflow</span><span class="p">(</span><span class="n">Snakefile</span><span class="p">,</span> <span class="n">flat_copy</span><span class="p">,</span> <span class="n">container</span><span class="p">):</span>
-    <span class="n">container</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">snakemake</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">Snakefile</span><span class="p">,</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span>    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">snakemake</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">Snakefile</span><span class="p">,</span>
                            <span class="n">options</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;-d&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">flat_copy</span><span class="p">),</span> <span class="s2">&quot;-s&quot;</span><span class="p">,</span>
                                     <span class="nb">str</span><span class="p">(</span><span class="n">Snakefile</span><span class="p">)],</span> <span class="n">container</span><span class="o">=</span><span class="n">container</span><span class="p">,</span>
                            <span class="n">read</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">iterable</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
@@ -323,9 +321,7 @@ the snakemake docker image
 container. By parametrizing the tests, we can combine the two cases in
 one test function. To do this we modify the test function as follows
 (see <cite>test_workflow_parametrize.py</cite>):</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="nd">@pytest.mark.parametrize</span><span class="p">(</span><span class="s2">&quot;container&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;local&quot;</span><span class="p">,</span> <span class="s2">&quot;docker&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;container&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">test_workflow</span><span class="p">(</span><span class="n">Snakefile</span><span class="p">,</span> <span class="n">flat_copy</span><span class="p">,</span> <span class="n">container</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">container</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span>    <span class="k">if</span> <span class="n">container</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">container</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">snakemake</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">Snakefile</span><span class="p">,</span>
                            <span class="n">options</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;-d&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">flat_copy</span><span class="p">),</span> <span class="s2">&quot;-s&quot;</span><span class="p">,</span>
@@ -338,9 +334,7 @@ one test function. To do this we modify the test function as follows
 <p>The parametrization is done indirectly via the <cite>container</cite> fixture. We
 modify this fixture to return <cite>None</cite> if the request parameter equals
 <cite>local</cite>, and if the parameter equals <cite>docker</cite> we return the container:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="nd">@pytest.fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;function&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">container</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">rm</span><span class="p">():</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">rm</span><span class="p">():</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Removing container &quot;</span><span class="p">,</span> <span class="n">container</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
             <span class="n">container</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
@@ -353,11 +347,11 @@ modify this fixture to return <cite>None</cite> if the request parameter equals
     <span class="n">request</span><span class="o">.</span><span class="n">addfinalizer</span><span class="p">(</span><span class="n">rm</span><span class="p">)</span>
     <span class="n">client</span> <span class="o">=</span> <span class="n">docker</span><span class="o">.</span><span class="n">from_env</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">image</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">snakemake_image</span><span class="p">)</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pytest</span><span class="o">.</span><span class="n">snakemake_image</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">docker</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">ImageNotFound</span><span class="p">:</span>
-        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;docker image {} not found; pulling&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">snakemake_image</span><span class="p">))</span>
-        <span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">pull</span><span class="p">(</span><span class="n">snakemake_image</span><span class="p">)</span>
-        <span class="n">image</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">snakemake_image</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;docker image {} not found; pulling&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pytest</span><span class="o">.</span><span class="n">snakemake_image</span><span class="p">))</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">pull</span><span class="p">(</span><span class="n">pytest</span><span class="o">.</span><span class="n">snakemake_image</span><span class="p">)</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pytest</span><span class="o">.</span><span class="n">snakemake_image</span><span class="p">)</span>
     <span class="k">except</span><span class="p">:</span>
         <span class="k">raise</span>
     <span class="n">container</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">containers</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">tty</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
@@ -365,6 +359,8 @@ modify this fixture to return <cite>None</cite> if the request parameter equals
                                          <span class="n">volumes</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;/tmp&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;bind&#39;</span><span class="p">:</span> <span class="s1">&#39;/tmp&#39;</span><span class="p">,</span> <span class="s1">&#39;mode&#39;</span><span class="p">:</span> <span class="s1">&#39;rw&#39;</span><span class="p">}},</span>
                                          <span class="n">working_dir</span><span class="o">=</span><span class="s2">&quot;/tmp&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">container</span>
+
+
 </pre></div>
 </div>
 <p>Now, running</p>
@@ -421,7 +417,7 @@ docker container.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.6.2',
+            VERSION:'0.6.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
