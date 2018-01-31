@@ -6,7 +6,6 @@ test_pytest_ngsfixtures
 
 Tests for `pytest_ngsfixtures` module.
 """
-import pytest
 
 
 def test_flat(flat):
