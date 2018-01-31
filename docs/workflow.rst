@@ -92,7 +92,7 @@ along with :py:mod:`os` and :py:mod:`pytest`:
 
 Then, we add a `container` fixture that sets up a container based on
 the snakemake docker image
-`quay.io/biocontainers/snakemake:4.3.1--py36_0
+`quay.io/biocontainers/snakemake:4.5.0--py36_0
 <https://quay.io/repository/biocontainers/snakemake?tag=latest&tab=tags>`_:
 
 .. literalinclude:: ../pytest_ngsfixtures/tests/test_workflow_docker.py
