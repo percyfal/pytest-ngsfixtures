@@ -120,13 +120,15 @@ release: clean clean-snakemake ## package and upload a release
 	python setup.py bdist_wheel upload
 
 current=$(shell git rev-parse --abbrev-ref HEAD)
+CONDA_OPTIONS?=
+CONDA_REPO?=percyfal
 conda: ## package and upload a conda release
-	git checkout conda
+	git checkout -b conda
 	git merge $(current)
 	$(MAKE) clean clean-snakemake
-	conda build conda --python 3.5
-	conda build conda --python 3.6
+	conda build $(CONDA_OPTIONS) --user $(CONDA_REPO) -m conda/build_config.yaml conda
 	git checkout $(current)
+	git branch -d conda
 
 dist: clean ## builds source and wheel package
 	python setup.py sdist

@@ -1,5 +1,5 @@
 {% set name = "pytest-ngsfixtures" %}
-{% set version = "0.6.3" %}
+{% set version = "0.6.4" %}
 
 package:
   name: {{ name|lower }}
@@ -12,22 +12,20 @@ build:
   script: $PYTHON setup.py install --single-version-externally-managed --record record.txt
 requirements:
   build:
-    - python
+    - python {{ python }}
     - setuptools
-    - pytest
     - pytest-runner
-    - snakemake
   run:
     - python
     - pytest
-    - pyyaml
+    - docker-py
 
 test:
   requires:
-    # tests
     - pytest
     - pytest-runner
     - docker-py
+    - snakemake ==4.5.0
 
   imports:
     - pytest_ngsfixtures
