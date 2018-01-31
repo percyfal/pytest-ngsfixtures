@@ -12,22 +12,20 @@ build:
   script: $PYTHON setup.py install --single-version-externally-managed --record record.txt
 requirements:
   build:
-    - python
+    - python {{ python }}
     - setuptools
-    - pytest
     - pytest-runner
-    - snakemake
   run:
     - python
     - pytest
-    - pyyaml
+    - docker-py
 
 test:
   requires:
-    # tests
     - pytest
     - pytest-runner
     - docker-py
+    - snakemake
 
   imports:
     - pytest_ngsfixtures
