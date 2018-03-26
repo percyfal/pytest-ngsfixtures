@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Configuration settings for pytest-ngsfixtures"""
 import os
+import re
 import yaml
 import itertools
 import logging
@@ -39,8 +40,21 @@ sample_conf = Config(
 )
 
 
-def runfmt_alias(alias=None, runfmt=None):
-    """Get alias and runformat tuple"""
+def runfmt_alias(runfmt):
+    """Get alias and runformat tuple.
+
+    Return alias / runfmt tuple for an alias or a runfmt string.
+
+    Args:
+      runfmt (str): run format string as a an alias or a python
+                    miniformat string representing the run format
+
+    Returns:
+      alias, runfmt: alias / runfmt tuple
+
+    """
+    alias = runfmt if re.search("[{}]", runfmt) is None else None
+    runfmt = runfmt if alias is None else None
     if alias is not None:
         try:
             i = sample_conf.RUNFMT_ALIAS.index(alias)
