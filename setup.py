@@ -83,5 +83,5 @@ setup(
     setup_requires=['pytest-runner'],
     tests_require=test_requirements,
     entry_points={'pytest11': ['pytest_ngsfixtures = pytest_ngsfixtures.plugin']},
-    scripts = scripts,
+    scripts=scripts,
 )
