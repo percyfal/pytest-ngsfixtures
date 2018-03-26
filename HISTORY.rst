@@ -1,6 +1,12 @@
 History
 =======
 
+0.6.5 (2018-03-XX)
+------------------
+
+* Simplify config.runfmt_alias function (#56)
+* Only package tiny sequence data (#55)
+
 0.6.4 (2018-01-31)
 ------------------
 
