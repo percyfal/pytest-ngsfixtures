@@ -1,9 +1,11 @@
 History
 =======
 
-0.6.5 (2018-03-XX)
+
+0.7.0 (2018-05-XX)
 ------------------
 
+* Remove application data (#30)
 * Simplify config.runfmt_alias function (#56)
 * Only package tiny sequence data (#55)
 

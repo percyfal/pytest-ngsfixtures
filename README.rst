@@ -29,10 +29,9 @@ usage.
 Features
 --------
 
-- ngs data sets of different sizes
+- a small test ngs data set
 - predefined sample layouts
 - factories for generating new sample layouts
-- result files from a variety of bioinformatics applications and tools
 - wrappers for quickly setting up workflow tests
 
 
