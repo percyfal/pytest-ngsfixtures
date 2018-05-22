@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import pathlib
 from ._version import get_versions
 
 __author__ = """Per Unneberg"""
@@ -8,5 +9,5 @@ __version__ = get_versions()['version']
 del get_versions
 
 # Package root and data directory paths
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.realpath(os.path.join(ROOT_DIR, "data"))
+ROOT_DIR = pathlib.Path(__file__).parent
+DATA_DIR = ROOT_DIR / "data"
