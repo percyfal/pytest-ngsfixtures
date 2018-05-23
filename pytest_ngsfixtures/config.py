@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """Configuration settings for pytest-ngsfixtures"""
 import os
-import logging
 import pathlib
+import logging
 from pytest_ngsfixtures import DATA_DIR
 
 REF_DIR = DATA_DIR / "ref"
