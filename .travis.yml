@@ -23,8 +23,9 @@ install:
   - pip install -r requirements_dev.txt
   - python setup.py install
 
+
 script:
-  - pytest -v -s
+  - pytest -v -s -rs
 
 after_success:
   coveralls
