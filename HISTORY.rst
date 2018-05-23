@@ -1,6 +1,15 @@
 History
 =======
 
+0.7.1 (2018-05-23)
+------------------
+
+Bugfixes
+++++++++
+
+* Update busybox images for tests (#59)
+* Fix failing test (#58)
+
 
 0.7.0 (2018-05-23)
 ------------------
