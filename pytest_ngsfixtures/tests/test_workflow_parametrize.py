@@ -2,13 +2,7 @@
 import os
 import docker
 import pytest
-from pytest_ngsfixtures.wm import snakemake
-from pytest_ngsfixtures import factories
-
-
-flat_copy = factories.sample_layout(sample=["CHS.HG00512"],
-                                    copy=True, numbered=True,
-                                    dirname="flat_copy")
+from pytest_ngsfixtures.wm.snakemake import snakefile, run as snakemake_run
 
 
 @pytest.fixture(scope="function")
@@ -40,17 +34,16 @@ def container(request):
     return container
 
 
-Snakefile = snakemake.snakefile_factory(
-    copy=True, numbered=True)
 
-
+@pytest.mark.samples(numbered=True)
+@pytest.mark.snakefile(numbered=True, dirname="snakefile")
 @pytest.mark.parametrize("container", ["local", "docker"], indirect=["container"])
-def test_workflow(Snakefile, flat_copy, container):
+def test_workflow(snakefile, samples, container):
     if container is not None:
         container.start()
-    for r in snakemake.run(Snakefile,
-                           options=["-d", str(flat_copy), "-s",
-                                    str(Snakefile)], container=container,
+    for r in snakemake_run(snakefile,
+                           options=["-d", str(samples), "-s",
+                                    str(snakefile)], container=container,
                            read=True, iterable=True):
         print(r)
-    assert flat_copy.join("results.txt").exists()
+    assert samples.join("results.txt").exists()

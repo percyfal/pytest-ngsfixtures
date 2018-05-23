@@ -1,6 +1,35 @@
 History
 =======
 
+
+0.7.0 (2018-05-23)
+------------------
+
+Breaking changes
++++++++++++++++++
+
+This is a major update in which the API has changed considerably.
+Notably, most of the code for generating fixtures has been removed and
+refactored completely. Most importantly, the factory functions have
+been replaced by a small number of fixtures that can be configured via
+the `pytest.mark` helper.
+
+In addition, most data files have been removed
+in an attempt to make the package as small as possible. As the
+location of test data has been decoupled from package functionality,
+it makes more sense to distribute package data separately.
+
+See the API documentation for more information.
+
+
+Features
+++++++++
+
+* Remove application data (#30)
+* Simplify config.runfmt_alias function (#56)
+* Only package tiny sequence data (#55)
+* Simplify sample layout configuration (#57)
+
 0.6.4 (2018-01-31)
 ------------------
 

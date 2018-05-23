@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import py
+import pathlib
 import logging
 from pytest_ngsfixtures import DATA_DIR
 
@@ -8,7 +9,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def safe_copy(p, src, dst, ignore_errors=False):
+def safe_copy(p, src, dst=None, ignore_errors=False):
     """Safely copy fixture file.
 
     Copy file from src to dst in LocalPath p. If src, dst are strings,
@@ -25,6 +26,8 @@ def safe_copy(p, src, dst, ignore_errors=False):
     Returns:
       dst (LocalPath): link name
     """
+    if isinstance(src, pathlib.PosixPath):
+        src = str(src)
     if isinstance(src, str):
         if not os.path.isabs(src):
             src = os.path.join(DATA_DIR, src)
@@ -47,7 +50,7 @@ def safe_copy(p, src, dst, ignore_errors=False):
     return dst
 
 
-def safe_symlink(p, src, dst, ignore_errors=False):
+def safe_symlink(p, src, dst=None, ignore_errors=False):
     """Safely make symlink.
 
     Make symlink from src to dst in LocalPath p. If src, dst are
@@ -64,6 +67,8 @@ def safe_symlink(p, src, dst, ignore_errors=False):
     Returns:
       dst (LocalPath): link name
     """
+    if isinstance(src, pathlib.PosixPath):
+        src = str(src)
     if isinstance(src, str):
         if not os.path.isabs(src):
             src = os.path.join(DATA_DIR, src)

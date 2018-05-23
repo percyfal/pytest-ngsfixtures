@@ -1,54 +1,15 @@
 # -*- coding: utf-8 -*-
 """Plugin configuration module for pytest-ngsfixtures"""
 import re
-from pytest_ngsfixtures import factories
-from pytest_ngsfixtures.fixtures import psample, pref
-from pytest_ngsfixtures.config import sample_conf, runfmt_alias
+import pytest
+from pytest_ngsfixtures.config import layout, reflayout
+from pytest_ngsfixtures.os import safe_mktemp, safe_copy, safe_symlink
 
-_help_ngs_size = "select sample size (choices: {})".format(", ".join("'{}'".format(x) for x in sample_conf.SIZES))
-_help_ngs_layout = "select predefined sample layout(s) (allowed choices: {})".format(", ".join("'{}'".format(x) for x in sample_conf.SAMPLE_LAYOUTS))
-_help_ngs_show_fixture = "show fixture layout"
 _help_ngs_threads = "set the number of threads to use in test"
 
 
 def pytest_addoption(parser):
     group = parser.getgroup("ngsfixtures", "next-generation sequencing fixture options")
-    group.addoption(
-        '-X',
-        '--ngs-size',
-        action='store',
-        dest='ngs_size',
-        default='tiny',
-        help=_help_ngs_size,
-        choices=sample_conf.SIZES,
-        metavar="size",
-    )
-    group.addoption(
-        '-L',
-        '--ngs-layout',
-        action='store',
-        dest='ngs_layout',
-        default=["short"],
-        help=_help_ngs_layout,
-        nargs="+",
-        metavar="layout",
-        choices=sample_conf.SAMPLE_LAYOUTS,
-    )
-    group.addoption(
-        "--ngs-pool",
-        action="store_true",
-        help="run tests on pooled data",
-        default=False,
-        dest="ngs_pool",
-    )
-    group.addoption(
-        '-F',
-        '--ngs-show-fixture',
-        action="store_true",
-        dest="ngs_show_fixture",
-        default=False,
-        help=_help_ngs_show_fixture,
-    )
     group.addoption(
         '--nt',
         '--ngs-threads',
@@ -57,51 +18,106 @@ def pytest_addoption(parser):
         default=1,
         help=_help_ngs_threads,
     )
-    group.addoption(
-        "--ngs-runfmt",
-        action="store",
-        help="sample test run format; organization of samples",
-        default=["sample"],
-        nargs="+",
-        dest="ngs_runfmt",
-        metavar="runfmt",
-    )
-    group.addoption(
-        "--ngs-copy",
-        action="store_true",
-        help="copy test data instead of symlinking",
-        default=False,
-        dest="ngs_copy",
-    )
-    group.addoption(
-        "--ngs-ref",
-        action="store_true",
-        help="use ref reference layout instead of scaffolds",
-        default=False,
-        dest="ngs_ref",
-    )
 
 
 def pytest_configure(config):
-    config.option.ngs_runfmt_alias = config.option.ngs_runfmt
-    config.option.ngs_layout = list(set(config.option.ngs_layout))
-    runfmt = []
-    if config.option.ngs_runfmt:
-        for rf in config.option.ngs_runfmt:
-            if re.search("[{}]", rf) is None:
-                assert rf in sample_conf.RUNFMT_ALIAS, "if run format is given as string, must be one of {}".format(", ".join(sample_conf.RUNFMT_ALIAS))
-
-            runfmt.append(runfmt_alias(rf)[1])
-        config.option.ngs_runfmt = runfmt
-    if config.option.ngs_pool:
-        config.option.ngs_layout.append("pool")
-    if "pool" in config.option.ngs_layout:
-        config.option.ngs_pool = True
+    pass
 
 
-flat = factories.sample_layout(sample=['CHS.HG00512'],
-                               scope="function", numbered=True,
-                               dirname="flat")
-ref = factories.reference_layout(dirname="ref")
-scaffolds = factories.reference_layout(label="scaffolds",
-                                       dirname="scaffolds")
+@pytest.fixture
+def testdata(request, tmpdir_factory):
+    """Return a temporary directory path object pointing to the root
+    directory where generic test data are located.
+
+    Examples:
+
+       .. code-block:: python
+
+          @pytest.mark.testdata(data={'foo.txt': 'bar.txt'})
+          def test_data(testdata):
+              print(testdata.listdir())
+
+    """
+    options = {
+        'data': {},
+        'numbered': False,
+    }
+    if 'data' in request.keywords:
+        options.update(request.keywords.get('data').kwargs)
+    assert isinstance(options['data'], dict), "'data' option must be a dictionary of dst:src value pairs"
+    p = safe_mktemp(tmpdir_factory, **options)
+    f = safe_copy if options['copy'] else safe_symlink
+    for dst, src in options['data'].items():
+        f(p, src, dst)
+    return safe_mktemp(tmpdir_factory, **options)
+
+
+@pytest.fixture
+def samples(request, tmpdir_factory):
+    """Return a temporary directory path object pointing to the root
+    directory where samples are located.
+
+    The samples directory path name can be changed with
+    @pytest.mark.samples. In addition, the data layout can be
+    parametrized with @pytest.mark.parametrize.
+
+    Examples:
+
+       .. code-block:: python
+
+          @pytest.mark.parametrize("layout", [{'s1.fastq.gz': '/path/to/foo.fastq.gz'},
+                                              {'s2.fastq.gz': '/path/to/foo.fastq.gz'}])
+          @pytest.mark.samples(dirname="foo")
+          def test_samples(samples, layout):
+              print(samples.listdir())
+
+    """
+    options = {
+        'numbered': False,
+        'dirname': 'data',
+        'layout': layout['flat'],
+        'copy': True,
+    }
+    if 'samples' in request.keywords:
+        options.update(request.keywords.get('samples').kwargs)
+    if 'parametrize' in request.keywords:
+        if 'layout' in request.funcargnames:
+            options.update({'layout': request.getfuncargvalue('layout')})
+        if 'dirname' in request.funcargnames:
+            options.update({'dirname': request.getfuncargvalue('dirname')})
+    assert isinstance(options['layout'], dict), "samples 'layout' option must be a dictionary of dst:src value pairs"
+    p = safe_mktemp(tmpdir_factory, **options)
+    f = safe_copy if options['copy'] else safe_symlink
+    for dst, src in options['layout'].items():
+        f(p, src, dst)
+    return p
+
+
+@pytest.fixture
+def ref(request, tmpdir_factory):
+    """Return a temporary directory path object pointing to the location
+    of reference files.
+
+    The reference directory path name can be changed with
+    @pytest.mark.ref(dirname="refdirname")
+
+    Examples:
+
+       .. code-block:: python
+
+          @pytest.mark.ref(dirname="foo", data={'ref.fa': '/path/to/ref.fa'})
+          def test_ref(ref):
+              print(ref)
+    """
+    options = {
+        'dirname': 'ref',
+        'data': reflayout,
+        'copy': True,
+    }
+    if 'ref' in request.keywords:
+        options.update(request.keywords.get('ref').kwargs)
+    p = safe_mktemp(tmpdir_factory, **options)
+    f = safe_copy if options['copy'] else safe_symlink
+    for dst, src in options['data'].items():
+        f(p, src, dst, ignore_errors=True)
+    return p

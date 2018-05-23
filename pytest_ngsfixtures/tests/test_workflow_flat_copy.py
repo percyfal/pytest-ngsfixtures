@@ -1,16 +1,11 @@
 # -*- coding: utf-8 -*-
-from pytest_ngsfixtures.wm import snakemake
-from pytest_ngsfixtures import factories
-
-flatc = factories.sample_layout(sample=["CHS.HG00512"],
-                                dirname="flat_copy",
-                                numbered=True, copy=True)
-
-Snakefile = snakemake.snakefile_factory(
-    copy=True, numbered=True)
+import pytest
+from pytest_ngsfixtures.wm.snakemake import snakefile, run as snakemake_run
 
 
-def test_workflow(Snakefile, flatc):
-    snakemake.run(Snakefile, options=["-d", str(flatc), "-s",
-                                      str(Snakefile)])
-    assert flatc.join("results.txt").exists()
+@pytest.mark.samples(numbered=True)
+@pytest.mark.snakefile(dirname="snakefile", numbered=True)
+def test_workflow(snakefile, samples):
+    snakemake_run(snakefile, options=["-d", str(samples), "-s",
+                                      str(snakefile)])
+    assert samples.join("results.txt").exists()
