@@ -49,8 +49,8 @@ sampleinfo = [
 # Sample layouts
 layout = {'flat':
           {
-              'CHS.HG00512_1.fastq.gz': str(SAMPLES_DIR / 'CHS.HG00512_1.fastq.gz'),
-              'CHS.HG00512_2.fastq.gz': str(SAMPLES_DIR / 'CHS.HG00512_2.fastq.gz')
+              's1_1.fastq.gz': str(SAMPLES_DIR / 'CHS.HG00512_1.fastq.gz'),
+              's1_2.fastq.gz': str(SAMPLES_DIR / 'CHS.HG00512_2.fastq.gz')
           },
           'sample': {
               'CHS/CHS.HG00512_010101_AAABBB11XX_1.fastq.gz': str(SAMPLES_DIR / 'CHS.HG00512_1.fastq.gz'),

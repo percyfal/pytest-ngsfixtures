@@ -2,6 +2,7 @@
 """Plugin configuration module for pytest-ngsfixtures"""
 import re
 import pytest
+from pytest_ngsfixtures.config import layout
 from pytest_ngsfixtures.os import safe_mktemp, safe_copy, safe_symlink
 
 _help_ngs_threads = "set the number of threads to use in test"
@@ -63,7 +64,7 @@ def samples(request, tmpdir_factory):
     options = {
         'numbered': False,
         'dirname': 'data',
-        'layout': {},
+        'layout': layout['flat'],
         'copy': True,
     }
     if 'samples' in request.keywords:
@@ -83,7 +84,6 @@ def samples(request, tmpdir_factory):
 
 @pytest.fixture
 def ref(request, tmpdir_factory):
-
     """Return a temporary directory path object pointing to the location
     of reference files.
 
