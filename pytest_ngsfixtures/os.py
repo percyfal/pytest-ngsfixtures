@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def safe_copy(p, src, dst, ignore_errors=False):
+def safe_copy(p, src, dst=None, ignore_errors=False):
     """Safely copy fixture file.
 
     Copy file from src to dst in LocalPath p. If src, dst are strings,
@@ -47,7 +47,7 @@ def safe_copy(p, src, dst, ignore_errors=False):
     return dst
 
 
-def safe_symlink(p, src, dst, ignore_errors=False):
+def safe_symlink(p, src, dst=None, ignore_errors=False):
     """Safely make symlink.
 
     Make symlink from src to dst in LocalPath p. If src, dst are
