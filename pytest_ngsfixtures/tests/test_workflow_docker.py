@@ -3,7 +3,6 @@ import os
 import docker
 import pytest
 from pytest_ngsfixtures.wm.snakemake import snakefile, run as snakemake_run
-from pytest_ngsfixtures import factories
 
 
 @pytest.fixture(scope="session")

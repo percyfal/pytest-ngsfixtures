@@ -7,6 +7,7 @@ import docker
 import subprocess as sp
 from pytest_ngsfixtures import DATA_DIR
 from pytest_ngsfixtures.os import localpath
+from pytest_ngsfixtures.config import SAMPLES_DIR
 import logging
 
 logger = logging.getLogger(__name__)
@@ -152,3 +153,8 @@ def image_args():
         'tty': False,
     }
     return d
+
+
+@pytest.fixture
+def readfile():
+    return py.path.local(SAMPLES_DIR / "CHS.HG00512_1.fastq.gz")
