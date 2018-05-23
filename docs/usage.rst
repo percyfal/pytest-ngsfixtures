@@ -56,7 +56,7 @@ different sample layouts:
        print(samples.listdir())
 
 There are a number of predefined layouts defined in
-the :py:dict:`pytest_ngsfixtures.config.layout` dictionary.
+the :py:data:`pytest_ngsfixtures.config.layout` dictionary.
        
 
 :py:func:`pytest_ngsfixtures.plugin.ref`
