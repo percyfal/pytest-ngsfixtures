@@ -7,7 +7,7 @@ import shlex
 import types
 import subprocess as sp
 import docker
-from docker.models.containers import Container
+from docker.models.containers import Container, ExecResult
 import logging
 
 logger = logging.getLogger(__name__)
@@ -131,6 +131,8 @@ class shell:
                 proc = container.exec_run(cmd, stream=iterable,
                                           detach=async,
                                           **kwargs)
+                if async:
+                    proc = proc.output
             except:
                 raise
         elif image:
@@ -180,6 +182,8 @@ class shell:
     def read_stdout(proc):
         if isinstance(proc, sp.Popen):
             return proc.stdout.read()
+        elif isinstance(proc, ExecResult):
+            return proc.output
         elif isinstance(proc, str):
             return proc
         elif isinstance(proc, bytes):
@@ -198,6 +202,14 @@ class shell:
         elif isinstance(proc, Container):
             for l in proc.logs(stream=True):
                 yield l[:-1].decode()
+            raise StopIteration
+        elif isinstance(proc, ExecResult):
+            for l in proc.output:
+                if isinstance(l, bytes):
+                    for k in l.decode().split("\n"):
+                        yield k
+                else:
+                    yield l[:-1].decode()
             raise StopIteration
         elif isinstance(proc, bytes):
             for l in proc.decode().split("\n"):

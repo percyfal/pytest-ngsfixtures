@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from pytest_ngsfixtures.wm import snakemake
-
-Snakefile = snakemake.snakefile_factory(
-    copy=True, numbered=True)
+import pytest
+from pytest_ngsfixtures.wm.snakemake import snakefile, run as snakemake_run
 
 
-def test_workflow(Snakefile, flat):
-    snakemake.run(Snakefile, options=["-d", str(flat)])
-    assert flat.join("results.txt").exists()
+@pytest.mark.samples(copy=False, numbered=True)
+@pytest.mark.snakefile(copy=False, dirname="snakefile", numbered=True)
+def test_workflow(samples, snakefile):
+    snakemake_run(snakefile, options=["-d", str(samples)])
+    assert samples.join("results.txt").exists()
