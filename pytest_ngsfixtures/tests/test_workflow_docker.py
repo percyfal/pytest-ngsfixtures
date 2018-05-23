@@ -35,6 +35,7 @@ def container(request):
 
 
 @pytest.mark.samples(numbered=True)
+@pytest.mark.snakefile(dirname="snakefile", numbered=True)
 def test_workflow(snakefile, samples, container):
     container.start()
     for r in snakemake_run(snakefile,
