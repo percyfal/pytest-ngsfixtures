@@ -89,7 +89,6 @@ managers, including Snakemake.
 
 See the `pytest-ngsfixtures documentation`_ for more examples.
       
-       
 
 Credits
 =======

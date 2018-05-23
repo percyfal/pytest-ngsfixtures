@@ -1,7 +1,6 @@
 History
 =======
 
-
 0.7.0 (2018-05-23)
 ------------------
 
@@ -29,6 +28,7 @@ Features
 * Simplify config.runfmt_alias function (#56)
 * Only package tiny sequence data (#55)
 * Simplify sample layout configuration (#57)
+
 
 0.6.4 (2018-01-31)
 ------------------
