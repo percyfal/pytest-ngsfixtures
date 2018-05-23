@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import pytest
+import shutil
 from pytest_ngsfixtures.shell import shell
 from pytest_ngsfixtures.config import reflayout, layout, SAMPLES_DIR
 
@@ -24,6 +25,8 @@ def test_ref(ref):
     assert ref.join("scaffolds.fa").islink()
 
 
+@pytest.mark.skipif(shutil.which("bwa") is None, reason="executable bwa not found")
+@pytest.mark.skipif(shutil.which("samtools") is None, reason="executable samtools not found")
 def test_data(samples, ref):
     shell("bwa index {}".format(ref.join("scaffolds.fa")))
     shell("bwa mem {} {} {} | samtools view -b > {}".format(
