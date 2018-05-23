@@ -2,7 +2,7 @@
 """Plugin configuration module for pytest-ngsfixtures"""
 import re
 import pytest
-from pytest_ngsfixtures.config import layout
+from pytest_ngsfixtures.config import layout, reflayout
 from pytest_ngsfixtures.os import safe_mktemp, safe_copy, safe_symlink
 
 _help_ngs_threads = "set the number of threads to use in test"
@@ -28,10 +28,19 @@ def pytest_configure(config):
 def testdata(request, tmpdir_factory):
     """Return a temporary directory path object pointing to the root
     directory where generic test data are located.
+
+    Examples:
+
+       .. code-block:: python
+
+          @pytest.mark.testdata(data={'foo.txt': 'bar.txt'})
+          def test_data(testdata):
+              print(testdata.listdir())
+
     """
     options = {
-        'numbered': False,
         'data': {},
+        'numbered': False,
     }
     if 'data' in request.keywords:
         options.update(request.keywords.get('data').kwargs)
@@ -54,11 +63,13 @@ def samples(request, tmpdir_factory):
 
     Examples:
 
-       @pytest.mark.parametrize("layout", [{'s1.fastq.gz': '/path/to/foo.fastq.gz'}, 
-                                           {'s2.fastq.gz': '/path/to/foo.fastq.gz'}])
-       @pytest.mark.samples(dirname="foo")
-       def test_samples(samples, layout):
-           print(samples.listdir())
+       .. code-block:: python
+
+          @pytest.mark.parametrize("layout", [{'s1.fastq.gz': '/path/to/foo.fastq.gz'},
+                                              {'s2.fastq.gz': '/path/to/foo.fastq.gz'}])
+          @pytest.mark.samples(dirname="foo")
+          def test_samples(samples, layout):
+              print(samples.listdir())
 
     """
     options = {
@@ -91,14 +102,16 @@ def ref(request, tmpdir_factory):
     @pytest.mark.ref(dirname="refdirname")
 
     Examples:
-    
-       @pytest.mark.ref(dirname="foo", data={'ref.fa': '/path/to/ref.fa'})
-       def test_ref(ref):
-           print(ref)
+
+       .. code-block:: python
+
+          @pytest.mark.ref(dirname="foo", data={'ref.fa': '/path/to/ref.fa'})
+          def test_ref(ref):
+              print(ref)
     """
     options = {
         'dirname': 'ref',
-        'data': {},
+        'data': reflayout,
         'copy': True,
     }
     if 'ref' in request.keywords:
@@ -106,5 +119,5 @@ def ref(request, tmpdir_factory):
     p = safe_mktemp(tmpdir_factory, **options)
     f = safe_copy if options['copy'] else safe_symlink
     for dst, src in options['data'].items():
-        f(p, src, dst)
+        f(p, src, dst, ignore_errors=True)
     return p

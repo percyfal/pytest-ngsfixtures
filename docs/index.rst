@@ -18,11 +18,13 @@ using fixture factories.
 Features
 --------
 
-- ngs data sets of different sizes
+- a small ngs data set
 - predefined sample layouts
-- factories for generating new sample layouts
-- result files from a variety of bioinformatics applications and tools
-
+- configurable data, reference, and sample fixtures
+- wrappers for running shell commands, either in terminals or
+  container applications
+- wrappers and helper functions for some workflow engines
+  
 
 Contents
 ==========
