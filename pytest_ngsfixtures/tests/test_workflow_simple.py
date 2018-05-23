@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-from pytest_ngsfixtures.wm import snakemake
+import pytest
+from pytest_ngsfixtures.config import layout
+from pytest_ngsfixtures.wm.snakemake import snakefile, run as snakemake_run
 
-Snakefile = snakemake.snakefile_factory(
-    copy=True, numbered=True)
 
-
-def test_workflow(Snakefile, flat):
-    snakemake.run(Snakefile, options=["-d", str(flat)])
-    assert flat.join("results.txt").exists()
+def test_workflow(snakefile, samples):
+    snakemake_run(snakefile, options=["-d", str(samples)])
+    assert samples.join("results.txt").exists()
