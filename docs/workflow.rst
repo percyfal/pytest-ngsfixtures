@@ -33,55 +33,41 @@ example looks as follows:
 Setting up a workflow with a predefined sample layout
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-The test file (here `test_workflow_simple.py`) defines a test that
-depends on the :py:data:`~pytest_ngsfixtures.plugin.flat`
-pytest_ngsfixtures fixture:
+The test file `test_workflow_simple.py` defines a test `test_workflow`
+that depends on the default
+:py:data:`~pytest_ngsfixtures.plugin.samples` fixture. As the
+Snakefile resides in the same directory, the
+:py:data:`~pytest_ngsfixtures.wm.snakemake.snakefile` fixture will
+automatically detect its presence and setup the file. If there is no
+Snakefile present, the full path has to be passed with the `snakefile`
+argument to `pytest.mark.snakefile`.
 
-.. literalinclude:: ../pytest_ngsfixtures/tests/test_workflow_simple.py
+By default, fixtures are setup to copy files to the test directory. By
+passing `copy=False` to the `pytest.mark` helpers, we use symlinks
+instead. In addition, we pass the option `numbered=True` to generate
+numbered output directories.
+
+.. literalinclude::
+                    ../pytest_ngsfixtures/tests/test_workflow_simple.py
    :language: python
 
-Here, the Snakefile fixture is defined via the
-:py:func:`~pytest_ngsfixtures.snakemake.snakefile_factory`. By
-default, the factory will assume there is a Snakefile in the test
-directory. If not, the full path to the Snakefile has to be passed
-with the `snakefile` argument. The :py:func:`test_workflow` function
-requires the two fixtures Snakefile and flat, and the workflow is run
-with the :py:func:`~pytest_ngsfixtures.snakemake.run` wrapper.
-Finally, we assert that the test has run to completion by asserting
-the existence of the output file `results.txt`. Now, the tests can be
-run with the command
+The :py:func:`test_workflow` function requires the two fixtures
+`samples` and `snakefile`, and the workflow is run with the
+:py:func:`~pytest_ngsfixtures.snakemake.run` wrapper. Finally, we
+assert that the test has run to completion by asserting the existence
+of the output file `results.txt`. Now, the tests can be run with the
+command
 
 .. code-block:: shell
 
-   pytest -v -s test_workflow1.py
-
-
-
-Setting up a workflow with a custom sample layout
-++++++++++++++++++++++++++++++++++++++++++++++++++
-
-The :py:data:`~pytest_ngsfixtures.plugin.flat` fixture is a predefined
-fixture that sets up test files via symlinks. However, as will become
-clear in the next section, sometimes it is desirable to copy the files
-to the test directory.
-
-We here use the :py:func:`~pytest_ngsfixtures.factories.sample_layout`
-function to setup a modified version of the
-:py:data:`~pytest_ngsfixtures.plugin.flat` fixture that copies the
-test files (`test_workflow_flat_copy.py`):
-
-.. literalinclude:: ../pytest_ngsfixtures/tests/test_workflow_flat_copy.py
-   :language: python
-
+   pytest -v -s tests/test_workflow_simple.py
 
 
 Setting up a docker container fixture
 +++++++++++++++++++++++++++++++++++++
 
-The previous section would have been unnecessary if only local tests
-were run, but copying test files is necessary for container-based
-tests. In the following test script (`test_workflow_docker.py`), we
-add a lot of new functionality.
+In the following test script (`test_workflow_docker.py`), we
+add functionality to deal with container-based fixtures.
 
 First, we import the :py:mod:`docker` module to interact with docker,
 along with :py:mod:`os` and :py:mod:`pytest`:
@@ -92,18 +78,26 @@ along with :py:mod:`os` and :py:mod:`pytest`:
 
 Then, we add a `container` fixture that sets up a container based on
 the snakemake docker image
-`quay.io/biocontainers/snakemake:4.5.0--py36_0
-<https://quay.io/repository/biocontainers/snakemake?tag=latest&tab=tags>`_:
+`quay.io/biocontainers/snakemake:X.Y.Z--py36_0
+<https://quay.io/repository/biocontainers/snakemake?tag=latest&tab=tags>`_,
+where `X.Y.Z` corresponds to the installed snakemake version:
 
 .. literalinclude:: ../pytest_ngsfixtures/tests/test_workflow_docker.py
    :language: python
-   :lines: 13-40
+   :lines: 8-33
 
 Finally, we add the `container` fixture to the test function call:
 
 .. literalinclude:: ../pytest_ngsfixtures/tests/test_workflow_docker.py
    :language: python
-   :lines: 47-54
+   :lines: 36-45
+
+and run the test as 
+
+.. code-block:: shell
+
+   pytest -v -s tests/test_workflow_docker.py
+
 
 
 Parametrized tests on running environment
@@ -116,7 +110,7 @@ one test function. To do this we modify the test function as follows
 
 .. literalinclude:: ../pytest_ngsfixtures/tests/test_workflow_parametrize.py
    :language: python
-   :lines: 49-58
+   :lines: 38-49
 
 The parametrization is done indirectly via the `container` fixture. We
 modify this fixture to return `None` if the request parameter equals
@@ -125,7 +119,7 @@ modify this fixture to return `None` if the request parameter equals
 
 .. literalinclude:: ../pytest_ngsfixtures/tests/test_workflow_parametrize.py
    :language: python
-   :lines: 16-42
+   :lines: 8-35
 
 Now, running
 

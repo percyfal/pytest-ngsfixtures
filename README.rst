@@ -13,13 +13,11 @@ About
 =====
 
 This is a `pytest plugin
-<http://doc.pytest.org/en/latest/plugins.html>`_ that enables next
-generation sequencing `pytest fixtures
-<http://doc.pytest.org/en/latest/fixture.html>`_, including fastq
-files and output files from a variety of bioinformatics applications
-and tools. There are sequencing fixtures for some common sample
-layouts, but it's easy to generate additional sample fixture layouts
-using fixture factories.
+<http://doc.pytest.org/en/latest/plugins.html>`_ that provides
+functionality for next generation sequencing `pytest fixtures
+<http://doc.pytest.org/en/latest/fixture.html>`. There are some
+predefined fixtures, but the main functionality depends on configuring
+fixtures via the `pytest.mark` helper function.
 
 See the `pytest-ngsfixtures documentation`_ for more information and
 usage.
@@ -31,7 +29,6 @@ Features
 
 - a small test ngs data set
 - predefined sample layouts
-- factories for generating new sample layouts
 - wrappers for quickly setting up workflow tests
 
 
@@ -45,20 +42,54 @@ Installation
 
 
 Usage
-=====
+=========
+
+You can easily setup a test requiring the predefined `samples` and
+`ref` fixtures:
+
+.. code-block:: python
+   
+   def test_data(samples, ref):
+    shell("bwa index {}".format(ref.join("scaffolds.fa")))
+    shell("bwa mem {} {} {} | samtools view -b > {}".format(
+        ref.join("scaffolds.fa"),
+        samples.join("s1_1.fastq.gz"),
+        samples.join("s1_2.fastq.gz"),
+        samples.join("s1.bam")
+    ))
+    assert samples.join("s1.bam").exists()
+
+The samples and ref fixtures can also be configured to use local
+files:
 
 .. code-block:: python
 
-   from pytest_ngsfixtures.fixtures import sample
-   from pytest_ngsfixtures.wm import snakemake
+   import pytest
+		
+   @pytest.mark.samples(layout={'s1_1.fastq.gz': "/path/to/read1.fastq.gz",
+		                's1_2.fastq.gz': "/path/to/read2.fastq.gz"})
+   @pytest.mark.ref(data={'ref.fa': "/path/to/reference.fa"})
+   def test_data(samples, ref):
+       # Do something with data
 
-   Snakefile = snakemake.snakefile_factory("/path/to/Snakefile")
+In addition, there are wrapper functions and fixtures for workflow
+managers, including Snakemake.
 
-   def test_workflow(Snakefile, sample):
-       snakemake.run(Snakefile, target="s1.bam")
-       assert sample.join("s1.bam").exist()
+.. code-block:: python
+
+   import pytest
+   from pytest_ngsfixtures.wm.snakemake import snakefile, run as snakemake_run
+
+   # By default, the snakefile fixture assumes there is a Snakefile in
+   # the test file directory
+   def test_workflow(samples, snakefile):
+       snakemake_run(snakefile, options=["-d", str(samples)])
+       assert samples.join("results.txt").exists()
 
 
+See the `pytest-ngsfixtures documentation`_ for more examples.
+      
+       
 
 Credits
 =======

@@ -25,9 +25,11 @@ def snakefile(request, tmpdir_factory):
 
     Examples:
 
-       @pytest.mark.snakefile(snakefile="/path/to/Snakefile", dirname="foo")
-       def test_snakefile(snakefile):
-           print(snakefile.listdir())
+      .. code-block:: python
+
+         @pytest.mark.snakefile(snakefile="/path/to/Snakefile", dirname="foo")
+         def test_snakefile(snakefile):
+             print(snakefile.listdir())
 
     """
     options = {
