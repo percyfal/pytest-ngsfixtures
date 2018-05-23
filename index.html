@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pytest-ngsfixtures documentation &mdash; pytest-ngsfixtures 0.6.4 documentation</title>
+  <title>pytest-ngsfixtures documentation &mdash; pytest-ngsfixtures 0.7.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="pytest-ngsfixtures 0.6.4 documentation" href="#"/>
+    <link rel="top" title="pytest-ngsfixtures 0.7.0 documentation" href="#"/>
         <link rel="next" title="Installation" href="installation.html"/> 
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.6.4
+                0.7.0
               </div>
             
           
@@ -175,10 +175,12 @@ using fixture factories.</p>
 <div class="section" id="features">
 <h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>ngs data sets of different sizes</li>
+<li>a small ngs data set</li>
 <li>predefined sample layouts</li>
-<li>factories for generating new sample layouts</li>
-<li>result files from a variety of bioinformatics applications and tools</li>
+<li>configurable data, reference, and sample fixtures</li>
+<li>wrappers for running shell commands, either in terminals or
+container applications</li>
+<li>wrappers and helper functions for some workflow engines</li>
 </ul>
 </div>
 </div>
@@ -194,8 +196,7 @@ using fixture factories.</p>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="usage.html#next-generation-sequencing-fixtures">Next-generation sequencing fixtures</a></li>
-<li class="toctree-l2"><a class="reference internal" href="usage.html#fixture-factories">Fixture factories</a></li>
-<li class="toctree-l2"><a class="reference internal" href="usage.html#fixture-setup-wrappers">Fixture setup wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#fixtures">Fixtures</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage.html#files">Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage.html#advanced-usage">Advanced usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage.html#plugin-options">Plugin options</a></li>
@@ -208,7 +209,6 @@ using fixture factories.</p>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Developer guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="contributing.html#summary">Summary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="contributing.html#setting-up-a-local-copy">Setting up a local copy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="contributing.html#adding-new-application-data">Adding new application data</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">pytest_ngsfixtures</a><ul>
@@ -269,7 +269,7 @@ using fixture factories.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.6.4',
+            VERSION:'0.7.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

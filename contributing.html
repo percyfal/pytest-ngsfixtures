@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Developer guide &mdash; pytest-ngsfixtures 0.6.4 documentation</title>
+  <title>Developer guide &mdash; pytest-ngsfixtures 0.7.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="pytest-ngsfixtures 0.6.4 documentation" href="index.html"/>
+    <link rel="top" title="pytest-ngsfixtures 0.7.0 documentation" href="index.html"/>
         <link rel="next" title="&lt;no title&gt;" href="authors.html"/>
         <link rel="prev" title="Tutorial" href="workflow.html"/> 
 
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.6.4
+                0.7.0
               </div>
             
           
@@ -97,7 +97,6 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Developer guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#summary">Summary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#setting-up-a-local-copy">Setting up a local copy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#adding-new-application-data">Adding new application data</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">pytest_ngsfixtures</a></li>
@@ -177,40 +176,6 @@ requests via separate feature branches.</p>
 <h2>Setting up a local copy<a class="headerlink" href="#setting-up-a-local-copy" title="Permalink to this headline">¶</a></h2>
 <p>See installation section <a class="reference internal" href="installation.html#installation-from-sources"><span class="std std-ref">From sources</span></a>.</p>
 </div>
-<div class="section" id="adding-new-application-data">
-<h2>Adding new application data<a class="headerlink" href="#adding-new-application-data" title="Permalink to this headline">¶</a></h2>
-<p><cite>pytest-ngsfixtures</cite> is bundled with application data from a variety
-of bioinformatics programs. The data is primarily used in test-based
-development, even though a beneficial side-effect is that the data can
-be used in unit tests.</p>
-<p>Application output data is automatically generated using Snakemake in
-order to track data provenance. However, adding new application data
-is a time-consuming process. To speed up addition of new applications,
-there is as of version 0.4.0 a script
-<cite>pytest_ngsfixtures_add_application.py</cite> that aids in setting up the
-necessary Snakefiles and configuration files for generating
-application data.</p>
-<p>The script will automatically setup a feature branch based on
-<em>develop</em> and add template files. Running the script in dry mode with
-a bogus application <em>foo</em> as argument gives the following output:</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="go">DRY RUN: cd /home/user/dev/pytest-ngsfixtures/pytest_ngsfixtures/data/applications</span>
-<span class="go">DRY RUN: git checkout develop</span>
-<span class="go">DRY RUN: git checkout -b feature/application/foo</span>
-<span class="go">DRY RUN: setup new application directory /home/user/dev/pytest-ngsfixtures/pytest_ngsfixtures/data/applications/foo</span>
-<span class="go">DRY RUN: saving /home/user/dev/pytest-ngsfixtures/pytest_ngsfixtures/data/applications/foo/config.yaml and /home/user/dev/pytest-ngsfixtures/pytest_ngsfixtures/data/applications/foo/Snakefile</span>
-
-<span class="go">All set to go!</span>
-
-<span class="go">1. cd to /home/user/dev/pytest-ngsfixtures/pytest_ngsfixtures/data/applications/foo</span>
-<span class="go">2. Start adding rules to Snakefile and modify config.yaml accordingly</span>
-<span class="go">3. run &#39;snakemake conda&#39; to generate conda files</span>
-<span class="go">4. run &#39;snakemake --use-conda all&#39; to generate output</span>
-<span class="go">5. (optional): run &#39;snakemake clean&#39; to remove excess output</span>
-<span class="go">6. run &#39;git add Snakefile config.yaml FILENAMES&#39; to add output</span>
-<span class="go">7. submit pull request to https://github.com/percyfal/pytest-ngsfixtures</span>
-</pre></div>
-</div>
-</div>
 </div>
 
 
@@ -257,7 +222,7 @@ a bogus application <em>foo</em> as argument gives the following output:</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.6.4',
+            VERSION:'0.7.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pytest_ngsfixtures.wm.snakemake &mdash; pytest-ngsfixtures 0.6.4 documentation</title>
+  <title>pytest_ngsfixtures.wm.snakemake &mdash; pytest-ngsfixtures 0.7.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="pytest-ngsfixtures 0.6.4 documentation" href="../../../index.html"/>
+    <link rel="top" title="pytest-ngsfixtures 0.7.0 documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.6.4
+                0.7.0
               </div>
             
           
@@ -166,8 +166,7 @@
 <span class="kn">import</span> <span class="nn">pytest</span>
 <span class="kn">import</span> <span class="nn">py</span>
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">pytest_ngsfixtures.os</span> <span class="k">import</span> <span class="n">safe_mktemp</span>
-<span class="kn">from</span> <span class="nn">pytest_ngsfixtures.file</span> <span class="k">import</span> <span class="n">setup_filetype</span>
+<span class="kn">from</span> <span class="nn">pytest_ngsfixtures.os</span> <span class="k">import</span> <span class="n">safe_mktemp</span><span class="p">,</span> <span class="n">safe_copy</span><span class="p">,</span> <span class="n">safe_symlink</span>
 <span class="kn">from</span> <span class="nn">pytest_ngsfixtures.shell</span> <span class="k">import</span> <span class="n">shell</span>
 <span class="kn">from</span> <span class="nn">pytest_ngsfixtures.wm.utils</span> <span class="k">import</span> <span class="n">save_command</span>
 
@@ -176,61 +175,38 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="snakefile_factory"><a class="viewcode-back" href="../../../pytest_ngsfixtures.wm.html#pytest_ngsfixtures.wm.snakemake.snakefile_factory">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
-<span class="k">def</span> <span class="nf">snakefile_factory</span><span class="p">(</span><span class="n">snakefile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">testdir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Fixture factory for snakefile.</span>
+<div class="viewcode-block" id="snakefile"><a class="viewcode-back" href="../../../pytest_ngsfixtures.wm.html#pytest_ngsfixtures.wm.snakemake.snakefile">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">snakefile</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">tmpdir_factory</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a temporary directory path object pointing to the location</span>
+<span class="sd">    of a Snakefile.</span>
 
-<span class="sd">    If no snakefile is given, the factory will assume that there is a</span>
-<span class="sd">    Snakefile in the same directory as the calling test file.</span>
+<span class="sd">    If no snakefile is defined with pytest.mark.snakefile, the fixture</span>
+<span class="sd">    will assume there is a Snakefile in the same directory as the</span>
+<span class="sd">    calling test file.</span>
 
-<span class="sd">    Example:</span>
+<span class="sd">    Examples:</span>
 
 <span class="sd">      .. code-block:: python</span>
 
-<span class="sd">         from pytest_ngsfixtures.wm import snakemake</span>
-<span class="sd">         snakefile = snakemake.snakefile_factory(&quot;/path/to/Snakfile&quot;)</span>
-
-<span class="sd">         def test_workflow(snakefile, flat):</span>
-<span class="sd">             snakemake.run(snakefile)</span>
-
-<span class="sd">         # Assumes there is a Snakefile in the test directory</span>
-<span class="sd">         snakefile2 = snakemake.snakefile_factory()</span>
-
-<span class="sd">         # Make specific target output.txt</span>
-<span class="sd">         def test_workflow(snakefile2, flat):</span>
-<span class="sd">             snakemake.run(snakefile2, target=flat.join(&quot;output.txt&quot;))</span>
-
-
-<span class="sd">    Args:</span>
-<span class="sd">      snakefile (str, py._path.local.LocalPath): snakefile path</span>
-<span class="sd">      testdir (str, py._path.local.LocalPath): output directory</span>
+<span class="sd">         @pytest.mark.snakefile(snakefile=&quot;/path/to/Snakefile&quot;, dirname=&quot;foo&quot;)</span>
+<span class="sd">         def test_snakefile(snakefile):</span>
+<span class="sd">             print(snakefile.listdir())</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">snakefile</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">snakefile</span> <span class="o">=</span> <span class="n">py</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">local</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">filename</span><span class="p">))</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;Snakefile&quot;</span><span class="p">)</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;dirname&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;copy&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">&#39;snakefile&#39;</span><span class="p">:</span> <span class="n">py</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">local</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">fspath</span><span class="o">.</span><span class="n">dirname</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;Snakefile&quot;</span><span class="p">),</span>
+        <span class="s1">&#39;numbered&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
 
-    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;scope&quot;</span><span class="p">,</span> <span class="s2">&quot;function&quot;</span><span class="p">),</span>
-                    <span class="n">autouse</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;autouse&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
-    <span class="k">def</span> <span class="nf">snakefile_fixture</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">tmpdir_factory</span><span class="p">,</span> <span class="n">pytestconfig</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Snakefile fixture&quot;&quot;&quot;</span>
-        <span class="n">sf</span> <span class="o">=</span> <span class="n">snakefile</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sf</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">sf</span> <span class="o">=</span> <span class="n">py</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">local</span><span class="p">(</span><span class="n">sf</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sf</span><span class="p">,</span> <span class="n">py</span><span class="o">.</span><span class="n">_path</span><span class="o">.</span><span class="n">local</span><span class="o">.</span><span class="n">LocalPath</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">sf</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="n">testdir</span>
-        <span class="k">if</span> <span class="n">p</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">p</span> <span class="o">=</span> <span class="n">safe_mktemp</span><span class="p">(</span><span class="n">tmpdir_factory</span><span class="p">,</span> <span class="s2">&quot;snakefile&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;Snakefile&quot;</span><span class="p">)</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="n">setup_filetype</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">p</span><span class="p">,</span> <span class="n">src</span><span class="o">=</span><span class="n">sf</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_show_fixture</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;-------------------------&quot;</span><span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Snakefile fixture content&quot;</span><span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;-------------------------&quot;</span><span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">p</span>
-    <span class="k">return</span> <span class="n">snakefile_fixture</span></div>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="s1">&#39;snakefile&#39;</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">keywords</span><span class="p">:</span>
+        <span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;snakefile&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">safe_mktemp</span><span class="p">(</span><span class="n">tmpdir_factory</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
+    <span class="n">src</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="s1">&#39;snakefile&#39;</span><span class="p">]</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">safe_copy</span> <span class="k">if</span> <span class="n">options</span><span class="p">[</span><span class="s1">&#39;copy&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="n">safe_symlink</span>
+    <span class="n">dst</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">src</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dst</span></div>
 
 
 <div class="viewcode-block" id="run"><a class="viewcode-back" href="../../../pytest_ngsfixtures.wm.html#pytest_ngsfixtures.wm.snakemake.run">[docs]</a><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">snakefile</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span>
@@ -307,7 +283,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.6.4',
+            VERSION:'0.7.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

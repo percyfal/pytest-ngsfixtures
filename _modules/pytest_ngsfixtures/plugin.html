@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pytest_ngsfixtures.plugin &mdash; pytest-ngsfixtures 0.6.4 documentation</title>
+  <title>pytest_ngsfixtures.plugin &mdash; pytest-ngsfixtures 0.7.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="pytest-ngsfixtures 0.6.4 documentation" href="../../index.html"/>
+    <link rel="top" title="pytest-ngsfixtures 0.7.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.6.4
+                0.7.0
               </div>
             
           
@@ -162,54 +162,15 @@
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Plugin configuration module for pytest-ngsfixtures&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">pytest_ngsfixtures</span> <span class="k">import</span> <span class="n">factories</span>
-<span class="kn">from</span> <span class="nn">pytest_ngsfixtures.fixtures</span> <span class="k">import</span> <span class="n">psample</span><span class="p">,</span> <span class="n">pref</span>
-<span class="kn">from</span> <span class="nn">pytest_ngsfixtures.config</span> <span class="k">import</span> <span class="n">sample_conf</span><span class="p">,</span> <span class="n">runfmt_alias</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">from</span> <span class="nn">pytest_ngsfixtures.config</span> <span class="k">import</span> <span class="n">layout</span><span class="p">,</span> <span class="n">reflayout</span>
+<span class="kn">from</span> <span class="nn">pytest_ngsfixtures.os</span> <span class="k">import</span> <span class="n">safe_mktemp</span><span class="p">,</span> <span class="n">safe_copy</span><span class="p">,</span> <span class="n">safe_symlink</span>
 
-<span class="n">_help_ngs_size</span> <span class="o">=</span> <span class="s2">&quot;select sample size (choices: </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;&#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sample_conf</span><span class="o">.</span><span class="n">SIZES</span><span class="p">))</span>
-<span class="n">_help_ngs_layout</span> <span class="o">=</span> <span class="s2">&quot;select predefined sample layout(s) (allowed choices: </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;&#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sample_conf</span><span class="o">.</span><span class="n">SAMPLE_LAYOUTS</span><span class="p">))</span>
-<span class="n">_help_ngs_show_fixture</span> <span class="o">=</span> <span class="s2">&quot;show fixture layout&quot;</span>
 <span class="n">_help_ngs_threads</span> <span class="o">=</span> <span class="s2">&quot;set the number of threads to use in test&quot;</span>
 
 
 <div class="viewcode-block" id="pytest_addoption"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.plugin.pytest_addoption">[docs]</a><span class="k">def</span> <span class="nf">pytest_addoption</span><span class="p">(</span><span class="n">parser</span><span class="p">):</span>
     <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">getgroup</span><span class="p">(</span><span class="s2">&quot;ngsfixtures&quot;</span><span class="p">,</span> <span class="s2">&quot;next-generation sequencing fixture options&quot;</span><span class="p">)</span>
-    <span class="n">group</span><span class="o">.</span><span class="n">addoption</span><span class="p">(</span>
-        <span class="s1">&#39;-X&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;--ngs-size&#39;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store&#39;</span><span class="p">,</span>
-        <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;ngs_size&#39;</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="s1">&#39;tiny&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="n">_help_ngs_size</span><span class="p">,</span>
-        <span class="n">choices</span><span class="o">=</span><span class="n">sample_conf</span><span class="o">.</span><span class="n">SIZES</span><span class="p">,</span>
-        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;size&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">group</span><span class="o">.</span><span class="n">addoption</span><span class="p">(</span>
-        <span class="s1">&#39;-L&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;--ngs-layout&#39;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store&#39;</span><span class="p">,</span>
-        <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;ngs_layout&#39;</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;short&quot;</span><span class="p">],</span>
-        <span class="n">help</span><span class="o">=</span><span class="n">_help_ngs_layout</span><span class="p">,</span>
-        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
-        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;layout&quot;</span><span class="p">,</span>
-        <span class="n">choices</span><span class="o">=</span><span class="n">sample_conf</span><span class="o">.</span><span class="n">SAMPLE_LAYOUTS</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">group</span><span class="o">.</span><span class="n">addoption</span><span class="p">(</span>
-        <span class="s2">&quot;--ngs-pool&quot;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;run tests on pooled data&quot;</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;ngs_pool&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">group</span><span class="o">.</span><span class="n">addoption</span><span class="p">(</span>
-        <span class="s1">&#39;-F&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;--ngs-show-fixture&#39;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
-        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;ngs_show_fixture&quot;</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="n">_help_ngs_show_fixture</span><span class="p">,</span>
-    <span class="p">)</span>
     <span class="n">group</span><span class="o">.</span><span class="n">addoption</span><span class="p">(</span>
         <span class="s1">&#39;--nt&#39;</span><span class="p">,</span>
         <span class="s1">&#39;--ngs-threads&#39;</span><span class="p">,</span>
@@ -217,55 +178,110 @@
         <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;ngs_threads&quot;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="n">_help_ngs_threads</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">group</span><span class="o">.</span><span class="n">addoption</span><span class="p">(</span>
-        <span class="s2">&quot;--ngs-runfmt&quot;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;sample test run format; organization of samples&quot;</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sample&quot;</span><span class="p">],</span>
-        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
-        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;ngs_runfmt&quot;</span><span class="p">,</span>
-        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;runfmt&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">group</span><span class="o">.</span><span class="n">addoption</span><span class="p">(</span>
-        <span class="s2">&quot;--ngs-copy&quot;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;copy test data instead of symlinking&quot;</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;ngs_copy&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">group</span><span class="o">.</span><span class="n">addoption</span><span class="p">(</span>
-        <span class="s2">&quot;--ngs-ref&quot;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;use ref reference layout instead of scaffolds&quot;</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;ngs_ref&quot;</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="pytest_configure"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.plugin.pytest_configure">[docs]</a><span class="k">def</span> <span class="nf">pytest_configure</span><span class="p">(</span><span class="n">config</span><span class="p">):</span>
-    <span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_runfmt_alias</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_runfmt</span>
-    <span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_layout</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_layout</span><span class="p">))</span>
-    <span class="n">runfmt</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_runfmt</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">rf</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_runfmt</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;[</span><span class="si">{}</span><span class="s2">]&quot;</span><span class="p">,</span> <span class="n">rf</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="n">rf</span> <span class="ow">in</span> <span class="n">sample_conf</span><span class="o">.</span><span class="n">RUNFMT_ALIAS</span><span class="p">,</span> <span class="s2">&quot;if run format is given as string, must be one of </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sample_conf</span><span class="o">.</span><span class="n">RUNFMT_ALIAS</span><span class="p">))</span>
-
-            <span class="n">runfmt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">runfmt_alias</span><span class="p">(</span><span class="n">rf</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
-        <span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_runfmt</span> <span class="o">=</span> <span class="n">runfmt</span>
-    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_pool</span><span class="p">:</span>
-        <span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_layout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;pool&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="s2">&quot;pool&quot;</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_layout</span><span class="p">:</span>
-        <span class="n">config</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">ngs_pool</span> <span class="o">=</span> <span class="kc">True</span></div>
+    <span class="k">pass</span></div>
 
 
-<span class="n">flat</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">sample_layout</span><span class="p">(</span><span class="n">sample</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;CHS.HG00512&#39;</span><span class="p">],</span>
-                               <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;function&quot;</span><span class="p">,</span> <span class="n">numbered</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                               <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;flat&quot;</span><span class="p">)</span>
-<span class="n">ref</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">reference_layout</span><span class="p">(</span><span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;ref&quot;</span><span class="p">)</span>
-<span class="n">scaffolds</span> <span class="o">=</span> <span class="n">factories</span><span class="o">.</span><span class="n">reference_layout</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;scaffolds&quot;</span><span class="p">,</span>
-                                       <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;scaffolds&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="testdata"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.plugin.testdata">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">testdata</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">tmpdir_factory</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a temporary directory path object pointing to the root</span>
+<span class="sd">    directory where generic test data are located.</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">       .. code-block:: python</span>
+
+<span class="sd">          @pytest.mark.testdata(data={&#39;foo.txt&#39;: &#39;bar.txt&#39;})</span>
+<span class="sd">          def test_data(testdata):</span>
+<span class="sd">              print(testdata.listdir())</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">{},</span>
+        <span class="s1">&#39;numbered&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="s1">&#39;data&#39;</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">keywords</span><span class="p">:</span>
+        <span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">],</span> <span class="nb">dict</span><span class="p">),</span> <span class="s2">&quot;&#39;data&#39; option must be a dictionary of dst:src value pairs&quot;</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">safe_mktemp</span><span class="p">(</span><span class="n">tmpdir_factory</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">safe_copy</span> <span class="k">if</span> <span class="n">options</span><span class="p">[</span><span class="s1">&#39;copy&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="n">safe_symlink</span>
+    <span class="k">for</span> <span class="n">dst</span><span class="p">,</span> <span class="n">src</span> <span class="ow">in</span> <span class="n">options</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">f</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">safe_mktemp</span><span class="p">(</span><span class="n">tmpdir_factory</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="samples"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.plugin.samples">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">samples</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">tmpdir_factory</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a temporary directory path object pointing to the root</span>
+<span class="sd">    directory where samples are located.</span>
+
+<span class="sd">    The samples directory path name can be changed with</span>
+<span class="sd">    @pytest.mark.samples. In addition, the data layout can be</span>
+<span class="sd">    parametrized with @pytest.mark.parametrize.</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">       .. code-block:: python</span>
+
+<span class="sd">          @pytest.mark.parametrize(&quot;layout&quot;, [{&#39;s1.fastq.gz&#39;: &#39;/path/to/foo.fastq.gz&#39;},</span>
+<span class="sd">                                              {&#39;s2.fastq.gz&#39;: &#39;/path/to/foo.fastq.gz&#39;}])</span>
+<span class="sd">          @pytest.mark.samples(dirname=&quot;foo&quot;)</span>
+<span class="sd">          def test_samples(samples, layout):</span>
+<span class="sd">              print(samples.listdir())</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;numbered&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s1">&#39;dirname&#39;</span><span class="p">:</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;layout&#39;</span><span class="p">:</span> <span class="n">layout</span><span class="p">[</span><span class="s1">&#39;flat&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;copy&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="s1">&#39;samples&#39;</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">keywords</span><span class="p">:</span>
+        <span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;samples&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;parametrize&#39;</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">keywords</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;layout&#39;</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">funcargnames</span><span class="p">:</span>
+            <span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;layout&#39;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">getfuncargvalue</span><span class="p">(</span><span class="s1">&#39;layout&#39;</span><span class="p">)})</span>
+        <span class="k">if</span> <span class="s1">&#39;dirname&#39;</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">funcargnames</span><span class="p">:</span>
+            <span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;dirname&#39;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">getfuncargvalue</span><span class="p">(</span><span class="s1">&#39;dirname&#39;</span><span class="p">)})</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;layout&#39;</span><span class="p">],</span> <span class="nb">dict</span><span class="p">),</span> <span class="s2">&quot;samples &#39;layout&#39; option must be a dictionary of dst:src value pairs&quot;</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">safe_mktemp</span><span class="p">(</span><span class="n">tmpdir_factory</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">safe_copy</span> <span class="k">if</span> <span class="n">options</span><span class="p">[</span><span class="s1">&#39;copy&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="n">safe_symlink</span>
+    <span class="k">for</span> <span class="n">dst</span><span class="p">,</span> <span class="n">src</span> <span class="ow">in</span> <span class="n">options</span><span class="p">[</span><span class="s1">&#39;layout&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">f</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">p</span></div>
+
+
+<div class="viewcode-block" id="ref"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.plugin.ref">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">ref</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">tmpdir_factory</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a temporary directory path object pointing to the location</span>
+<span class="sd">    of reference files.</span>
+
+<span class="sd">    The reference directory path name can be changed with</span>
+<span class="sd">    @pytest.mark.ref(dirname=&quot;refdirname&quot;)</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">       .. code-block:: python</span>
+
+<span class="sd">          @pytest.mark.ref(dirname=&quot;foo&quot;, data={&#39;ref.fa&#39;: &#39;/path/to/ref.fa&#39;})</span>
+<span class="sd">          def test_ref(ref):</span>
+<span class="sd">              print(ref)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;dirname&#39;</span><span class="p">:</span> <span class="s1">&#39;ref&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">reflayout</span><span class="p">,</span>
+        <span class="s1">&#39;copy&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="s1">&#39;ref&#39;</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">keywords</span><span class="p">:</span>
+        <span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ref&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">safe_mktemp</span><span class="p">(</span><span class="n">tmpdir_factory</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">safe_copy</span> <span class="k">if</span> <span class="n">options</span><span class="p">[</span><span class="s1">&#39;copy&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="n">safe_symlink</span>
+    <span class="k">for</span> <span class="n">dst</span><span class="p">,</span> <span class="n">src</span> <span class="ow">in</span> <span class="n">options</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">f</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">p</span></div>
 </pre></div>
 
            </div>
@@ -302,7 +318,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.6.4',
+            VERSION:'0.7.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
