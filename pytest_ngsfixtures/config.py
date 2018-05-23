@@ -6,12 +6,13 @@ import logging
 from pytest_ngsfixtures import DATA_DIR
 
 REF_DIR = DATA_DIR / "ref"
-SAMPLES_DIR = DATA_DIR / "tiny"
+SAMPLES_DIR = DATA_DIR / "seq"
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-ref = {x.name:str(x) for x in REF_DIR.iterdir()}
+refignore = ["Makefile"]
+reflayout = {x.name:str(x) for x in REF_DIR.iterdir() if x.name not in refignore}
 
 # Define sampleinfo
 # TODO: Simplify this definition
