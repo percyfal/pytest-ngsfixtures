@@ -15,16 +15,17 @@ services:
 
 before_install:
   - docker pull busybox
-  - docker pull quay.io/biocontainers/snakemake:4.5.0--py35_0
-  - docker pull quay.io/biocontainers/snakemake:4.5.0--py36_0
+  - docker pull quay.io/biocontainers/snakemake:5.1.3--py35_0
+  - docker pull quay.io/biocontainers/snakemake:5.1.3--py36_0
 
 install:
   - pip install coveralls
   - pip install -r requirements_dev.txt
   - python setup.py install
 
+
 script:
-  - pytest -v -s
+  - pytest -v -s -rs
 
 after_success:
   coveralls

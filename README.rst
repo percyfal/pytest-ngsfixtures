@@ -15,7 +15,7 @@ About
 This is a `pytest plugin
 <http://doc.pytest.org/en/latest/plugins.html>`_ that provides
 functionality for next generation sequencing `pytest fixtures
-<http://doc.pytest.org/en/latest/fixture.html>`. There are some
+<http://doc.pytest.org/en/latest/fixture.html>`_. There are some
 predefined fixtures, but the main functionality depends on configuring
 fixtures via the `pytest.mark` helper function.
 
