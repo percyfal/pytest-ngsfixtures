@@ -7,7 +7,7 @@ import shlex
 import types
 import subprocess as sp
 import docker
-from docker.models.containers import Container
+from docker.models.containers import Container, ExecResult
 import logging
 
 logger = logging.getLogger(__name__)
@@ -195,8 +195,8 @@ class shell:
                 else:
                     yield l[:-1]
             raise StopIteration
-        elif isinstance(proc, Container):
-            for l in proc.logs(stream=True):
+        elif isinstance(proc, ExecResult):
+            for l in proc.output:
                 yield l[:-1].decode()
             raise StopIteration
         elif isinstance(proc, bytes):
