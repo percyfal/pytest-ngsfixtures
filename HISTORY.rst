@@ -1,6 +1,14 @@
 History
 =======
 
+0.7.4 (2018-05-24)
+------------------
+
+Bugfixes
+++++++++
+
+* Make pytest.mark.fixture have precedence over pytest.mark.parametrize when updating functions
+
 0.7.3 (2018-05-24)
 ------------------
 
