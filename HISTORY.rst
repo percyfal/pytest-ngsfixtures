@@ -1,6 +1,14 @@
 History
 =======
 
+0.7.3 (2018-05-24)
+------------------
+
+Features
++++++++++
+
+* Add testdir parameter and allow configuration of all fixture options via parametrization (#62)
+
 0.7.2 (2018-05-24)
 ------------------
 

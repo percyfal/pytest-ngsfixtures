@@ -31,7 +31,8 @@ dictionary of key:value pairs that are passed via the `data` option
 fixtures predefine output directories which can be configured with the
 `dirname` option. The key corresponds the test fixture file path
 *relative to the pytest root directory*, whereas the value is the path
-to the test data file.
+to the test data file. In addition, there is a `testdir` option that
+allows grouping fixtures in the same test directory.
 
 :py:func:`pytest_ngsfixtures.plugin.testdata`
 +++++++++++++++++++++++++++++++++++++++++++++
@@ -132,6 +133,24 @@ example shows how to parametrize over the predefined layouts:
 
 Here, we define an indirect fixture that calls one of the predefined
 layout fixtures by use of the ``request.getfuncargvalue`` function.
+
+
+Grouping fixtures in  test directories
++++++++++++++++++++++++++++++++++++++++
+
+When parametrizing fixtures over several conditions, it may be of
+interest to group fixtures in separate parametrized test directories.
+This can be achieved by using the `testdir` fixture option, as the
+following example shows:
+
+.. code-block:: python
+
+   @pytest.mark.parametrize("testdir", ["context1", "context2"])
+   def test_with_context(samples, ref, testdir):
+       # Do something with data
+       # Sample data will end up in context1/data, reference data in
+       # context1/ref for context1 and so on
+
 
 .. _plugin-options:
 
