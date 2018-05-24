@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Plugin configuration module for pytest-ngsfixtures"""
+import os
 import re
 import pytest
 from pytest_ngsfixtures.config import layout, reflayout
@@ -24,6 +25,19 @@ def pytest_configure(config):
     pass
 
 
+def _update_options(request, fixturename, options, exclude=["request", "tmpdir_factory"]):
+    if fixturename in request.keywords:
+        options.update(request.keywords.get(fixturename).kwargs)
+    d = {}
+    keys = set(request.fixturenames).difference(exclude)
+    for k in keys:
+        try:
+            d[k] = request.getfixturevalue(k)
+        except:
+            pass
+    options.update(d)
+
+
 @pytest.fixture
 def testdata(request, tmpdir_factory):
     """Return a temporary directory path object pointing to the root
@@ -41,9 +55,11 @@ def testdata(request, tmpdir_factory):
     options = {
         'data': {},
         'numbered': False,
+        'dirname': '',
+        'testdir': '',
     }
-    if 'data' in request.keywords:
-        options.update(request.keywords.get('data').kwargs)
+    _update_options(request, 'testdata', options)
+    options['dirname'] = os.path.join(options['testdir'], options['dirname'])
     assert isinstance(options['data'], dict), "'data' option must be a dictionary of dst:src value pairs"
     p = safe_mktemp(tmpdir_factory, **options)
     f = safe_copy if options['copy'] else safe_symlink
@@ -75,16 +91,13 @@ def samples(request, tmpdir_factory):
     options = {
         'numbered': False,
         'dirname': 'data',
+        'testdir': '',
         'layout': layout['flat'],
         'copy': True,
     }
-    if 'samples' in request.keywords:
-        options.update(request.keywords.get('samples').kwargs)
-    if 'parametrize' in request.keywords:
-        if 'layout' in request.funcargnames:
-            options.update({'layout': request.getfuncargvalue('layout')})
-        if 'dirname' in request.funcargnames:
-            options.update({'dirname': request.getfuncargvalue('dirname')})
+    _update_options(request, 'samples', options)
+    options['dirname'] = os.path.join(options['testdir'], options['dirname'])
+    p = safe_mktemp(tmpdir_factory, **options)
     assert isinstance(options['layout'], dict), "samples 'layout' option must be a dictionary of dst:src value pairs"
     p = safe_mktemp(tmpdir_factory, **options)
     f = safe_copy if options['copy'] else safe_symlink
@@ -110,12 +123,13 @@ def ref(request, tmpdir_factory):
               print(ref)
     """
     options = {
+        'testdir': '',
         'dirname': 'ref',
         'data': reflayout,
         'copy': True,
     }
-    if 'ref' in request.keywords:
-        options.update(request.keywords.get('ref').kwargs)
+    _update_options(request, 'ref', options)
+    options['dirname'] = os.path.join(options['testdir'], options['dirname'])
     p = safe_mktemp(tmpdir_factory, **options)
     f = safe_copy if options['copy'] else safe_symlink
     for dst, src in options['data'].items():

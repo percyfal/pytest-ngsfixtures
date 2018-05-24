@@ -61,3 +61,14 @@ def test_layouts(samples, name, layout, dirname):
         assert 6 == len([str(p) for p in samples.visit() if p.isfile()])
     elif name == "pop_sample_project_run":
         assert 6 == len([str(p) for p in samples.visit() if p.isfile()])
+
+
+@pytest.mark.ref(copy=False)
+@pytest.mark.parametrize("testdir,copy",[(("foo"), (False)), (("bar"), (True))])
+def test_layouts_request(samples, ref, testdir, copy):
+    assert str(samples).endswith("{}/data".format(testdir))
+    assert str(ref).endswith("{}/ref".format(testdir))
+    if testdir == "foo":
+        assert samples.join("s1_1.fastq.gz").islink()
+    elif testdir == "bar":
+        assert samples.join("s1_1.fastq.gz").isfile()
