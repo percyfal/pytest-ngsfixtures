@@ -24,16 +24,16 @@ sampleinfo = [
     ['CHS.HG00513', '010101_AAABBB11XX', 'CHS', 'p1', 'CHS.HG00513_2.fastq.gz', '2', 'CHS.HG00513', False],
     ['CHS', '010101_AAABBB11XX', 'CHS', 'p1', 'CHS_1.fastq.gz', '1', 'CHS', True],
     ['CHS', '010101_AAABBB11XX', 'CHS', 'p1', 'CHS_2.fastq.gz', '2', 'CHS', True],
-    ['PUR.HG00731.A', '010101_AAABBB11XX', 'PUR', 'p1', 'PUR.HG00731.A_1.fastq.gz', '1', 'PUR.HG00731.A', False],
-    ['PUR.HG00731.A', '010101_AAABBB11XX', 'PUR', 'p1', 'PUR.HG00731.A_2.fastq.gz', '2', 'PUR.HG00731.A', False],
-    ['PUR.HG00731.B', '020202_AAABBB22XX', 'PUR', 'p2', 'PUR.HG00731.B_1.fastq.gz', '1', 'PUR.HG00731.B', False],
-    ['PUR.HG00731.B', '020202_AAABBB22XX', 'PUR', 'p2', 'PUR.HG00731.B_2.fastq.gz', '2', 'PUR.HG00731.B', False],
+    ['PUR.HG00731', '010101_AAABBB11XX', 'PUR', 'p1', 'PUR.HG00731.A_1.fastq.gz', '1', 'PUR.HG00731.A', False],
+    ['PUR.HG00731', '010101_AAABBB11XX', 'PUR', 'p1', 'PUR.HG00731.A_2.fastq.gz', '2', 'PUR.HG00731.A', False],
+    ['PUR.HG00731', '020202_AAABBB22XX', 'PUR', 'p2', 'PUR.HG00731.B_1.fastq.gz', '1', 'PUR.HG00731.B', False],
+    ['PUR.HG00731', '020202_AAABBB22XX', 'PUR', 'p2', 'PUR.HG00731.B_2.fastq.gz', '2', 'PUR.HG00731.B', False],
     ['PUR.HG00731', '010101_AAABBB11XX', 'PUR', 'p1', 'PUR.HG00731_1.fastq.gz', '1', 'PUR.HG00731', False],
     ['PUR.HG00731', '010101_AAABBB11XX', 'PUR', 'p1', 'PUR.HG00731_2.fastq.gz', '2', 'PUR.HG00731', False],
-    ['PUR.HG00733.A', '010101_AAABBB11XX', 'PUR', 'p1', 'PUR.HG00733.A_1.fastq.gz', '1', 'PUR.HG00733.A', False],
-    ['PUR.HG00733.A', '010101_AAABBB11XX', 'PUR', 'p1', 'PUR.HG00733.A_2.fastq.gz', '2', 'PUR.HG00733.A', False],
-    ['PUR.HG00733.B', '020202_AAABBB22XX', 'PUR', 'p2', 'PUR.HG00733.B_1.fastq.gz', '1', 'PUR.HG00733.B', False],
-    ['PUR.HG00733.B', '020202_AAABBB22XX', 'PUR', 'p2', 'PUR.HG00733.B_2.fastq.gz', '2', 'PUR.HG00733.B', False],
+    ['PUR.HG00733', '010101_AAABBB11XX', 'PUR', 'p1', 'PUR.HG00733.A_1.fastq.gz', '1', 'PUR.HG00733.A', False],
+    ['PUR.HG00733', '010101_AAABBB11XX', 'PUR', 'p1', 'PUR.HG00733.A_2.fastq.gz', '2', 'PUR.HG00733.A', False],
+    ['PUR.HG00733', '020202_AAABBB22XX', 'PUR', 'p2', 'PUR.HG00733.B_1.fastq.gz', '1', 'PUR.HG00733.B', False],
+    ['PUR.HG00733', '020202_AAABBB22XX', 'PUR', 'p2', 'PUR.HG00733.B_2.fastq.gz', '2', 'PUR.HG00733.B', False],
     ['PUR.HG00733', '010101_AAABBB11XX', 'PUR', 'p1', 'PUR.HG00733_1.fastq.gz', '1', 'PUR.HG00733', False],
     ['PUR.HG00733', '010101_AAABBB11XX', 'PUR', 'p1', 'PUR.HG00733_2.fastq.gz', '2', 'PUR.HG00733', False],
     ['PUR', '010101_AAABBB11XX', 'PUR', 'p1', 'PUR_1.fastq.gz', '1', 'PUR', True],
@@ -58,7 +58,7 @@ layout = {'flat':
               'CHS/CHS.HG00512_010101_AAABBB11XX_2.fastq.gz': str(SAMPLES_DIR / 'CHS.HG00512_2.fastq.gz')
           }
 }
-runs = ['CHS.HG00512', 'CHS.HG00513', 'PUR.HG00731.A', 'PUR.HG00731.B', 'PUR.HG00733.A', 'YRI.NA19238', 'YRI.NA19239']
+runs = ['CHS.HG00512', 'CHS.HG00513', 'PUR.HG00731.A', 'PUR.HG00731.B', 'PUR.HG00733.A', 'PUR.HG00733.B', 'YRI.NA19238', 'YRI.NA19239']
 layout['sample_run'] = {
     "{SM}/{PU}/{SM}_{PU}_{read}.fastq.gz".format(SM=sm, PU=pu, read=read): str(SAMPLES_DIR / fq) for sm, pu, pop, batch, fq, read, run, pool in sampleinfo if run in runs
 }
