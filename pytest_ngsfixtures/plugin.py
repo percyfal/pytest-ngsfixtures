@@ -26,8 +26,6 @@ def pytest_configure(config):
 
 
 def _update_options(request, fixturename, options, exclude=["request", "tmpdir_factory"]):
-    if fixturename in request.keywords:
-        options.update(request.keywords.get(fixturename).kwargs)
     d = {}
     keys = set(request.fixturenames).difference(exclude)
     for k in keys:
@@ -36,6 +34,8 @@ def _update_options(request, fixturename, options, exclude=["request", "tmpdir_f
         except:
             pass
     options.update(d)
+    if fixturename in request.keywords:
+        options.update(request.keywords.get(fixturename).kwargs)
 
 
 @pytest.fixture
