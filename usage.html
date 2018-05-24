@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Usage &mdash; pytest-ngsfixtures 0.7.2 documentation</title>
+  <title>Usage &mdash; pytest-ngsfixtures 0.7.3 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="pytest-ngsfixtures 0.7.2 documentation" href="index.html"/>
+    <link rel="top" title="pytest-ngsfixtures 0.7.3 documentation" href="index.html"/>
         <link rel="next" title="Tutorial" href="workflow.html"/>
         <link rel="prev" title="Installation" href="installation.html"/> 
 
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.7.2
+                0.7.3
               </div>
             
           
@@ -103,6 +103,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#files">Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#advanced-usage">Advanced usage</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#parametrizing-existing-sample-layouts">Parametrizing existing sample layouts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#grouping-fixtures-in-test-directories">Grouping fixtures in  test directories</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#plugin-options">Plugin options</a><ul>
@@ -205,7 +206,8 @@ dictionary of key:value pairs that are passed via the <cite>data</cite> option
 fixtures predefine output directories which can be configured with the
 <cite>dirname</cite> option. The key corresponds the test fixture file path
 <em>relative to the pytest root directory</em>, whereas the value is the path
-to the test data file.</p>
+to the test data file. In addition, there is a <cite>testdir</cite> option that
+allows grouping fixtures in the same test directory.</p>
 <div class="section" id="pytest-ngsfixtures-plugin-testdata">
 <h3><a class="reference internal" href="pytest_ngsfixtures.html#pytest_ngsfixtures.plugin.testdata" title="pytest_ngsfixtures.plugin.testdata"><code class="xref py py-func docutils literal notranslate"><span class="pre">pytest_ngsfixtures.plugin.testdata()</span></code></a><a class="headerlink" href="#pytest-ngsfixtures-plugin-testdata" title="Permalink to this headline">¶</a></h3>
 <p>A generic fixture for setting up test data.</p>
@@ -285,6 +287,20 @@ example shows how to parametrize over the predefined layouts:</p>
 <p>Here, we define an indirect fixture that calls one of the predefined
 layout fixtures by use of the <code class="docutils literal notranslate"><span class="pre">request.getfuncargvalue</span></code> function.</p>
 </div>
+<div class="section" id="grouping-fixtures-in-test-directories">
+<h3>Grouping fixtures in  test directories<a class="headerlink" href="#grouping-fixtures-in-test-directories" title="Permalink to this headline">¶</a></h3>
+<p>When parametrizing fixtures over several conditions, it may be of
+interest to group fixtures in separate parametrized test directories.
+This can be achieved by using the <cite>testdir</cite> fixture option, as the
+following example shows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@pytest.mark.parametrize</span><span class="p">(</span><span class="s2">&quot;testdir&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;context1&quot;</span><span class="p">,</span> <span class="s2">&quot;context2&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_with_context</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">testdir</span><span class="p">):</span>
+    <span class="c1"># Do something with data</span>
+    <span class="c1"># Sample data will end up in context1/data, reference data in</span>
+    <span class="c1"># context1/ref for context1 and so on</span>
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="plugin-options">
 <span id="id1"></span><h2>Plugin options<a class="headerlink" href="#plugin-options" title="Permalink to this headline">¶</a></h2>
@@ -339,7 +355,7 @@ layout fixtures by use of the <code class="docutils literal notranslate"><span c
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.7.2',
+            VERSION:'0.7.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

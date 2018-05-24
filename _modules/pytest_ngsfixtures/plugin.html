@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pytest_ngsfixtures.plugin &mdash; pytest-ngsfixtures 0.7.2 documentation</title>
+  <title>pytest_ngsfixtures.plugin &mdash; pytest-ngsfixtures 0.7.3 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="pytest-ngsfixtures 0.7.2 documentation" href="../../index.html"/>
+    <link rel="top" title="pytest-ngsfixtures 0.7.3 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.7.2
+                0.7.3
               </div>
             
           
@@ -161,6 +161,7 @@
   <h1>Source code for pytest_ngsfixtures.plugin</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Plugin configuration module for pytest-ngsfixtures&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">pytest</span>
 <span class="kn">from</span> <span class="nn">pytest_ngsfixtures.config</span> <span class="k">import</span> <span class="n">layout</span><span class="p">,</span> <span class="n">reflayout</span>
@@ -185,6 +186,19 @@
     <span class="k">pass</span></div>
 
 
+<span class="k">def</span> <span class="nf">_update_options</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">fixturename</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;request&quot;</span><span class="p">,</span> <span class="s2">&quot;tmpdir_factory&quot;</span><span class="p">]):</span>
+    <span class="k">if</span> <span class="n">fixturename</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">keywords</span><span class="p">:</span>
+        <span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">fixturename</span><span class="p">)</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">fixturenames</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">exclude</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">getfixturevalue</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+
+
 <div class="viewcode-block" id="testdata"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.plugin.testdata">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
 <span class="k">def</span> <span class="nf">testdata</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">tmpdir_factory</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return a temporary directory path object pointing to the root</span>
@@ -202,9 +216,11 @@
     <span class="n">options</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">{},</span>
         <span class="s1">&#39;numbered&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s1">&#39;dirname&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;testdir&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
     <span class="p">}</span>
-    <span class="k">if</span> <span class="s1">&#39;data&#39;</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">keywords</span><span class="p">:</span>
-        <span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">_update_options</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;testdata&#39;</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+    <span class="n">options</span><span class="p">[</span><span class="s1">&#39;dirname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;testdir&#39;</span><span class="p">],</span> <span class="n">options</span><span class="p">[</span><span class="s1">&#39;dirname&#39;</span><span class="p">])</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">],</span> <span class="nb">dict</span><span class="p">),</span> <span class="s2">&quot;&#39;data&#39; option must be a dictionary of dst:src value pairs&quot;</span>
     <span class="n">p</span> <span class="o">=</span> <span class="n">safe_mktemp</span><span class="p">(</span><span class="n">tmpdir_factory</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">safe_copy</span> <span class="k">if</span> <span class="n">options</span><span class="p">[</span><span class="s1">&#39;copy&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="n">safe_symlink</span>
@@ -236,16 +252,13 @@
     <span class="n">options</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;numbered&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
         <span class="s1">&#39;dirname&#39;</span><span class="p">:</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;testdir&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
         <span class="s1">&#39;layout&#39;</span><span class="p">:</span> <span class="n">layout</span><span class="p">[</span><span class="s1">&#39;flat&#39;</span><span class="p">],</span>
         <span class="s1">&#39;copy&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">}</span>
-    <span class="k">if</span> <span class="s1">&#39;samples&#39;</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">keywords</span><span class="p">:</span>
-        <span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;samples&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">if</span> <span class="s1">&#39;parametrize&#39;</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">keywords</span><span class="p">:</span>
-        <span class="k">if</span> <span class="s1">&#39;layout&#39;</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">funcargnames</span><span class="p">:</span>
-            <span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;layout&#39;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">getfuncargvalue</span><span class="p">(</span><span class="s1">&#39;layout&#39;</span><span class="p">)})</span>
-        <span class="k">if</span> <span class="s1">&#39;dirname&#39;</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">funcargnames</span><span class="p">:</span>
-            <span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;dirname&#39;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">getfuncargvalue</span><span class="p">(</span><span class="s1">&#39;dirname&#39;</span><span class="p">)})</span>
+    <span class="n">_update_options</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;samples&#39;</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+    <span class="n">options</span><span class="p">[</span><span class="s1">&#39;dirname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;testdir&#39;</span><span class="p">],</span> <span class="n">options</span><span class="p">[</span><span class="s1">&#39;dirname&#39;</span><span class="p">])</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">safe_mktemp</span><span class="p">(</span><span class="n">tmpdir_factory</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;layout&#39;</span><span class="p">],</span> <span class="nb">dict</span><span class="p">),</span> <span class="s2">&quot;samples &#39;layout&#39; option must be a dictionary of dst:src value pairs&quot;</span>
     <span class="n">p</span> <span class="o">=</span> <span class="n">safe_mktemp</span><span class="p">(</span><span class="n">tmpdir_factory</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">safe_copy</span> <span class="k">if</span> <span class="n">options</span><span class="p">[</span><span class="s1">&#39;copy&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="n">safe_symlink</span>
@@ -271,12 +284,13 @@
 <span class="sd">              print(ref)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">options</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;testdir&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
         <span class="s1">&#39;dirname&#39;</span><span class="p">:</span> <span class="s1">&#39;ref&#39;</span><span class="p">,</span>
         <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">reflayout</span><span class="p">,</span>
         <span class="s1">&#39;copy&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">}</span>
-    <span class="k">if</span> <span class="s1">&#39;ref&#39;</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">keywords</span><span class="p">:</span>
-        <span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ref&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">_update_options</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;ref&#39;</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+    <span class="n">options</span><span class="p">[</span><span class="s1">&#39;dirname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;testdir&#39;</span><span class="p">],</span> <span class="n">options</span><span class="p">[</span><span class="s1">&#39;dirname&#39;</span><span class="p">])</span>
     <span class="n">p</span> <span class="o">=</span> <span class="n">safe_mktemp</span><span class="p">(</span><span class="n">tmpdir_factory</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">safe_copy</span> <span class="k">if</span> <span class="n">options</span><span class="p">[</span><span class="s1">&#39;copy&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="n">safe_symlink</span>
     <span class="k">for</span> <span class="n">dst</span><span class="p">,</span> <span class="n">src</span> <span class="ow">in</span> <span class="n">options</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -318,7 +332,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.7.2',
+            VERSION:'0.7.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
