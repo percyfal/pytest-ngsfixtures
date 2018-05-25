@@ -1,6 +1,16 @@
 History
 =======
 
+0.7.6 (2018-05-25)
+------------------
+
+Features
+++++++++
+
+* Add path option to override tmpdir_factory invocation
+* Pass ignore_errors to copy/link function
+
+
 0.7.5 (2018-05-25)
 -------------------
 

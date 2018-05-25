@@ -35,6 +35,7 @@ class Fixture(LocalPath):
       name (str): fixture name (one of testdata, samples, ref)
       request (_pytest.fixtures.SubRequest): pytest request object
       datakey (str): data key label
+      path (str): test directory path; overrides call to tmpdir_factory
 
     Keyword Args:
       copy (bool): copy or link data
@@ -44,10 +45,11 @@ class Fixture(LocalPath):
       numbered (bool): create numbered test directories
       testunit (str): group tests in directory named testunit relative to tmpdir_factory basename
     """
-    def __init__(self, name='testdata', request=None, datakey='data', **kwargs):
+    def __init__(self, name='testdata', request=None, datakey='data', path=None, **kwargs):
         self._name = name
         self._request = request
         self._datakey = datakey
+        self._path = path
         self._d = {
             'copy': True,
             'data': {},
@@ -90,11 +92,14 @@ class Fixture(LocalPath):
         else:
             from _pytest.tmpdir import TempdirFactory
             tmpdir_factory = TempdirFactory(pytest.config)
-        p = safe_mktemp(tmpdir_factory, **dict(self))
+        if self._path is not None:
+            p = self._path
+        else:
+            p = safe_mktemp(tmpdir_factory, **dict(self))
         self.strpath = str(p)
         f = safe_copy if self._d['copy'] else safe_symlink
         for dst, src in self._d['data'].items():
-            f(p, src, dst)
+            f(p, src, dst, ignore_errors=self._d['ignore_errors'])
 
 
 @pytest.fixture
