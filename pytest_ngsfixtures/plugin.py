@@ -94,7 +94,7 @@ class Fixture(LocalPath):
         self.strpath = str(p)
         f = safe_copy if self._d['copy'] else safe_symlink
         for dst, src in self._d['data'].items():
-            f(p, src, dst)
+            f(p, src, dst, ignore_errors=self._d['ignore_errors'])
 
 
 @pytest.fixture
