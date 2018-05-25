@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pytest_ngsfixtures.plugin &mdash; pytest-ngsfixtures 0.7.5+2.gae25bf3 documentation</title>
+  <title>pytest_ngsfixtures.plugin &mdash; pytest-ngsfixtures 0.7.6 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="pytest-ngsfixtures 0.7.5+2.gae25bf3 documentation" href="../../index.html"/>
+    <link rel="top" title="pytest-ngsfixtures 0.7.6 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.7.5+2.gae25bf3
+                0.7.6
               </div>
             
           
@@ -196,6 +196,7 @@
 <span class="sd">      name (str): fixture name (one of testdata, samples, ref)</span>
 <span class="sd">      request (_pytest.fixtures.SubRequest): pytest request object</span>
 <span class="sd">      datakey (str): data key label</span>
+<span class="sd">      path (str): test directory path; overrides call to tmpdir_factory</span>
 
 <span class="sd">    Keyword Args:</span>
 <span class="sd">      copy (bool): copy or link data</span>
@@ -205,10 +206,11 @@
 <span class="sd">      numbered (bool): create numbered test directories</span>
 <span class="sd">      testunit (str): group tests in directory named testunit relative to tmpdir_factory basename</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;testdata&#39;</span><span class="p">,</span> <span class="n">request</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">datakey</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;testdata&#39;</span><span class="p">,</span> <span class="n">request</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">datakey</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_request</span> <span class="o">=</span> <span class="n">request</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_datakey</span> <span class="o">=</span> <span class="n">datakey</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">path</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_d</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;copy&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
             <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">{},</span>
@@ -251,11 +253,14 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="kn">from</span> <span class="nn">_pytest.tmpdir</span> <span class="k">import</span> <span class="n">TempdirFactory</span>
             <span class="n">tmpdir_factory</span> <span class="o">=</span> <span class="n">TempdirFactory</span><span class="p">(</span><span class="n">pytest</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="n">safe_mktemp</span><span class="p">(</span><span class="n">tmpdir_factory</span><span class="p">,</span> <span class="o">**</span><span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">safe_mktemp</span><span class="p">(</span><span class="n">tmpdir_factory</span><span class="p">,</span> <span class="o">**</span><span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">strpath</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
         <span class="n">f</span> <span class="o">=</span> <span class="n">safe_copy</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">[</span><span class="s1">&#39;copy&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="n">safe_symlink</span>
         <span class="k">for</span> <span class="n">dst</span><span class="p">,</span> <span class="n">src</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">f</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">)</span></div>
+            <span class="n">f</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">[</span><span class="s1">&#39;ignore_errors&#39;</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="testdata"><a class="viewcode-back" href="../../pytest_ngsfixtures.html#pytest_ngsfixtures.plugin.testdata">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
@@ -351,7 +356,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.7.5+2.gae25bf3',
+            VERSION:'0.7.6',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

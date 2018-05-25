@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Usage &mdash; pytest-ngsfixtures 0.7.5+2.gae25bf3 documentation</title>
+  <title>Usage &mdash; pytest-ngsfixtures 0.7.6 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="pytest-ngsfixtures 0.7.5+2.gae25bf3 documentation" href="index.html"/>
+    <link rel="top" title="pytest-ngsfixtures 0.7.6 documentation" href="index.html"/>
         <link rel="next" title="Tutorial" href="workflow.html"/>
         <link rel="prev" title="Installation" href="installation.html"/> 
 
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.7.5+2.gae25bf3
+                0.7.6
               </div>
             
           
@@ -104,6 +104,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#advanced-usage">Advanced usage</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#parametrizing-existing-sample-layouts">Parametrizing existing sample layouts</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#grouping-fixtures-in-test-directories">Grouping fixtures in test directories</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#creating-fixtures-with-the-fixture-class">Creating fixtures with the <code class="docutils literal notranslate"><span class="pre">Fixture</span></code> class</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#plugin-options">Plugin options</a><ul>
@@ -208,6 +209,9 @@ fixtures predefine output directories which can be configured with the
 <em>relative to the pytest root directory</em>, whereas the value is the path
 to the test data file. In addition, there is a <cite>testunit</cite> option that
 allows grouping fixtures in the same test directory.</p>
+<p>Under the hood, the fixtures call the class
+<a class="reference internal" href="pytest_ngsfixtures.html#pytest_ngsfixtures.plugin.Fixture" title="pytest_ngsfixtures.plugin.Fixture"><code class="xref py py-class docutils literal notranslate"><span class="pre">Fixture</span></code></a> to setup the fixture.
+See <a class="reference internal" href="#using-the-fixture-class"><span class="std std-ref">Creating fixtures with the Fixture class</span></a> for more information.</p>
 <div class="section" id="pytest-ngsfixtures-plugin-testdata">
 <h3><a class="reference internal" href="pytest_ngsfixtures.html#pytest_ngsfixtures.plugin.testdata" title="pytest_ngsfixtures.plugin.testdata"><code class="xref py py-func docutils literal notranslate"><span class="pre">pytest_ngsfixtures.plugin.testdata()</span></code></a><a class="headerlink" href="#pytest-ngsfixtures-plugin-testdata" title="Permalink to this headline">¶</a></h3>
 <p>A generic fixture for setting up test data.</p>
@@ -301,6 +305,27 @@ following example shows:</p>
 </pre></div>
 </div>
 </div>
+<div class="section" id="creating-fixtures-with-the-fixture-class">
+<span id="using-the-fixture-class"></span><h3>Creating fixtures with the <a class="reference internal" href="pytest_ngsfixtures.html#pytest_ngsfixtures.plugin.Fixture" title="pytest_ngsfixtures.plugin.Fixture"><code class="xref py py-class docutils literal notranslate"><span class="pre">Fixture</span></code></a> class<a class="headerlink" href="#creating-fixtures-with-the-fixture-class" title="Permalink to this headline">¶</a></h3>
+<p>In addition to using and configuring the predefined fixtures, you can
+setup fixtures by directly calling the
+<a class="reference internal" href="pytest_ngsfixtures.html#pytest_ngsfixtures.plugin.Fixture" title="pytest_ngsfixtures.plugin.Fixture"><code class="xref py py-class docutils literal notranslate"><span class="pre">Fixture</span></code></a> class. The <cite>path</cite>
+option can be used to override invocation of the tmpdir_factory that
+otherwise is called at fixture setup. This feature is primarily useful
+when fixtures have to take parametrized values into account.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">from</span> <span class="nn">pytest_ngsfixtures.plugin</span> <span class="kn">import</span> <span class="n">Fixture</span>
+
+<span class="nd">@pytest.fixture</span>
+<span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">Fixture</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">getfixturevalue</span><span class="p">(</span><span class="s2">&quot;samples&quot;</span><span class="p">))</span>
+
+<span class="nd">@pytest.mark.parametrize</span><span class="p">(</span><span class="s2">&quot;layout&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">layout1</span><span class="p">,</span> <span class="n">layout2</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_layout</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">layout</span><span class="p">,</span> <span class="n">metadata</span><span class="p">):</span>
+    <span class="c1"># Do something with data</span>
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="plugin-options">
 <span id="id1"></span><h2>Plugin options<a class="headerlink" href="#plugin-options" title="Permalink to this headline">¶</a></h2>
@@ -355,7 +380,7 @@ following example shows:</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.7.5+2.gae25bf3',
+            VERSION:'0.7.6',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
