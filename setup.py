@@ -28,10 +28,7 @@ extras_require = {
 
 package_data = []
 
-scripts = [
-    'scripts/pytest_ngsfixtures_download_data.py',
-    'scripts/pytest_ngsfixtures_add_application.py',
-]
+scripts = []
 
 
 def package_path(path, filters=()):
