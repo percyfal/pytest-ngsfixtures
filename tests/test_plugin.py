@@ -23,3 +23,7 @@ def test_fixture_testdata_testunit_class():
     p = Fixture(dirname="foo", testunit="bar")
     assert str(p).endswith("bar/foo")
     
+
+def test_fixture_testdata_path_class(tmpdir_factory):
+    p = Fixture(dirname="foo", path=tmpdir_factory.getbasetemp().join("bar"))
+    assert str(p).endswith("bar")
