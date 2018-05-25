@@ -34,6 +34,11 @@ fixtures predefine output directories which can be configured with the
 to the test data file. In addition, there is a `testunit` option that
 allows grouping fixtures in the same test directory.
 
+Under the hood, the fixtures call the class
+:py:class:`~pytest_ngsfixtures.plugin.Fixture` to setup the fixture.
+See :ref:`using-the-fixture-class` for more information.
+
+
 :py:func:`pytest_ngsfixtures.plugin.testdata`
 +++++++++++++++++++++++++++++++++++++++++++++
 
@@ -152,6 +157,33 @@ following example shows:
        # context1/ref for context1 and so on
 
 
+.. _using-the-fixture-class:
+
+Creating fixtures with the :py:class:`~pytest_ngsfixtures.plugin.Fixture` class
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+In addition to using and configuring the predefined fixtures, you can
+setup fixtures by directly calling the
+:py:class:`~pytest_ngsfixtures.plugin.Fixture` class. The `path`
+option can be used to override invocation of the tmpdir_factory that
+otherwise is called at fixture setup. This feature is primarily useful
+when fixtures have to take parametrized values into account.
+
+.. code-block:: python
+
+   import pytest
+   from pytest_ngsfixtures.plugin import Fixture
+		
+   @pytest.fixture
+   def metadata(request):
+       p = Fixture(request, path=request.getfixturevalue("samples"))
+		
+   @pytest.mark.parametrize("layout", [layout1, layout2])
+   def test_layout(samples, layout, metadata):
+       # Do something with data
+
+
+       
 .. _plugin-options:
 
 Plugin options
