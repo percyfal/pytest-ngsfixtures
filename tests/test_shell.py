@@ -38,7 +38,7 @@ def test_shell_read(foo):
 
 
 def test_shell_async(foo):
-    ret = shell("ls " + str(foo), async=True)
+    ret = shell("ls " + str(foo), async_=True)
     assert isinstance(ret, sp.Popen)
 
 
