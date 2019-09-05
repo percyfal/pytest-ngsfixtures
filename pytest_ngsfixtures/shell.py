@@ -198,11 +198,11 @@ class shell:
                         yield k
                 else:
                     yield l[:-1]
-            raise StopIteration
+            return
         elif isinstance(proc, Container):
             for l in proc.logs(stream=True):
                 yield l[:-1].decode()
-            raise StopIteration
+            return
         elif isinstance(proc, ExecResult):
             for l in proc.output:
                 if isinstance(l, bytes):
@@ -210,11 +210,11 @@ class shell:
                         yield k
                 else:
                     yield l[:-1].decode()
-            raise StopIteration
+            return
         elif isinstance(proc, bytes):
             for l in proc.decode().split("\n"):
                 yield l
-            raise StopIteration
+            return
         elif isinstance(proc, str):
             return proc
         for l in proc.stdout:
