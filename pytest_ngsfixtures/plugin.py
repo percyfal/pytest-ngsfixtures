@@ -85,10 +85,12 @@ class Fixture(LocalPath):
         for k in self.keys():
             try:
                 self._d[k] = self._request.getfixturevalue(k)
-            except:
+            except Exception:
                 pass
-        if self._name in self._request.keywords:
-            self._d.update(self._request.keywords.get(self._name).kwargs)
+        markers = {m.name: m for m in self._request.keywords.get("pytestmark")}
+        if self._name in markers.keys():
+            mark = markers[self._name]
+            self._d.update(mark.kwargs)
 
     def _setup_fixture_data(self):
         self._d['dirname'] = os.path.join(str(self._d['testunit']), self._d['dirname'])
