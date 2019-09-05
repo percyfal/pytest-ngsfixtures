@@ -11,6 +11,7 @@ dependencies:
   - pip
   - pytest >= 5.0
   - pytest-runner
+  - samtools
   - snakemake >= 5.0.0
   - watchdog
   - wcwidth
