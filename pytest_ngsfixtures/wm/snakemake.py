@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os
-import inspect
 import pytest
 import py
 import logging
@@ -40,7 +39,8 @@ def snakefile(request, tmpdir_factory):
 
     }
     if 'snakefile' in request.keywords:
-        options.update(request.keywords.get('snakefile').kwargs)
+        markers = {m.name: m for m in request.keywords.get("pytestmark")}
+        options.update(markers['snakefile'].kwargs)
     p = safe_mktemp(tmpdir_factory, **options)
     src = options['snakefile']
     f = safe_copy if options['copy'] else safe_symlink
