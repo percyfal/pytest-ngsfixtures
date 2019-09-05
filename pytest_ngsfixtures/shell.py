@@ -133,7 +133,7 @@ class shell:
                                           **kwargs)
                 if asynchronous:
                     proc = proc.output
-            except:
+            except Exception:
                 raise
         elif image:
             try:
@@ -141,7 +141,7 @@ class shell:
                 proc = client.containers.run(image, command=cmd,
                                              detach=asynchronous,
                                              **kwargs)
-            except:
+            except Exception:
                 raise
         else:
             proc = sp.Popen(cmd,

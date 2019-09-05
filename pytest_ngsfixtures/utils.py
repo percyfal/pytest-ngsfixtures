@@ -13,7 +13,7 @@ def cd(path):
     os.chdir(path)
     try:
         yield
-    except:
+    except Exception:
         print('Exception caught: ', sys.exc_info()[0],
               file=sys.stderr)
     finally:

@@ -11,7 +11,7 @@ PYTHON_VERSION = "py{}{}".format(sys.version_info.major,
 try:
     SNAKEMAKE_VERSION = sp.check_output(
         ["snakemake", "--version"]).decode().strip()
-except:
+except Exception:
     logger.error("couldn't get snakemake version")
     raise
 

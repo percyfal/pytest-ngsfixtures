@@ -12,7 +12,7 @@ def test_fixture_testdata(testdata):
 @pytest.mark.testdata(dirname="foo", testunit="bar")
 def test_fixture_testdata_testunit(testdata):
     assert str(testdata).endswith("bar/foo")
-    
+
 
 def test_fixture_testdata_class():
     p = Fixture(dirname="foo")
@@ -22,7 +22,7 @@ def test_fixture_testdata_class():
 def test_fixture_testdata_testunit_class():
     p = Fixture(dirname="foo", testunit="bar")
     assert str(p).endswith("bar/foo")
-    
+
 
 def test_fixture_testdata_path_class(tmpdir_factory):
     p = Fixture(dirname="foo", path=tmpdir_factory.getbasetemp().join("bar"))

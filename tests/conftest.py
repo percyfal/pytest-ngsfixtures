@@ -21,7 +21,7 @@ PYTHON_VERSION = "py{}{}".format(sys.version_info.major,
 try:
     SNAKEMAKE_VERSION = sp.check_output(
         ["snakemake", "--version"]).decode().strip()
-except:
+except Exception:
     logger.error("couldn't get snakemake version")
     raise
 
@@ -50,7 +50,7 @@ def pytest_runtest_setup(item):
             client.images.list()
         except ConnectionError:
             pytest.skip("docker executable not found; docker tests will be skipped")
-        except:
+        except Exception:
             raise
     busyboxmark = item.get_closest_marker("busybox")
     if busyboxmark is not None:
@@ -69,7 +69,7 @@ def get_image(image):
         logger.info("docker image '{}' not found; pulling to run tests".format(image))
         client.images.pull(image)
         image = client.images.get(image)
-    except:
+    except Exception:
         raise
     return image
 
@@ -88,7 +88,7 @@ def image_factory(name):
                         continue
                     c.remove(force=True)
                     logger.info("Removed container {} ({})".format(c.name, c.short_id))
-            except:
+            except Exception:
                 raise
             finally:
                 pass
@@ -97,7 +97,7 @@ def image_factory(name):
         client = docker.from_env()
         try:
             image = client.images.get(name)
-        except:
+        except Exception:
             raise
         return image
     return image_fixture
@@ -115,7 +115,7 @@ def container_factory(name):
             try:
                 container.remove(force=True)
                 logger.info("Removed container {} ({})".format(container.name, container.short_id))
-            except:
+            except Exception:
                 raise
             finally:
                 pass
@@ -124,7 +124,7 @@ def container_factory(name):
         client = docker.from_env()
         try:
             image = client.images.get(name)
-        except:
+        except Exception:
             raise
         container = client.containers.create(image, tty=True,
                                              user="{}:{}".format(pytest.uid, pytest.gid),
