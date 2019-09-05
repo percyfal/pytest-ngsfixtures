@@ -2,7 +2,7 @@
 import os
 import docker
 import pytest
-from pytest_ngsfixtures.wm.snakemake import snakefile, run as snakemake_run
+from pytest_ngsfixtures.wm.snakemake import run as snakemake_run, snakefile
 
 
 @pytest.fixture(scope="session")
@@ -18,11 +18,11 @@ def container(request):
     request.addfinalizer(rm)
     client = docker.from_env()
     try:
-        image = client.images.get(pytest.snakemake_image)
+        image = client.images.get(pytest.snakemake_repo)
     except docker.errors.ImageNotFound:
-        print("docker image '{}' not found; pulling".format(pytest.snakemake_image))
-        client.images.pull(pytest.snakemake_image)
-        image = client.images.get(pytest.snakemake_image)
+        print("docker image '{}' not found; pulling".format(pytest.snakemake_repo))
+        client.images.pull(pytest.snakemake_repo)
+        image = client.images.get(pytest.snakemake_repo)
     except Exception:
         raise
     container = client.containers.create(image, tty=True,
