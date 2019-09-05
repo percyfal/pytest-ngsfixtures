@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
+import re
 import py
 import pytest
 import docker
 import subprocess as sp
-from pytest_ngsfixtures import DATA_DIR
-from pytest_ngsfixtures.os import localpath
 from pytest_ngsfixtures.config import SAMPLES_DIR
 import logging
 
@@ -25,9 +24,29 @@ except Exception:
     logger.error("couldn't get snakemake version")
     raise
 
-SNAKEMAKE_BASETAG = "{}--{}".format(SNAKEMAKE_VERSION, PYTHON_VERSION)
-SNAKEMAKE_IMAGE = "quay.io/biocontainers/snakemake:{}_0".format(SNAKEMAKE_BASETAG)
+SNAKEMAKE_REPO = "quay.io/biocontainers/snakemake"
 BUSYBOX_IMAGE = "busybox:latest"
+
+
+def get_snakemake_quay_tag():
+    import requests
+    try:
+        r = requests.get(
+            "https://quay.io/api/v1/repository/biocontainers/snakemake/tag")
+        tags = [t['name'] for t in r.json()['tags']]
+    except Exception:
+        logger.error("couldn't complete requests for quay.io")
+        raise
+    r = re.compile(SNAKEMAKE_VERSION)
+    for t in sorted(tags, reverse=True):
+        if r.search(t):
+            print("Tag: ", t)
+            return t
+    logger.error("No valid snakemake tag found")
+    sys.exit(1)
+
+
+SNAKEMAKE_IMAGE = "{}:{}".format(SNAKEMAKE_REPO, get_snakemake_quay_tag())
 
 
 def pytest_configure(config):

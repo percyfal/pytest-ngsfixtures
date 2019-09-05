@@ -1,7 +1,7 @@
 History
 =======
 
-0.7.7 (2019-09-05)
+0.8.0 (2019-09-05)
 -------------------
 
 Features
@@ -9,6 +9,8 @@ Features
 
 * Add support for python 3.7
 * Pin pytest >= 5.0
+* PEP-8 formatting
+* Check for correct snakemake repo tag
 
 
 0.7.6 (2018-05-25)
