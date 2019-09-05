@@ -30,15 +30,6 @@ SNAKEMAKE_IMAGE = "quay.io/biocontainers/snakemake:{}_0".format(SNAKEMAKE_BASETA
 BUSYBOX_IMAGE = "busybox:latest"
 
 
-def pytest_namespace():
-    d = {
-        'uid': os.getuid(),
-        'gid': os.getgid(),
-        'testdir': py.path.local(os.path.abspath(os.path.dirname(__file__))),
-    }
-    return d
-
-
 def pytest_configure(config):
     config.addinivalue_line("markers",
                             "docker: mark test as dependent on docker")
@@ -46,10 +37,13 @@ def pytest_configure(config):
                             "busybox: mark test as dependent on busybox image")
     config.addinivalue_line("markers",
                             "snakemake: mark test as dependent on snakemake image")
+    pytest.uid = os.getuid()
+    pytest.gid = os.getgid()
+    pytest.testdir = py.path.local(os.path.abspath(os.path.dirname(__file__)))
 
 
 def pytest_runtest_setup(item):
-    dockermark = item.get_marker("docker")
+    dockermark = item.get_closest_marker("docker")
     if dockermark is not None:
         try:
             client = docker.from_env()
@@ -58,10 +52,10 @@ def pytest_runtest_setup(item):
             pytest.skip("docker executable not found; docker tests will be skipped")
         except:
             raise
-    busyboxmark = item.get_marker("busybox")
+    busyboxmark = item.get_closest_marker("busybox")
     if busyboxmark is not None:
         get_image(BUSYBOX_IMAGE)
-    snakemakemark = item.get_marker("snakemake")
+    snakemakemark = item.get_closest_marker("snakemake")
     if snakemakemark is not None:
         get_image(SNAKEMAKE_IMAGE)
 
