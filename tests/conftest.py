@@ -28,27 +28,6 @@ SNAKEMAKE_REPO = "quay.io/biocontainers/snakemake"
 BUSYBOX_IMAGE = "busybox:latest"
 
 
-def get_snakemake_quay_tag():
-    import requests
-    try:
-        r = requests.get(
-            "https://quay.io/api/v1/repository/biocontainers/snakemake/tag")
-        tags = [t['name'] for t in r.json()['tags']]
-    except Exception:
-        logger.error("couldn't complete requests for quay.io")
-        raise
-    r = re.compile(SNAKEMAKE_VERSION)
-    for t in sorted(tags, reverse=True):
-        if r.search(t):
-            print("Tag: ", t)
-            return t
-    logger.error("No valid snakemake tag found")
-    sys.exit(1)
-
-
-SNAKEMAKE_IMAGE = "{}:{}".format(SNAKEMAKE_REPO, get_snakemake_quay_tag())
-
-
 def pytest_configure(config):
     config.addinivalue_line("markers",
                             "docker: mark test as dependent on docker")
@@ -59,6 +38,23 @@ def pytest_configure(config):
     pytest.uid = os.getuid()
     pytest.gid = os.getgid()
     pytest.testdir = py.path.local(os.path.abspath(os.path.dirname(__file__)))
+
+    regex = re.compile(SNAKEMAKE_VERSION)
+    if config.cache.get("pytest_ngsfixtures/tags", None) is None:
+        try:
+            import requests
+            r = requests.get(
+                "https://quay.io/api/v1/repository/biocontainers/snakemake/tag")
+            tags = sorted([t['name'] for t in r.json()['tags']], reverse=True)
+            config.cache.set("pytest_ngsfixtures/tags", tags)
+        except Exception:
+            logger.error("couldn't complete requests for quay.io")
+            raise
+    for t in sorted(config.cache.get("pytest_ngsfixtures/tags", []), reverse=True):
+        if regex.search(t):
+            snakemake_tag = t
+            break
+    pytest.snakemake_image = "{}:{}".format(SNAKEMAKE_REPO, snakemake_tag)
 
 
 def pytest_runtest_setup(item):
@@ -76,7 +72,7 @@ def pytest_runtest_setup(item):
         get_image(BUSYBOX_IMAGE)
     snakemakemark = item.get_closest_marker("snakemake")
     if snakemakemark is not None:
-        get_image(SNAKEMAKE_IMAGE)
+        get_image(pytest.snakemake_image)
 
 
 def get_image(image):
@@ -97,11 +93,14 @@ def image_factory(name):
     @pytest.mark.docker
     @pytest.fixture(scope="session")
     def image_fixture(request):
+        image_name = name
+        if name == "snakemake":
+            image_name = pytest.snakemake_image
         def rm():
             try:
                 client = docker.from_env()
                 containers = client.containers.list(filters={'status': 'exited',
-                                                             'ancestor': name})
+                                                             'ancestor': image_name})
                 for c in containers:
                     if not c.name.startswith("pytest_ngsfixtures"):
                         continue
@@ -115,7 +114,7 @@ def image_factory(name):
         request.addfinalizer(rm)
         client = docker.from_env()
         try:
-            image = client.images.get(name)
+            image = client.images.get(image_name)
         except Exception:
             raise
         return image
@@ -123,13 +122,16 @@ def image_factory(name):
 
 
 busybox_image = image_factory(BUSYBOX_IMAGE)
-snakemake_image = image_factory(SNAKEMAKE_IMAGE)
+snakemake_image = image_factory("snakemake")
 
 
 def container_factory(name):
     @pytest.mark.docker
     @pytest.fixture(scope="session")
     def container_fixture(request):
+        container_name = name
+        if name == "snakemake":
+            container_name = pytest.snakemake_image
         def rm():
             try:
                 container.remove(force=True)
@@ -142,7 +144,7 @@ def container_factory(name):
         request.addfinalizer(rm)
         client = docker.from_env()
         try:
-            image = client.images.get(name)
+            image = client.images.get(container_name)
         except Exception:
             raise
         container = client.containers.create(image, tty=True,
@@ -155,7 +157,7 @@ def container_factory(name):
 
 
 busybox_container = container_factory(BUSYBOX_IMAGE)
-snakemake_container = container_factory(SNAKEMAKE_IMAGE)
+snakemake_container = container_factory("snakemake")
 
 
 @pytest.fixture(scope="module")
