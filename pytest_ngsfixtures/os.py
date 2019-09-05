@@ -43,7 +43,7 @@ def safe_copy(p, src, dst=None, ignore_errors=False):
         src.copy(dst)
     except OSError as e:
         if ignore_errors:
-            logger.warn(e)
+            logger.warning(e)
         else:
             logger.error(e)
             raise
@@ -82,7 +82,7 @@ def safe_symlink(p, src, dst=None, ignore_errors=False):
         dst.mksymlinkto(src)
     except OSError as e:
         if ignore_errors:
-            logger.warn(e)
+            logger.warning(e)
         else:
             logger.error(e)
             raise
