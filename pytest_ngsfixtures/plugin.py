@@ -23,7 +23,12 @@ def pytest_addoption(parser):
 
 
 def pytest_configure(config):
-    pass
+    # Create a default TempdirFactory and attach it to pytest
+    from _pytest.tmpdir import TempdirFactory, TempPathFactory
+    tmppath_handler = TempPathFactory.from_config(config)
+    pytest.tmpdir_factory = TempdirFactory(tmppath_handler)
+    foo = TempdirFactory(tmppath_handler)
+
 
 
 class Fixture(LocalPath):
@@ -90,8 +95,7 @@ class Fixture(LocalPath):
         if self._request is not None:
             tmpdir_factory = self._request.getfixturevalue("tmpdir_factory")
         else:
-            from _pytest.tmpdir import TempdirFactory
-            tmpdir_factory = TempdirFactory(pytest.config)
+            tmpdir_factory = pytest.tmpdir_factory
         if self._path is not None:
             p = self._path
         else:
