@@ -27,7 +27,18 @@ def pytest_configure(config):
     from _pytest.tmpdir import TempdirFactory, TempPathFactory
     tmppath_handler = TempPathFactory.from_config(config)
     pytest.tmpdir_factory = TempdirFactory(tmppath_handler)
-    foo = TempdirFactory(tmppath_handler)
+    config.addinivalue_line(
+        "markers", "samples: set metadata on samples"
+    )
+    config.addinivalue_line(
+        "markers", "snakefile: set metadata on snakefile"
+    )
+    config.addinivalue_line(
+        "markers", "ref: set metadata on reference sequences"
+    )
+    config.addinivalue_line(
+        "markers", "testdata: set metadata on generic testdata"
+    )
 
 
 
