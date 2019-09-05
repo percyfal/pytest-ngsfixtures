@@ -18,7 +18,7 @@ STDOUT = sys.stdout
 
 def get_conda_root():
     output = sp.check_output(shlex.split("conda info --json"))
-    m = re.search("\"root_prefix\":\s+\"(\S+)\",$", output.decode("utf-8"), re.MULTILINE)
+    m = re.search(r"\"root_prefix\":\s+\"(\S+)\",$", output.decode("utf-8"), re.MULTILINE)
     try:
         return m.group(1)
     except AttributeError:
@@ -84,11 +84,11 @@ class shell:
                 image=None,
                 iterable=False,
                 read=False,
-                async=False,
+                asynchronous=False,
                 path_list=[],
                 **kwargs):
 
-        stdout = sp.PIPE if iterable or async or read else kwargs.pop("stdout", STDOUT)
+        stdout = sp.PIPE if iterable or asynchronous or read else kwargs.pop("stdout", STDOUT)
         stderr = kwargs.pop("stderr", STDOUT)
 
         close_fds = sys.platform != 'win32'
@@ -96,7 +96,7 @@ class shell:
         if kwargs.get("stream", False):
             iterable = kwargs.pop("stream")
         if kwargs.get("detach", False):
-            async = kwargs.pop("detach")
+            asynchronous = kwargs.pop("detach")
 
         if conda_env_list:
             if not conda_root:
@@ -129,19 +129,19 @@ class shell:
         if container:
             try:
                 proc = container.exec_run(cmd, stream=iterable,
-                                          detach=async,
+                                          detach=asynchronous,
                                           **kwargs)
-                if async:
+                if asynchronous:
                     proc = proc.output
-            except:
+            except Exception:
                 raise
         elif image:
             try:
                 client = docker.from_env()
                 proc = client.containers.run(image, command=cmd,
-                                             detach=async,
+                                             detach=asynchronous,
                                              **kwargs)
-            except:
+            except Exception:
                 raise
         else:
             proc = sp.Popen(cmd,
@@ -156,7 +156,7 @@ class shell:
         if read:
             proc = cls.read_stdout(proc)
             return cls.stdout(proc, cmd, ret=proc)
-        elif async:
+        elif asynchronous:
             return proc
 
         return cls.stdout(proc, cmd)
@@ -198,11 +198,11 @@ class shell:
                         yield k
                 else:
                     yield l[:-1]
-            raise StopIteration
+            return
         elif isinstance(proc, Container):
             for l in proc.logs(stream=True):
                 yield l[:-1].decode()
-            raise StopIteration
+            return
         elif isinstance(proc, ExecResult):
             for l in proc.output:
                 if isinstance(l, bytes):
@@ -210,11 +210,11 @@ class shell:
                         yield k
                 else:
                     yield l[:-1].decode()
-            raise StopIteration
+            return
         elif isinstance(proc, bytes):
             for l in proc.decode().split("\n"):
                 yield l
-            raise StopIteration
+            return
         elif isinstance(proc, str):
             return proc
         for l in proc.stdout:

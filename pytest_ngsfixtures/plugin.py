@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """Plugin configuration module for pytest-ngsfixtures"""
 import os
-import re
 import pytest
 from py._path.local import LocalPath
 from pytest_ngsfixtures.config import layout, reflayout
@@ -23,7 +22,22 @@ def pytest_addoption(parser):
 
 
 def pytest_configure(config):
-    pass
+    # Create a default TempdirFactory and attach it to pytest
+    from _pytest.tmpdir import TempdirFactory, TempPathFactory
+    tmppath_handler = TempPathFactory.from_config(config)
+    pytest.tmpdir_factory = TempdirFactory(tmppath_handler)
+    config.addinivalue_line(
+        "markers", "samples: set metadata on samples"
+    )
+    config.addinivalue_line(
+        "markers", "snakefile: set metadata on snakefile"
+    )
+    config.addinivalue_line(
+        "markers", "ref: set metadata on reference sequences"
+    )
+    config.addinivalue_line(
+        "markers", "testdata: set metadata on generic testdata"
+    )
 
 
 class Fixture(LocalPath):
@@ -80,18 +94,19 @@ class Fixture(LocalPath):
         for k in self.keys():
             try:
                 self._d[k] = self._request.getfixturevalue(k)
-            except:
+            except Exception:
                 pass
-        if self._name in self._request.keywords:
-            self._d.update(self._request.keywords.get(self._name).kwargs)
+        markers = {m.name: m for m in self._request.keywords.get("pytestmark")}
+        if self._name in markers.keys():
+            mark = markers[self._name]
+            self._d.update(mark.kwargs)
 
     def _setup_fixture_data(self):
         self._d['dirname'] = os.path.join(str(self._d['testunit']), self._d['dirname'])
         if self._request is not None:
             tmpdir_factory = self._request.getfixturevalue("tmpdir_factory")
         else:
-            from _pytest.tmpdir import TempdirFactory
-            tmpdir_factory = TempdirFactory(pytest.config)
+            tmpdir_factory = pytest.tmpdir_factory
         if self._path is not None:
             p = self._path
         else:
@@ -99,7 +114,7 @@ class Fixture(LocalPath):
         self.strpath = str(p)
         f = safe_copy if self._d['copy'] else safe_symlink
         for dst, src in self._d['data'].items():
-            f(p, src, dst, ignore_errors=self._d['ignore_errors'])
+            f(self, src, dst, ignore_errors=self._d['ignore_errors'])
 
 
 @pytest.fixture

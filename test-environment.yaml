@@ -1,0 +1,18 @@
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - Sphinx
+  - atomicwrites
+  - bumpversion
+  - coverage
+  - docker-py >= 3.0
+  - flake8
+  - pip
+  - pytest >= 5.0
+  - pytest-runner
+  - samtools
+  - snakemake >= 5.0.0
+  - watchdog
+  - wcwidth
+  - wheel

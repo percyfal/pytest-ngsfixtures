@@ -14,12 +14,12 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 requirements = [
-    'pytest>=3.0.0',
+    'pytest>=5.0.0',
     'pyyaml',
 ]
 
 test_requirements = [
-    'pytest>=3.0.0',
+    'pytest>=5.0.0',
 ]
 
 extras_require = {
