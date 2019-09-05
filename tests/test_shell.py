@@ -37,8 +37,8 @@ def test_shell_read(foo):
     assert ret.rstrip() == str(foo.join("foo.txt"))
 
 
-def test_shell_async(foo):
-    ret = shell("ls " + str(foo), async=True)
+def test_shell_asynchronous(foo):
+    ret = shell("ls " + str(foo), asynchronous=True)
     assert isinstance(ret, sp.Popen)
 
 
@@ -86,9 +86,9 @@ def test_container_shell_iterable_detach(busybox_container, foo, shell_config):
 
 @pytest.mark.docker
 @pytest.mark.busybox
-def test_container_shell_async(busybox_container, foo, shell_config):
+def test_container_shell_asynchronous(busybox_container, foo, shell_config):
     busybox_container.start()
-    touch = foo.join("test_busybox_shell_async.touch")
+    touch = foo.join("test_busybox_shell_asynchronous.touch")
     ret = shell("touch {}".format(touch), container=busybox_container,
                 detach=True)
     assert isinstance(ret, str)
@@ -153,10 +153,10 @@ def test_busybox_image_shell_iterable_detach(busybox_image, foo, image_args, she
 
 # Detaching client.containers.run returns a container
 @pytest.mark.docker
-def test_busybox_image_shell_async(busybox_image, foo, image_args, shell_config):
-    touch = foo.join("test_busybox_image_shell_async.touch")
+def test_busybox_image_shell_asynchronous(busybox_image, foo, image_args, shell_config):
+    touch = foo.join("test_busybox_image_shell_asynchronous.touch")
     ret = shell("touch {}".format(touch), image=busybox_image, detach=True,
-                name="pytest_ngsfixtures_test_busybox_image_shell_async", **image_args)
+                name="pytest_ngsfixtures_test_busybox_image_shell_asynchronous", **image_args)
     assert isinstance(ret, Container)
     assert touch.exists()
 

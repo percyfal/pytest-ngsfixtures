@@ -84,11 +84,11 @@ class shell:
                 image=None,
                 iterable=False,
                 read=False,
-                async=False,
+                asynchronous=False,
                 path_list=[],
                 **kwargs):
 
-        stdout = sp.PIPE if iterable or async or read else kwargs.pop("stdout", STDOUT)
+        stdout = sp.PIPE if iterable or asynchronous or read else kwargs.pop("stdout", STDOUT)
         stderr = kwargs.pop("stderr", STDOUT)
 
         close_fds = sys.platform != 'win32'
@@ -96,7 +96,7 @@ class shell:
         if kwargs.get("stream", False):
             iterable = kwargs.pop("stream")
         if kwargs.get("detach", False):
-            async = kwargs.pop("detach")
+            asynchronous = kwargs.pop("detach")
 
         if conda_env_list:
             if not conda_root:
@@ -129,9 +129,9 @@ class shell:
         if container:
             try:
                 proc = container.exec_run(cmd, stream=iterable,
-                                          detach=async,
+                                          detach=asynchronous,
                                           **kwargs)
-                if async:
+                if asynchronous:
                     proc = proc.output
             except:
                 raise
@@ -139,7 +139,7 @@ class shell:
             try:
                 client = docker.from_env()
                 proc = client.containers.run(image, command=cmd,
-                                             detach=async,
+                                             detach=asynchronous,
                                              **kwargs)
             except:
                 raise
@@ -156,7 +156,7 @@ class shell:
         if read:
             proc = cls.read_stdout(proc)
             return cls.stdout(proc, cmd, ret=proc)
-        elif async:
+        elif asynchronous:
             return proc
 
         return cls.stdout(proc, cmd)
