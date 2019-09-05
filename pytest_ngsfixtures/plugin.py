@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """Plugin configuration module for pytest-ngsfixtures"""
 import os
-import re
 import pytest
 from py._path.local import LocalPath
 from pytest_ngsfixtures.config import layout, reflayout
@@ -39,7 +38,6 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers", "testdata: set metadata on generic testdata"
     )
-
 
 
 class Fixture(LocalPath):

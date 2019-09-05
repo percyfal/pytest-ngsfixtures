@@ -11,7 +11,7 @@ def container(request):
         try:
             print("Removing container ", container.name)
             container.remove(force=True)
-        except:
+        except Exception:
             raise
         finally:
             pass
@@ -25,7 +25,7 @@ def container(request):
         print("docker image {} not found; pulling".format(pytest.snakemake_image))
         client.images.pull(pytest.snakemake_image)
         image = client.images.get(pytest.snakemake_image)
-    except:
+    except Exception:
         raise
     container = client.containers.create(image, tty=True,
                                          user="{}:{}".format(os.getuid(), os.getgid()),

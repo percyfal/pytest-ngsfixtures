@@ -18,7 +18,7 @@ STDOUT = sys.stdout
 
 def get_conda_root():
     output = sp.check_output(shlex.split("conda info --json"))
-    m = re.search("\"root_prefix\":\s+\"(\S+)\",$", output.decode("utf-8"), re.MULTILINE)
+    m = re.search(r"\"root_prefix\":\s+\"(\S+)\",$", output.decode("utf-8"), re.MULTILINE)
     try:
         return m.group(1)
     except AttributeError:
