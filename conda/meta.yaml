@@ -1,5 +1,5 @@
 {% set name = "pytest-ngsfixtures" %}
-{% set version = "0.8.0" %}
+{% set version = "0.8.1" %}
 
 package:
   name: {{ name|lower }}
@@ -16,7 +16,7 @@ requirements:
     - setuptools
     - pytest-runner
   run:
-    - python
+    - python {{ python }}
     - pytest
     - docker-py
 
@@ -25,7 +25,7 @@ test:
     - pytest
     - pytest-runner
     - docker-py
-    - snakemake ==5.1.3
+    - snakemake
     - bwa
     - samtools
 
