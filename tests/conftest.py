@@ -38,6 +38,7 @@ def pytest_configure(config):
     pytest.uid = os.getuid()
     pytest.gid = os.getgid()
     pytest.testdir = py.path.local(os.path.abspath(os.path.dirname(__file__)))
+    snakemake_tag = "{}--0".format(SNAKEMAKE_VERSION)
 
     regex = re.compile(SNAKEMAKE_VERSION)
     if config.cache.get("pytest_ngsfixtures/tags", None) is None:

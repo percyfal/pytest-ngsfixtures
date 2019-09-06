@@ -22,6 +22,7 @@ SNAKEMAKE_REPO = "quay.io/biocontainers/snakemake"
 
 def pytest_configure(config):
     regex = re.compile(SNAKEMAKE_VERSION)
+    snakemake_tag = SNAKEMAKE_VERSION
     if config.cache.get("pytest_ngsfixtures/tags", None) is None:
         try:
             import requests
